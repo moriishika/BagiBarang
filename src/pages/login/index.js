@@ -1,32 +1,49 @@
 import Link from "next/link";
 import React from "react";
+import axios from "axios";
 class Login extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             user: {},
             fields: { email: '', password: '' },
-            isLoggedIn: false
+            isLoggedIn: false,
         }
         this.handleLogin = this.handleLogin.bind(this);
         this.fieldHandler = this.fieldHandler.bind(this);
+        this.login = this.login.bind(this)
     }
 
     async handleLogin(e) {
+        e.preventDefault();
+        const email = this.state.fields.email;
+        const password = this.state.fields.password;
         await this.setState({
             user: {
-                email: this.state.fields.email,
-                password: this.state.fields.password
+                email,
+                password
             }
         })
-        await this.setState({
-            fields: {
-                email: '',
-                password: ''
-            }
+
+        this.login(email, password);
+    }
+
+    login(email, password) {
+    
+        axios.post('/api/auth/login', {
+            email,
+            password
         })
-        console.log(this.state.user)
-        console.log(this.state.fields);
+            .then((res) => {
+                this.setState({
+                    fields: {
+                        email: '',
+                        password: ''
+                    }
+                })
+            }).catch((err) => {
+                alert(err)
+            })
     }
 
     async fieldHandler(e) {
@@ -37,8 +54,6 @@ class Login extends React.Component {
                 [fieldName]: e.target.value
             }
         })
-
-        console.log(this.state.fields)
     }
 
     render() {
@@ -55,7 +70,7 @@ class Login extends React.Component {
                     <h1 className="text-center my-4 font-semibold text-lg">Mau Barang? <br></br>Login Dulu Gak lama kok</h1>
                     <form onSubmit={this.handleLogin}>
                         <input type="text" name="email" onChange={this.fieldHandler} value={this.state.fields.email} className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3" placeholder="Email"></input>
-                        <input type="text" name="password" onChange={this.fieldHandler} className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3" placeholder="Password"></input>
+                        <input type="password" name="password" onChange={this.fieldHandler} value={this.state.fields.password} className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3" placeholder="Password"></input>
                         <button className="bg-transparent block border border-blue-500 w-full py-2 rounded-md mt-4 text-blue-500 font-semibold hover hover:bg-blue-500 hover:text-white">Masuk</button>
                     </form>
                     <p className="text-center mt-8 font-medium">Atau</p>
