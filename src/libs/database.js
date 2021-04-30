@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
-
-mongoose.connect('mongodb://localhost:27017/bagibarang', {useNewUrlParser: true, useUnifiedTopology: true});
+const connectionString = process.env.MONGODB_URI
+mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
 
