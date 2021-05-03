@@ -8,14 +8,19 @@ const Home = () => {
             <TopNavbar></TopNavbar>
             {!session && (<>
                 <h1>Please Sign in Here first</h1>
-                <button onClick={(e) => {e.preventDefault(); signIn()}}> Google Account</button>
+                <button onClick={(e) => { 
+                    e.preventDefault(); 
+                    signIn() }}> Google Account</button>
             </>)}
             {session && (
                 <>
-                    <h1>You signed in as {session.user.name}</h1> 
+                    <h1>You signed in as {session.user.name}</h1>
                     <p>{session.user.email}</p>
                     <img src={session.user.image} />
-                    <button onClick={(e) => {e.preventDefault(); singOut()}}>signOut</button>
+                    <button onClick={(e) => {
+                        e.preventDefault(); 
+                        signOut()
+                    }}>signOut</button>
                     <Items ></Items>
                 </>
             )
