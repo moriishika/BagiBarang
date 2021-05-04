@@ -14,6 +14,4 @@ const options = {
     ]
 }
 
-console.log(options.providers);
-
 export default (req, res) => NextAuth(req, res, options);

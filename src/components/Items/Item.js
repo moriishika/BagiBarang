@@ -1,6 +1,8 @@
 import React from 'react'
+import { signIn, useSession} from 'next-auth/client'
 
 const Item = (props) => {
+    const [session, loading] = useSession();
     return (
         <div className="w-80 xl:w-2/5 my-5 p-0">
             <div className="pb-4 flex justify-between items-center">
@@ -27,7 +29,7 @@ const Item = (props) => {
                 <p>{props.value.deskripsi}</p>
             </div>
             <div className="flex w-full justify-between text-white text-3xl mt-4">
-                <button className="bg-blue-400 w-1/6 p-2 rounded-md hover:bg-blue-700 duration-150">share</button>
+                <button className="bg-blue-400 w-1/6 p-2 rounded-md hover:bg-blue-700 duration-150">Share</button>
                 <button className="bg-green-500 w-4/5 p-2 rounded-md hover:bg-green-700 duration-150">Detail</button>
             </div>
         </div>
