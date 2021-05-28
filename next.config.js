@@ -1,4 +1,4 @@
-const pwaConfig = require('next-pwa');
+const pwaConfig = require('next-pwa'); 
 
 module.exports = pwaConfig({
     future: { webpack5: true },

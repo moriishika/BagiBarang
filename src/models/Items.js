@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import db from '../libs/database.js'
+
 const { Schema } = mongoose;
 
 const ItemsSchema = new Schema({
@@ -14,4 +15,4 @@ const ItemsSchema = new Schema({
     images: [Schema.Types.Mixed]
 });
 
-export default db.models.Items || db.model('Items', ItemsSchema)
+export default db.models.Items || db.model('Items', ItemsSchema);

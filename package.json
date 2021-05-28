@@ -3,19 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@next-auth/typeorm-legacy-adapter": "0.0.2-pr.63.110",
     "@tailwindcss/forms": "^0.3.2",
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
+    "googleapis": "^73.0.0",
     "mongoose": "^5.12.6",
     "next": "latest",
-    "next-auth": "^3.19.5",
+    "next-auth": "^3.23.0",
     "next-pwa": "^5.2.18",
     "nodemailer": "^6.6.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "typeorm": "^0.2.32",
     "web-vitals": "^1.1.1"
   },
   "scripts": {
