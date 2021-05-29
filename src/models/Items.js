@@ -5,13 +5,11 @@ const { Schema } = mongoose;
 
 const ItemsSchema = new Schema({
     name: String,
-    amount: Number,
-    contact: {
-        email: String,
-        whatsapp: String,
-        telp : String
-    },
     description: String,
+    province : String,
+    address : String,
+    phoneNumber : String,
+    email : String,
     images: [Schema.Types.Mixed]
 });
 
