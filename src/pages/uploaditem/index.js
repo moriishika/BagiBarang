@@ -1,11 +1,11 @@
-import BottomNavbar from "../../components/BottomNavbar"
+import { BottomNavbar, ItemForm } from "../../components";
 const UploadItem = () => {
     return(
         <div>
-            <h1>Ini halaman Upload Item</h1>
+            <ItemForm />
             <BottomNavbar />
         </div>
-    );
+    );a
 }
 
 export default UploadItem;

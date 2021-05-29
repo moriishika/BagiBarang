@@ -1,8 +1,7 @@
 import { signOut } from 'next-auth/client';
-import {ProfileBox, Items} from '../../components';
+import {Items, BottomNavbar} from '../../components';
 import Image from 'next/image';
 import {useSession} from 'next-auth/client';
-import Item from '../../components/Items/Item';
 const Profile = (props) => {
 const [session, loading] = useSession();
     return (
@@ -14,8 +13,9 @@ const [session, loading] = useSession();
                     <button className="mt-1 text-md bg-transparent block border border-green-500 w-full rounded-md hover:text-white text-green-500 font-medium hover:bg-green-500 ">Perbarui Profil</button>
                 </div>
             </div>
-            <button onClick = {signOut}>SignOut</button>
             <Items />
+            <button onClick = {signOut}>SignOut</button>
+            <BottomNavbar />
         </div>
     );
 }

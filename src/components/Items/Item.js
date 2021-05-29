@@ -10,15 +10,15 @@ const Item = (props) => {
             <div className="pb-4 flex justify-between items-center">
                 <div className="flex items-center">
                     <img src="MoriiUta.png" alt="gadis sange" className="w-12 rounded-full" />
-                    <p className="ml-3 font-medium">{props.value.userName}</p>
+                    <p className="ml-3 font-medium">{props.item.name}</p>
                 </div>
                 <button className="bg-white  py-1 px-3 rounded-xl shadow-lg font-medium">Laporkan</button>
             </div>
             <div className="flex-col justify-center">
                 <div className="flex justify-center">
-                    <img src={props.value.imgUrl[0]} className="rounded-xl w-full object-cover object-center" alt={props.value.name}/>
+                    <img src={props.item.images["1"]} className="rounded-xl w-full object-cover object-center" alt={props.item.name}/>
                 </div>
-                <div className="flex w-full h-6 justify-center items-center">
+            <div className="flex w-full h-6 justify-center items-center">
                     <div className="w-3.5 bg-white border-black border-2 h-3.5 mx-1 mt-1 rounded-full"></div>
                     <div className="w-3.5 bg-black h-3.5 mx-1 mt-1 rounded-full"></div>
                     <div className="w-3.5 bg-black h-3.5 mx-1 mt-1 rounded-full"></div>
@@ -27,8 +27,8 @@ const Item = (props) => {
                 </div>
             </div>
             <div>
-                <h1 className="text-xl mt-2 font-semibold" >{props.value.name}</h1>
-                <p>{props.value.deskripsi}</p>
+                <h1 className="text-xl mt-2 font-semibold" >{props.item.name}</h1>
+                <p>{props.item.description}</p>
                 {isOpened && (
                     <h1>terbuka</h1>
                 )}
