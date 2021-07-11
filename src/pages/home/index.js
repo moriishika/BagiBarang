@@ -1,14 +1,14 @@
-import { TopNavbar, Items, BottomNavbar} from '../../components';
+import { TopNavbar, Items, BottomNavbar } from '../../components';
 
-const Home = () => {
+const Home = ({ items }) => {
+    console.log(items)
     return (
         <main className="h-auto w-full">
             <TopNavbar></TopNavbar>
 
-            <Items ></Items>
+            <Items items={items}></Items>
             <BottomNavbar></BottomNavbar>
         </main>
     )
 }
-
 export default Home;

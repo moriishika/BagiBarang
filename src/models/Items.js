@@ -11,6 +11,6 @@ const ItemsSchema = new Schema({
     phoneNumber : String,
     email : String,
     images: [Schema.Types.Mixed]
-});
+},{timestamps : true});
 
 export default db.models.Items || db.model('Items', ItemsSchema);

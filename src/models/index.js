@@ -1,8 +1,7 @@
-import User, { UserSchema } from "./Users"
+import Users from "./Users";
+import Items from './Items';
 
 export default {
-  User: {
-    model: User,
-    schema: UserSchema,
-  },
+  Users,
+  Items
 }

@@ -1,0 +1,32 @@
+.animation-reportGoingUp{
+    animation-name : reportGoingUp;
+    animation-duration: 0.8s;
+}
+
+.animation-revert{
+    animation-direction: alternate;
+}
+
+.animation-fadeIn{
+    animation-name : fadeIn;
+    animation-duration : 0.6s;
+}
+
+@keyframes reportGoingUp {
+    from {
+        height: 0%;
+    }
+    to {
+        height : 75%;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 0.2;
+    }
+}

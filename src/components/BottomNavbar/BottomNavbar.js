@@ -6,7 +6,7 @@ const BottomNavbar = () => {
     return (
         <div className="w-full flex justify-center bg-white sticky bottom-0 py-3">
             <Link href="/">
-                <div className="flex flex-col  items-center cursor-pointer">
+                <div className="flex flex-col items-center cursor-pointer">
                     <a><img src="/assets/icons/home.svg" className="w-10 h-10" /></a>
                     <p className="font-semibold">Beranda</p>
                 </div>
@@ -21,7 +21,7 @@ const BottomNavbar = () => {
 
             <Link href={session ? '/profile' : '/login'}>
                 <div className="flex flex-col  items-center cursor-pointer">
-                    <a><img src={session ? session.user.image : '/assets/icons/circleacc.svg'} className="w-10 h-10 rounded-full" /></a>
+                    <a><img src={session ?  'https://lh3.googleusercontent.com/a-/AOh14Gh2ksbehcd6liPsvP85IFkbWFRnChdR-aW5Q2MX=s96-c' : '/assets/icons/circleacc.svg'} className="w-10 h-10 rounded-full" /></a>
                     <p className="font-semibold">Profil</p>
                 </div>
             </Link>
