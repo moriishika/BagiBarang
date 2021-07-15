@@ -9,9 +9,11 @@ handler.use(parseMultipartForm);
 
 // this api need auth, so no one will able to save data without login 
 handler.post(async (req, res) => {
+    
     const session = await getSession({ req });
     if (session) {
         try {
+            console.log('masuk post')
             //contains image name
             const files = req.files.images.map(image => image.name);
             //contains inputs value from uploadItem form
@@ -26,6 +28,7 @@ handler.post(async (req, res) => {
 
             //if success it's gonna send a json with the item data
             res.status(200).json(item);
+            console.log('masuk')
         }
         catch (err) {
             console.log(err);

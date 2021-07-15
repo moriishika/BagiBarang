@@ -4,7 +4,7 @@ import ItemsModel from '../models/Items';
 import { TopNavbar, Items, BottomNavbar } from '../components';
 
 const Index = ({ items }) => {
-    const [searchedResult, setSearchedResult] = useState(['']);
+    const [searchedResult, setSearchedResult] = useState(null);
 
     const search = async (keywords, province) => {
         if (keywords) {
@@ -14,7 +14,7 @@ const Index = ({ items }) => {
             console.log(result);
             setSearchedResult(result)
         } else {
-            setSearchedResult(['']);
+            setSearchedResult(null);
         }
     }
 

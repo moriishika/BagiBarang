@@ -9,7 +9,6 @@ export default async function parseMultipartForm(req, res, next) {
 	form.keepExtensions = true;
 
 	form.on('fileBegin', (fields, file) => {
-		console.log(file)
 		file.name = Date.now() + file.name;
 		file.path = form.uploadDir + '/' + file.name;
 	})
@@ -17,22 +16,26 @@ export default async function parseMultipartForm(req, res, next) {
 	//check kalo file nya cuma bisa image doang
 	const contentType = req.headers['content-type']
 	if (contentType && contentType.indexOf('multipart/form-data') !== -1) {
+		console.log('masuk')
 		form.parse(req, (err, fields, files) => {
 			if (!err) {
+				console.log('masukkk')
+				console.log(files)
+				console.log(fields)
 				req.body = fields;
-				console.log(files);
-				console.log(fields);
 				if (!files.images.length) {
 					files.images = [files.images];
 				}
 
 				req.files = files
+			} else {
+				console.log("error")
+				console.log(err);
 			}
-			console.log("error")
-			console.log(err);
 			next();
 		})
 	} else {
+		console.log('errors bet')
 		next();
 	}
 }

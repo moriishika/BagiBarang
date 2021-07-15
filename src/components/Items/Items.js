@@ -7,18 +7,13 @@ function Items({ items, searchedItems }) {
             <div className="flex flex-col w-11/12 xl:w-2/5 items-center">
                 {!items && <h1 >Lagi loading</h1>}
 
-                {searchedItems[0] && searchedItems.map((item, index)=> {
+                {searchedItems && searchedItems.length && searchedItems.map((item, index)=> {
                     return <Item item={item} key={item._id}></Item>
                 })}
 
-                {items && !searchedItems[0] && JSON.parse(items).map((item, index) => {
+                {items && !searchedItems && JSON.parse(items).map((item, index) => {
                     return <Item item={item} key={item._id}></Item>
                 })}
-
-                
-
-
-                
             </div>
         </div>
     );
