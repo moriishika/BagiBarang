@@ -40,7 +40,7 @@ const ItemForm = (props) => {
     }
 
     useEffect(() => {
-        setInputs(session ? { province: session.user.province, address: session.user.address, phoneNumber: session.user.phoneNumber, email: session.user.email} : {});
+        setInputs(session ? { province: session.user.province, address: session.user.address, phoneNumber: session.user.phoneNumber, email: session.user.email } : {});
     }, [loading])
 
     return (
@@ -50,7 +50,7 @@ const ItemForm = (props) => {
                     <div className='flex flex-col items-center justify-center w-full'>
                         <label className='flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-green-300 hover:fill-current hover:text-green-600 group'>
                             <div className='flex flex-col items-center justify-center pt-7'>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24"/></g><g><g><path d="M20,2H4C3,2,2,2.9,2,4v3.01C2,7.73,2.43,8.35,3,8.7V20c0,1.1,1.1,2,2,2h14c0.9,0,2-0.9,2-2V8.7c0.57-0.35,1-0.97,1-1.69V4 C22,2.9,21,2,20,2z M19,20H5V9h14V20z M20,7H4V4h16V7z"/><rect height="2" width="6" x="9" y="12"/></g></g></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24" /></g><g><g><path d="M20,2H4C3,2,2,2.9,2,4v3.01C2,7.73,2.43,8.35,3,8.7V20c0,1.1,1.1,2,2,2h14c0.9,0,2-0.9,2-2V8.7c0.57-0.35,1-0.97,1-1.69V4 C22,2.9,21,2,20,2z M19,20H5V9h14V20z M20,7H4V4h16V7z" /><rect height="2" width="6" x="9" y="12" /></g></g></svg>
                                 <p className='text-sm font-medium text-gray-600 group-hover:text-green-600 pt-1 tracking-wider'>Pilih Foto Barang</p>
                             </div>
                             <input type='file' className="hidden" name="itemPhotos" onChange={onFileChange} multiple />
@@ -61,8 +61,41 @@ const ItemForm = (props) => {
                 <textarea name="description" className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3" value={inputs.description} onChange={onChangeHandler} placeholder="Deskripsi" />
                 <select name="province" onChange={onChangeHandler} className="rounded-md">
                     <option hidden value="">Pilih Wilayah</option>
-                    <option value="jakarta">Jakarta</option>
-                    <option value="bali">Bali</option>
+                    <option hidden>Pilih Wilayah</option>
+                    <option value="Aceh">Aceh</option>
+                    <option value="Bali">Bali</option>
+                    <option value="Banten">Banten</option>
+                    <option value="Bengkulu">Bengkulu</option>
+                    <option value="Di Yogyakarta">Di Yogyakarta</option>
+                    <option value="Dki Jakarta">Dki Jakarta</option>
+                    <option value="Gorontalo">Gorontalo</option>
+                    <option value="Jambi">Jambi</option>
+                    <option value="Jawa Barat">Jawa Barat</option>
+                    <option value="Jawa Tengah">Jawa Tengah</option>
+                    <option value="Jawa Timur">Jawa Timur</option>
+                    <option value="Kalimantan Barat">Kalimantan Barat</option>
+                    <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+                    <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+                    <option value="Kalimantan Timur">Kalimantan Timur</option>
+                    <option value="Kalimantan Utara">Kalimantan Utara</option>
+                    <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+                    <option value="Kepulauan Riau">Kepulauan Riau</option>
+                    <option value="Lampung">Lampung</option>
+                    <option value="Maluku Utara">Maluku Utara</option>
+                    <option value="Maluku">Maluku</option>
+                    <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+                    <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+                    <option value="Papua Barat">Papua Barat</option>
+                    <option value="Papua">Papua</option>
+                    <option value="Riau">Riau</option>
+                    <option value="Sulawesi Barat">Sulawesi Barat</option>
+                    <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+                    <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+                    <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+                    <option value="Sulawesi Utara">Sulawesi Utara</option>
+                    <option value="Sumatera Barat">Sumatera Barat</option>
+                    <option value="Sumatera Selatan">Sumatera Selatan</option>
+                    <option value="Sumatera Utara">Sumatera Utara</option>
                 </select>
                 <input type="text" name="address" className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3" value={inputs.address} onChange={onChangeHandler} placeholder="Alamat Barang Akan di Terima" />
                 <input type="text" name="phoneNumber" className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3" value={inputs.phoneNumber} onChange={onChangeHandler} placeholder="Nomor Telepon / Whatsapp" />

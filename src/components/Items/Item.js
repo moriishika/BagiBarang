@@ -23,7 +23,7 @@ const Item = (props) => {
     }
 
     return (
-        <div className="w-full my-5 p-0" key={props.key}>
+        <div className="w-full my-5 p-0">
             <div className="pb-4 flex justify-between items-center">
                 <div className="flex items-center">
                     <img src="MoriiUta.png" alt="gadis sange" className="w-12 rounded-full" />
