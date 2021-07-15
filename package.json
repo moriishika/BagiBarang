@@ -9,6 +9,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
+    "babel-eslint": "^10.1.0",
     "dotenv": "^8.6.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.8.0",
