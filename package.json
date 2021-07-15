@@ -11,6 +11,7 @@
     "axios": "^0.21.1",
     "dotenv": "^8.6.0",
     "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^5.8.0",
     "formidable-serverless": "^1.1.1",
     "googleapis": "^73.0.0",
     "mongoose": "^5.13.2",
