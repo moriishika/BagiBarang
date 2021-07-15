@@ -2,11 +2,12 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
-const TopNavbar = (props) => {
+const TopNavbar = ({ search }) => {
     const { register, handleSubmit } = useForm();
 
-    const searchItems = (input) => {
-        
+    const searchItems = (data) => {
+        console.log('kepencet')
+        search(data.keywords)
     }
 
     return (

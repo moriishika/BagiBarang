@@ -41,7 +41,7 @@ const ItemForm = (props) => {
 
     useEffect(() => {
         setInputs(session ? { province: session.user.province, address: session.user.address, phoneNumber: session.user.phoneNumber, email: session.user.email } : {});
-    }, [loading])
+    }, [])
 
     return (
         <div className='bg-white'>
@@ -50,7 +50,7 @@ const ItemForm = (props) => {
                     <div className='flex flex-col items-center justify-center w-full'>
                         <label className='flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-green-300 hover:fill-current hover:text-green-600 group'>
                             <div className='flex flex-col items-center justify-center pt-7'>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24" /></g><g><g><path d="M20,2H4C3,2,2,2.9,2,4v3.01C2,7.73,2.43,8.35,3,8.7V20c0,1.1,1.1,2,2,2h14c0.9,0,2-0.9,2-2V8.7c0.57-0.35,1-0.97,1-1.69V4 C22,2.9,21,2,20,2z M19,20H5V9h14V20z M20,7H4V4h16V7z" /><rect height="2" width="6" x="9" y="12" /></g></g></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12" enable-background="new 0 0 24 24" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24" /></g><g><g><path d="M20,2H4C3,2,2,2.9,2,4v3.01C2,7.73,2.43,8.35,3,8.7V20c0,1.1,1.1,2,2,2h14c0.9,0,2-0.9,2-2V8.7c0.57-0.35,1-0.97,1-1.69V4 C22,2.9,21,2,20,2z M19,20H5V9h14V20z M20,7H4V4h16V7z" /><rect height="2" width="6" x="9" y="12" /></g></g></svg>
                                 <p className='text-sm font-medium text-gray-600 group-hover:text-green-600 pt-1 tracking-wider'>Pilih Foto Barang</p>
                             </div>
                             <input type='file' className="hidden" name="itemPhotos" onChange={onFileChange} multiple />
