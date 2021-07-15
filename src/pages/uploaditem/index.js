@@ -5,7 +5,7 @@ const UploadItem = () => {
             <ItemForm />
             <BottomNavbar />
         </div>
-    );a
+    );
 }
 
 export default UploadItem;
