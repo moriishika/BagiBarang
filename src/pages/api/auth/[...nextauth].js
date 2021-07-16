@@ -1,5 +1,7 @@
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
+import Adapters from "next-auth/adapters"
+import Models from '../../../models';
 
 const options = {
     providers: [
@@ -12,7 +14,14 @@ const options = {
             clientSecret: process.env.FACEBOOK_CLIENT_SECRET
         }),
     ],
-    database: process.env.MONGODB_URI,
+    adapter: Adapters.TypeORM.Adapter(
+        process.env.MONGODB_URI,
+        // The second argument can be used to pass custom models and schemas
+        {
+            models: {
+                User: Models.User,
+            }
+        }),
     callbacks: {
         async redirect(url, baseUrl) {
             return url.startsWith(baseUrl)

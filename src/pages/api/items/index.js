@@ -7,7 +7,7 @@ const handler = nextConnect();
 
 handler.use(parseMultipartForm);
 
-// this api need auth, so no one will able to save data without login 
+// this api needs auth, so no one will able to save data without login 
 handler.post(async (req, res) => {
     
     const session = await getSession({ req });
