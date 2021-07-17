@@ -36,8 +36,8 @@ const ItemForm = (props) => {
     }
 
     return (
-        <div className='bg-white'>
-            <form onSubmit={handleSubmit(uploadItem)} className="flex flex-col p-4" encType="multipart/form-data">
+        <div className='flex justify-center h-full'>
+            <form onSubmit={handleSubmit(uploadItem)} className="flex flex-col p-4 xl:w-2/6" encType="multipart/form-data">
                 <div className="grid grid-cols-1 my-5 mx-7">
                     <div className='flex flex-col items-center justify-center w-full'>
                         <label className='flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-green-300 hover:fill-current hover:text-green-600 group'>

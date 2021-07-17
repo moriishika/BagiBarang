@@ -3,7 +3,7 @@ import Link from "next/link";
 import { signIn } from 'next-auth/client';
 const Login = () => {
     return (
-        <div className="">
+        <div>
             <div className="bg-white h-20 flex justify-items-center">
                 <Link href='/'>
                     <svg xmlns="http://www.w3.org/2000/svg" className="ml-4 w-14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
