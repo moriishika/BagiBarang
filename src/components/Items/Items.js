@@ -3,7 +3,7 @@ import Item from './Item';
 
 function Items({ items, searchedItems }) {
     return (
-        <div  className="flex flex-col items-center">
+        <div  className="flex flex-col items-center min-h-full">
             <div className="flex flex-col w-11/12 xl:w-2/5 items-center">
                 {!items && <h1 >Lagi loading</h1>}
 
@@ -17,8 +17,6 @@ function Items({ items, searchedItems }) {
             </div>
         </div>
     );
-
 }
-// grid grid-cols-1 place-items-center
 
 export default Items;

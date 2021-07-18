@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/client';
 import ReportBox from '../ReportBox';
+import MediaSlider from '../MediaSlider';
 
 let windowOffset = 0;
 
 const Item = (props) => {
-    // const [isOpened, setOpenStatus] = useState(false);
-    const [session, loading] = useSession();
     const [isOpened, setOpenedStatus] = useState(false);
 
     const openReport = async () => {
@@ -32,16 +30,7 @@ const Item = (props) => {
                 <button className="bg-white  py-1 px-3 rounded-xl shadow-lg font-medium" onClick={openReport}>Laporkan</button>
             </div>
             <div className="flex-col justify-center">
-                <div className="flex justify-center">
-                    <img src={`/assets/images/items/${props.item.images[0]}`} className="rounded-xl w-full object-cover object-center" alt={props.item.name} />
-                </div>
-                <div className="flex w-full h-6 justify-center items-center">
-                    <div className="w-3.5 bg-white border-black border-2 h-3.5 mx-1 mt-1 rounded-full"></div>
-                    <div className="w-3.5 bg-black h-3.5 mx-1 mt-1 rounded-full"></div>
-                    <div className="w-3.5 bg-black h-3.5 mx-1 mt-1 rounded-full"></div>
-                    <div className="w-3.5 bg-black h-3.5 mx-1 mt-1 rounded-full"></div>
-                    <div className="w-3.5 bg-black h-3.5 mx-1 mt-1 rounded-full"></div>
-                </div>
+                    <MediaSlider images={props.item.images}></MediaSlider>
             </div>
             <div>
                 <h1 className="text-xl mt-2 font-semibold" >{props.item.name}</h1>

@@ -23,7 +23,7 @@ const Index = ({ items }) => {
             <Head>
                 <title>Bagi Barang</title>
             </Head>
-            <div className="h-auto w-full">
+            <div className="h-full w-full">
                 <TopNavbar search={search}></TopNavbar>
                 <Items items={items} searchedItems={searchedResult}></Items>
                 <BottomNavbar></BottomNavbar>
@@ -45,3 +45,4 @@ export async function getStaticProps() {
     }
 }
 export default Index;
+
