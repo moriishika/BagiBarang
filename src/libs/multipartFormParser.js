@@ -5,7 +5,7 @@ export default async function parseMultipartForm(req, res, next) {
 	//ini ga bisa cuma untuk item, harus di perbaiki untuk profile image, ads, sama video
 	//ato ga coba bikin middleware nya dinamis lah intinya biar untuk ads nya nanti juga lancar
 	form.multiples = true;
-	form.uploadDir = `./public/assets/images/items`;
+	form.uploadDir = `public/assets/images/items`;
 	form.keepExtensions = true;
 
 	form.on('fileBegin', (fields, file) => {
