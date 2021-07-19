@@ -15,7 +15,6 @@
     "eslint-plugin-flowtype": "^5.8.0",
     "formidable-serverless": "^1.1.1",
     "googleapis": "^73.0.0",
-    "keen-slider": "^5.5.1",
     "mongoose": "^5.13.2",
     "multer": "^1.4.2",
     "next": "^11.0.1",
@@ -26,6 +25,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.11.0",
+    "react-slick": "^0.28.1",
+    "slick-carousel": "^1.8.1",
     "typeorm": "^0.2.34",
     "web-vitals": "^1.1.2"
   },

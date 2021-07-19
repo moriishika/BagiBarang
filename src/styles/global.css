@@ -23,3 +23,13 @@ body {
   height: 100%;
   width: 100%;
 }
+
+
+.slick-dots li div{
+  background-color: black;
+}
+.slick-dots li.slick-active div{
+  background-color: white;
+  border-color: black;
+}
+
