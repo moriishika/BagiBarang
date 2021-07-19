@@ -2,6 +2,11 @@ import Items from '../../../models/Items';
 import parseMultipartForm from '../../../libs/multipartFormParser';
 import nextConnect from 'next-connect';
 import { getSession } from 'next-auth/client';
+import Cors from 'cors';
+
+const cors = Cors({
+    methods : ['POST']
+});
 
 const handler = nextConnect();
 
