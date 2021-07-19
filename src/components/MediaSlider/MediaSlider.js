@@ -12,6 +12,7 @@ const MediaSlider = (props) => {
     slidesToScroll: 1,
     adaptiveHeight: true,
     lazyLoad : true,
+    arrows : false,
     customPaging: i => (
       <div className="w-3.5 border-2 h-3.5  bg-white border-black rounded-full"></div>
     )

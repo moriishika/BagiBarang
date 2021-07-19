@@ -6,8 +6,7 @@ const TopNavbar = ({ search }) => {
     const { register, handleSubmit } = useForm();
 
     const searchItems = (data) => {
-        console.log('kepencet')
-        search(data.keywords)
+        search(data.keywords.toLowerCase())
     }
 
     return (

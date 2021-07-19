@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/client';
 const BottomNavbar = (props) => {
     const [session, loading] = useSession();
     return (
-        <div className={"w-full flex justify-center bg-white bottom-0 py-3 sticky"}>
+        <div className={"w-full flex justify-center bg-white bottom-0 py-3 sticky z-50"}>
             <Link href="/">
                 <div className="flex flex-col items-center cursor-pointer">
                     <a><img src="/assets/icons/home.svg" className="w-10 h-10" /></a>

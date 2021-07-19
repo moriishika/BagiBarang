@@ -9,7 +9,7 @@ const Index = ({ items }) => {
     const search = async (keywords, province) => {
         if (keywords) {
             const result = JSON.parse(items).filter((item) => {
-                return item.name.includes(keywords)
+                return item.name.toLowerCase().includes(keywords.toLowerCase())
             })
             console.log(result);
             setSearchedResult(result)
