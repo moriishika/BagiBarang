@@ -24,7 +24,7 @@ const ItemForm = (props) => {
         }
 
 
-        axios.post('http://localhost:3000/api/items', formData, {
+        axios.post('/api/items', formData, {
             headers: {
                 'content-type': 'multipart/form-data',
             }
