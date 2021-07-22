@@ -11,7 +11,7 @@ const Index = ({ items }) => {
       const result = JSON.parse(items).filter((item) => {
         return item.name.toLowerCase().includes(keywords.toLowerCase());
       });
-      console.log(result);
+
       setSearchedResult(result);
     } else {
       setSearchedResult(null);
