@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Head from "next/head";
 import ItemsModel from "../models/Items";
-import { TopNavbar, Items, BottomNavbar } from "../components";
+import { TopNavbar, Items, BottomNavbar, LoadingBox } from "../components";
 
 const Index = ({ items }) => {
   const [searchedResult, setSearchedResult] = useState(null);
@@ -25,7 +25,7 @@ const Index = ({ items }) => {
       </Head>
       <div className="h-full w-full">
         <TopNavbar search={search}></TopNavbar>
-        <Items items={items} searchedItems={searchedResult}></Items>
+        <Items items={JSON.parse(items)} searchedItems={searchedResult}></Items>
         <BottomNavbar></BottomNavbar>
       </div>
     </>
@@ -34,13 +34,15 @@ const Index = ({ items }) => {
 
 export async function getServerSideProps() {
   const items = await ItemsModel.find((err, items) => {
-    if (err) return console.error(err);
-    return items;
-  });
+      if (err) return console.error(err);
+      console.log(items)
+      return items;
+    }
+  )
 
   if (!items) {
     return {
-        notFound : true
+      notFound: true,
     };
   }
 

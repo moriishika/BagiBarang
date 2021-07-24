@@ -2,7 +2,9 @@ import {createContext} from 'react';
 
 const Loading  = createContext({
     isLoading : false,
-    setLoadingStatus : (status) => {}
+    loadingMessage : 'Mohon Tunggu',
+    setLoadingStatus : (status) => {},
+    setLoadingMessage : (message)=> {}
 });
 
 export default Loading;

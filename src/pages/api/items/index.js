@@ -14,7 +14,7 @@ handler.use(parseMultipartForm);
 
 // this api needs auth, so no one will able to save data without login 
 handler.post(async (req, res) => {
-    
+    // const user = session.user;
     const session = await getSession({ req });
     if (session) {
         try {
@@ -24,11 +24,11 @@ handler.post(async (req, res) => {
             //contains inputs value from uploadItem form
             const body = req.body;
             //contains the logged in user data
-
-            const user = session.user;
+            console.log(body);
 
             // creating new instance of Items and save it to the database
-            const item = new Items({ ...body, images: files, user });
+            const item = new Items({ ...body, images: files });
+
             await item.save();
 
             //if success it's gonna send a json with the item data

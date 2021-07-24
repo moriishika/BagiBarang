@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { Loading } from "../../state";
 
 const ItemForm = ({ userId }) => {
-  const { setLoadingStatus } = useContext(Loading);
+  const { setLoadingStatus, setLoadingMessage } = useContext(Loading);
 
   const {
     register,
@@ -19,12 +19,15 @@ const ItemForm = ({ userId }) => {
   };
 
   const uploadItem = async (data) => {
-    if(!files[0]){
+    if(!files[0] || files.length > 5){
       setFile(null);
       return;
     }
 
     setLoadingStatus(true);
+    setLoadingMessage('Mengupload Gambar');
+   
+
     let formData = new FormData();
 
     for (const input in data) {
@@ -44,12 +47,13 @@ const ItemForm = ({ userId }) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setLoadingStatus(false);
+        setLoadingMessage('Mohon Tunggu');
       })
       .catch((err) => {
         console.log(err);
         setLoadingStatus(false);
+        setLoadingMessage('Mohon Tunggu');
       });
   };
 
@@ -93,7 +97,7 @@ const ItemForm = ({ userId }) => {
               />
             </label>
             <p className="text-red-500">
-              {!files && "Tolong pilih gambar minimal 1"}
+              {!files && "Tolong pilih gambar min 1 dan max 5 gambar"}
             </p>
           </div>
         </div>
@@ -113,6 +117,7 @@ const ItemForm = ({ userId }) => {
           name="description"
           className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
           placeholder="Deskripsi"
+          cols={20} rows={6}
         />
         <select
           {...register("province", { required: true })}
@@ -204,7 +209,7 @@ const ItemForm = ({ userId }) => {
           {errors.email?.type === "pattern" &&
             "Format email salah contoh : namaemail@gmail.com"}
         </p>
-        <button className="w-full bg-blue-400 h-12 rounded-lg text-white font-bold hover:bg-blue-600">
+        <button className="w-full bg-blue-400 xl:h-12 h-44 rounded-lg text-white font-bold hover:bg-blue-600">
           Simpan
         </button>
       </form>

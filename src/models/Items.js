@@ -11,7 +11,8 @@ const ItemsSchema = new Schema({
     phoneNumber : String,
     email : String,
     images: [Schema.Types.Mixed],
-    reports : [Schema.Types.Mixed]
+    reports : [Schema.Types.Mixed],
+    user_id : {type : Schema.Types.ObjectId, ref : 'users'}
 },{timestamps : true});
 
 export default db.models.Items || db.model('Items', ItemsSchema);

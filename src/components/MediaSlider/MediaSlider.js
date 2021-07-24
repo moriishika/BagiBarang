@@ -21,11 +21,11 @@ const MediaSlider = (props) => {
   return (
     <div>
       <Slider {...settings}>
-        {props.images.map((image) => {
+        {props.images.map((image, index) => {
           return (
-            <div>
+            <div key={index}>
               <img
-                src={`/assets/images/items/${image}`}
+                src={`/assets/images/items/${image}.webp`}
                 className="rounded-xl m-auto"
               />
             </div>

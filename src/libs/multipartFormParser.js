@@ -15,12 +15,11 @@ export default async function parseMultipartForm(req, res, next) {
 
   form.on("fileBegin", async (fields, file) => {
     file.name = Date.now();
-    console.log(file.name);
     file.path = form.uploadDir + "/" + file.name;
   });
 
   form.onPart = (part) => {
-    const validTypes = ["image/png", "image/jpg", "image/jpeg", "webp"];
+    const validTypes = ["image/png", "image/jpg", "image/jpeg", "image/ webp"];
     if (validTypes.indexOf(part.mime) === -1) {
       // Here is the invalid file types will be handled.
       // You can listen on 'error' event
@@ -35,7 +34,6 @@ export default async function parseMultipartForm(req, res, next) {
   //check kalo file nya cuma bisa image doang
   const contentType = req.headers["content-type"];
   if (contentType && contentType.indexOf("multipart/form-data") !== -1) {
-    console.log("masuk");
     form.parse(req, (err, fields, files) => {
       if (!err) {
         req.body = fields;
@@ -48,13 +46,11 @@ export default async function parseMultipartForm(req, res, next) {
 
         req.files = files;
       } else {
-        console.log("error");
         console.log(err);
       }
       next();
     });
   } else {
-    console.log("errors bet");
     next();
   }
 }

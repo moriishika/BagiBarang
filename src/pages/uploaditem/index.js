@@ -14,7 +14,7 @@ const UploadItem = () => {
     <div className="h-screen xl:fixed w-full">
       {isLoading ? <LoadingBox></LoadingBox> : null}
       <Backbar link="/" />
-      <ItemForm userId={session ? session.user._id : null} />
+      <ItemForm userId={session ? session.user.id : null} />
       <BottomNavbar />
     </div>
   );

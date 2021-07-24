@@ -7,10 +7,18 @@ import { Loading } from "../state";
 
 const App = ({ Component, pageProps }) => {
   const [isLoading, setLoadingStatus] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("Mohon Tunggu");
 
   return (
     <Provider session={pageProps.session}>
-      <Loading.Provider value={{isLoading, setLoadingStatus}}>
+      <Loading.Provider
+        value={{
+          isLoading,
+          setLoadingStatus,
+          loadingMessage,
+          setLoadingMessage,
+        }}
+      >
         <Component {...pageProps} />
       </Loading.Provider>
     </Provider>
