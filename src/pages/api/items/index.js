@@ -3,7 +3,7 @@ import parseMultipartForm from "../../../libs/multipartFormParser";
 import nextConnect from "next-connect";
 import { getSession } from "next-auth/client";
 import Cors from "cors";
-import dbmiddleware from "../../../libs/database";
+import { dbmiddleware } from "../../../libs/database";
 import mongo from "mongodb";
 
 const cors = Cors({
@@ -33,7 +33,7 @@ handler
       req.db
         .collection("items")
         .insertOne({ ...body, images: files }, (err, data) => {
-          if(err) return console.log(err);
+          if (err) return console.log(err);
           res.status(200).json(data);
         });
     } else {

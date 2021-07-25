@@ -1,26 +1,27 @@
-import { signOut } from "next-auth/client";
+import { getSession, signOut } from "next-auth/client";
 import { Items, BottomNavbar, LoadingBox } from "../../components";
 import axios from "axios";
 import { useSession } from "next-auth/client";
 import { useEffect, useState } from "react";
+import { connectToDatabase } from "../../libs/database";
 
-const Profile = () => {
+const Profile = ({items}) => {
   const [session, loading] = useSession();
-  const [items, setItems] = useState([]);
+  // const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    if (session) {
-      axios
-        .get(`/api/items/user/${session.user.id}`)
-        .then((res) => {
-          console.log(res.data);
-          setItems(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session) {
+  //     axios
+  //       .get(`/api/items/user/${session.user.id}`)
+  //       .then((res) => {
+  //         console.log(res.data);
+  //         setItems(res.data);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // }, [session]);
 
   return (
     <>
@@ -74,17 +75,29 @@ const Profile = () => {
   );
 };
 
-// export async function getServerSideProps() {
-//   const items = await ItemsModel.find((err, items) => {
-//     if (err) return console.error(err);
-//     return items;
-//   });
+export async function getServerSideProps({req, res}) {
+  const session = await getSession({req});
+  console.log(session);
+  const db = await connectToDatabase();
+  try {
+    const items = await db
+      .collection("items").find(session.user.id)
+      .toArray();
 
-//   return {
-//     props: {
-//       items: JSON.stringify(items),
-//     },
-//   };
-// }
+    if (!items) {
+      return {
+        notFound: true,
+      };
+    }
+
+    return {
+      props: {
+        items: JSON.parse(JSON.stringify(items)),
+      },
+    };
+  } catch (err) {
+    return console.log(err);
+  }
+}
 
 export default Profile;

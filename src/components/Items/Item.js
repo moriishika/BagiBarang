@@ -24,8 +24,8 @@ const Item = (props) => {
         <div className="w-full my-5 p-0">
             <div className="pb-4 flex justify-between items-center">
                 <div className="flex items-center">
-                    <img src="MoriiUta.png" alt="gadis sange" className="w-12 rounded-full" />
-                    <p className="ml-3 font-medium">{props.item.name}</p>
+                    <img src={props.item.uploader[0].image} alt="gadis sange" className="w-12 rounded-full" />
+                    <p className="ml-3 font-medium">{props.item.uploader[0].name}</p>
                 </div>
                 <button className="bg-white  py-1 px-3 rounded-xl shadow-lg font-medium" onClick={openReport}>Laporkan</button>
             </div>

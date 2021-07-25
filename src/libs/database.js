@@ -6,18 +6,24 @@ const client = new MongoClient(process.env.MONGODB_URI, {
   useUnifiedTopology: true,
 });
 
-async function database(req, res, next){
-    if(!client.isConnected()) await client.connect();
-    req.dbClient = client;
-    req.db = client.db('bagibarang');
-    return next();
+async function database(req, res, next) {
+  if (!client.isConnected()) await client.connect();
+  req.dbClient = client;
+  req.db = client.db("bagibarang");
+  return next();
+}
+
+async function connectToDatabase() {
+  if (!client.isConnected()) await client.connect();
+  const db = client.db('bagibarang');
+  return db;
 }
 
 const dbmiddleware = nextConnect();
 
 dbmiddleware.use(database);
 
-export default dbmiddleware;
+export {dbmiddleware, connectToDatabase};
 
 // import mongoose from 'mongoose'
 

@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import Head from "next/head";
 // import ItemsModel from "../models/Items";
-import axios from "axios";
+// import axios from "axios";
 import { TopNavbar, Items, BottomNavbar, LoadingBox } from "../components";
+import { connectToDatabase } from "../libs/database";
 
-const Index = () => {
+const Index = ({ items }) => {
   const [searchedResult, setSearchedResult] = useState(null);
 
-  const [items, setItems] = useState([]);
+  // const [items, setItems] = useState([]);
 
   const search = async (keywords, province) => {
     if (keywords) {
@@ -24,16 +25,16 @@ const Index = () => {
     }
   };
 
-  useEffect(() => {
-    axios
-      .get("/api/items")
-      .then((res) => {
-        setItems(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("/api/items")
+  //     .then((res) => {
+  //       setItems(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
 
   return (
     <>
@@ -49,24 +50,36 @@ const Index = () => {
   );
 };
 
-// export async function getServerSideProps() {
-//   const items = await ItemsModel.find((err, items) => {
-//       if (err) return console.error(err);
-//       console.log(items)
-//       return items;
-//     }
-//   )
+export async function getServerSideProps() {
+  const db = await connectToDatabase();
+  try {
+    const items = await db
+      .collection("items")
+      .aggregate([
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "uploader",
+          },
+        },
+      ])
+      .toArray();
 
-//   if (!items) {
-//     return {
-//       notFound: true,
-//     };
-//   }
+    if (!items) {
+      return {
+        notFound: true,
+      };
+    }
 
-//   return {
-//     props: {
-//       items: JSON.stringify(items),
-//     },
-//   };
-// }
+    return {
+      props: {
+        items: JSON.parse(JSON.stringify(items)),
+      },
+    };
+  } catch (err) {
+    return console.log(err);
+  }
+}
 export default Index;
