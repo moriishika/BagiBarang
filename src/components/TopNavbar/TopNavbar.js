@@ -6,7 +6,7 @@ const TopNavbar = ({ search }) => {
     const { register, handleSubmit } = useForm();
 
     const searchItems = (data) => {
-        search(data.keywords.toLowerCase())
+        search(data.keywords.toLowerCase(), data.province);
     }
 
     return (

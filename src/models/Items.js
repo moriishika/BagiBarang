@@ -1,18 +1,18 @@
-import mongoose from 'mongoose';
-import db from '../libs/database.js'
+// import mongoose from 'mongoose';
+// import db from '../libs/database.js'
 
-const { Schema } = mongoose;
+// const { Schema } = mongoose;
 
-const ItemsSchema = new Schema({
-    name: String,
-    description: String,
-    province : String,
-    address : String,
-    phoneNumber : String,
-    email : String,
-    images: [Schema.Types.Mixed],
-    reports : [Schema.Types.Mixed],
-    user_id : {type : Schema.Types.ObjectId, ref : 'users'}
-},{timestamps : true});
+// const ItemsSchema = new Schema({
+//     name: String,
+//     description: String,
+//     province : String,
+//     address : String,
+//     phoneNumber : String,
+//     email : String,
+//     images: [Schema.Types.Mixed],
+//     reports : [Schema.Types.Mixed],
+//     uploader : [{type : Schema.Types.ObjectId, ref : 'users'}]
+// },{timestamps : true});
 
-export default db.models.Items || db.model('Items', ItemsSchema);
+// export default db.models.Items || db.model('Items', ItemsSchema);
