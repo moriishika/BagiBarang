@@ -23,10 +23,15 @@ body {
 }
 
 .slick-dots li div{
-  background-color: black;
+  margin-top: 5px;
+  margin-right: 2px;
+  background-color: white;
+  border-color : black;
 }
 .slick-dots li.slick-active div{
-  background-color: white;
-  border-color: black;
+  background-color: black;
 }
 
+pre{
+  font-family: 'Montserrat', sans-serif;
+}

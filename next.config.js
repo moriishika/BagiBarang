@@ -1,7 +1,6 @@
-const pwaConfig = require('next-pwa'); 
-
+const pwaConfig = require("next-pwa");
 module.exports = pwaConfig({
-    pwa: {
-        dest: 'public'
-    }
-})
+  pwa: {
+    dest: "public",
+  },
+});

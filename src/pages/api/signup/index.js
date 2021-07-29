@@ -1,5 +1,4 @@
 import nextConnect from 'next-connect';
-import { User } from '../../../models';
 import parseMultipartForm from '../../../libs/multipartFormParser';
 
 const handler = nextConnect();

@@ -1,32 +1,33 @@
-import { getSession, signOut } from "next-auth/client";
+import { signOut } from "next-auth/client";
 import { Items, BottomNavbar, LoadingBox } from "../../components";
-import axios from "axios";
 import { useSession } from "next-auth/client";
-import { useEffect, useState } from "react";
-import { connectToDatabase } from "../../libs/database";
+import Head from "next/head";
+import axios from "axios";
+import useSWR from "swr";
+import { useState } from "react";
 
-const Profile = ({items}) => {
+const Profile = () => {
   const [session, loading] = useSession();
-  // const [items, setItems] = useState([]);
+  const fetcher = (url) => axios.get(url).then((res) => res.data);
+  const { data, error } = useSWR("/api/items/useritems/", fetcher);
+  const [items, setItems] = useState(data);
 
-  // useEffect(() => {
-  //   if (session) {
-  //     axios
-  //       .get(`/api/items/user/${session.user.id}`)
-  //       .then((res) => {
-  //         console.log(res.data);
-  //         setItems(res.data);
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   }
-  // }, [session]);
+  if (error) return <div>ada error</div>;
+
+  if (loading || !data) return <LoadingBox></LoadingBox>;
 
   return (
     <>
-      {!session ? <LoadingBox></LoadingBox> : null}
-      <div className={items.length ? '' : 'xl:fixed w-full h-full flex flex-col justify-between'}>
+      <Head>
+        <title>{session ? "Bagi Barang" : session.user.name}</title>
+      </Head>
+      <div
+        className={
+          data.length
+            ? ""
+            : "xl:fixed w-full h-full flex flex-col justify-between"
+        }
+      >
         <div className="flex justify-center items-center w-full p-4 bg-white sticky top-0 z-50">
           {session ? (
             <img
@@ -61,43 +62,25 @@ const Profile = ({items}) => {
             </div>
           </div>
         </div>
-        {items.length ? (
-          <Items items={items} />
+        {!data.length && (
+          <div className="flex flex-col justify-center items-center my-auto">
+            <img src="/assets/icons/inventory.svg" className="h-72"></img>
+            <p className="font-bold">Ada yang ga ke pake? Bagi aja!</p>
+          </div>
+        )}
+
+        {data.length ? (
+          <Items items={data} inProfile={true} />
         ) : (
           <div className="flex flex-col justify-center items-center my-auto">
             <img src="/assets/icons/inventory.svg" className="h-72"></img>
             <p className="font-bold">Ada yang ga ke pake? Bagi aja!</p>
           </div>
         )}
-          <BottomNavbar />
+        <BottomNavbar />
       </div>
     </>
   );
 };
-
-export async function getServerSideProps({req, res}) {
-  const session = await getSession({req});
-  console.log(session);
-  const db = await connectToDatabase();
-  try {
-    const items = await db
-      .collection("items").find(session.user.id)
-      .toArray();
-
-    if (!items) {
-      return {
-        notFound: true,
-      };
-    }
-
-    return {
-      props: {
-        items: JSON.parse(JSON.stringify(items)),
-      },
-    };
-  } catch (err) {
-    return console.log(err);
-  }
-}
 
 export default Profile;

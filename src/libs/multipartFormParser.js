@@ -4,8 +4,8 @@ import compressImage from "./imageCompress";
 export default async function parseMultipartForm(req, res, next) {
   const form = new formidable.IncomingForm({
     multiples: true,
-    uploadDir: `public/assets/images/items`,
-    keepExtensions: false,
+    uploadDir: `media/items`,
+    keepExtensions: true,
   });
   //ini ga bisa cuma untuk item, harus di perbaiki untuk profile image, ads, sama video
   //ato ga coba bikin middleware nya dinamis lah intinya biar untuk ads nya nanti juga lancar
@@ -15,7 +15,7 @@ export default async function parseMultipartForm(req, res, next) {
 
   form.on("fileBegin", async (fields, file) => {
     file.name = Date.now();
-    file.path = form.uploadDir + "/" + file.name;
+    file.path = process.cwd() + '/' + form.uploadDir + "/" + file.name;
   });
 
   form.onPart = (part) => {
@@ -43,6 +43,8 @@ export default async function parseMultipartForm(req, res, next) {
         }
 
         compressImage(files.images);
+        
+        console.log(files);
 
         req.files = files;
       } else {
