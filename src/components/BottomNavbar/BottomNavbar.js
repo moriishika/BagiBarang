@@ -21,7 +21,7 @@ const BottomNavbar = (props) => {
 
             <Link href={session ? '/profile' : '/login'}>
                 <div className="flex flex-col  items-center cursor-pointer">
-                    <a><img src={session ?  'https://lh3.googleusercontent.com/a-/AOh14Gh2ksbehcd6liPsvP85IFkbWFRnChdR-aW5Q2MX=s96-c' : '/assets/icons/circleacc.svg'} className="w-10 h-10 rounded-full" /></a>
+                    <a><img src={session ?  session.user.image : '/assets/icons/circleacc.svg'} className="w-10 h-10 rounded-full" /></a>
                     <p className="font-semibold">Profil</p>
                 </div>
             </Link>

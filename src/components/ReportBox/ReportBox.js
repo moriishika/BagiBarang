@@ -10,7 +10,7 @@ const ReportBox = (props) => {
     }
 
     return (
-        <div className="animate-goingUp left-0 bottom-0 fixed w-full h-full  flex justify-center">
+        <div className="animate-goingUp left-0 bottom-0 fixed w-full h-full  z-40 flex justify-center">
             <div className="mx-auto absolute w-11/12 xl:w-2/5 h-full bg-black animation-fadeIn opacity-20" onClick={props.closeReport}></div>
             <div className='w-11/12 xl:w-2/6 h-3/4 z-30 bg-white  shadow-xl reportbox-radius mt-auto flex flex-col animation-reportGoingUp items-start pt-10 px-10'>
                 <div className="w-full flex justify-between">

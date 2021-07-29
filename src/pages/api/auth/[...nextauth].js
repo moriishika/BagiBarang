@@ -15,7 +15,7 @@ const options = {
         }),
     ],
     adapter: Adapters.TypeORM.Adapter(
-        process.env.MONGODB_URI,
+        process.env.MONGODB_URI+process.env.DB_NAME,
         // The second argument can be used to pass custom models and schemas
         {
             models: {
@@ -30,7 +30,6 @@ const options = {
         },
         async session(session, token) {
             const { id, province, address, phoneNumber } = token;
-            console.log(token);
             session.user.id = id;
             session.user.province = province;
             session.user.address = address;

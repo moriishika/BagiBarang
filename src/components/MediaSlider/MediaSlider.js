@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -21,11 +20,11 @@ const MediaSlider = (props) => {
   return (
     <div>
       <Slider {...settings}>
-        {props.images.map((image) => {
+        {props.images.map((image, index) => {
           return (
-            <div>
+            <div key={index}>
               <img
-                src={`/assets/images/items/${image}`}
+                src={`/api/items/image/${image}.webp`}
                 className="rounded-xl m-auto"
               />
             </div>

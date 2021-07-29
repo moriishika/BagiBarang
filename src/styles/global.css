@@ -6,7 +6,6 @@ html {
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
   width: 100%;
   font-family: 'Montserrat', sans-serif;
   background-color: #F6F6F6;
@@ -14,22 +13,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-.reportbox-radius {
-  border-radius: 2rem;
-}
-
 #__next{
   height: 100%;
   width: 100%;
 }
 
+.reportbox-radius {
+  border-radius: 2rem;
+}
 
 .slick-dots li div{
-  background-color: black;
+  margin-top: 5px;
+  margin-right: 2px;
+  background-color: white;
+  border-color : black;
 }
 .slick-dots li.slick-active div{
-  background-color: white;
-  border-color: black;
+  background-color: black;
 }
 
+pre{
+  font-family: 'Montserrat', sans-serif;
+}

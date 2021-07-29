@@ -13,7 +13,7 @@ class MyDocument extends Document {
           <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
           <link
             rel="shortcut icon"
-            href="/favicon.ico"
+            href="/bb.png"
             type="image/x-icon"
           />
           <meta name="description" content="Bagi Barang Bagi Kebaikan" />
@@ -33,11 +33,11 @@ class MyDocument extends Document {
           <link rel='apple-touch-icon' sizes='180x180' href='/touch-icon-iphone-retina.png' />
           <link rel='apple-touch-icon' sizes='167x167' href='/touch-icon-ipad-retina.png' />
 
-          <link rel='icon' type='image/png' sizes='32x32' href='/favicon-32x32.png' />
-          <link rel='icon' type='image/png' sizes='16x16' href='/favicon-16x16.png' />
+          <link rel='icon' type='image/png' sizes='32x32' href='/bb.png' />
+          <link rel='icon' type='image/png' sizes='16x16' href='/bb.png' />
           <link rel='manifest' href='/manifest.json' />
           <link rel='mask-icon' href='/safari-pinned-tab.svg' color='#5bbad5' />
-          <link rel='shortcut icon' href='/favicon.ico' />
+          <link rel='shortcut icon' href='/bb.ico' />
 
           <meta name='twitter:card' content='summary' />
           <meta name='twitter:url' content='https://bagibarang.vercel.app/' />
