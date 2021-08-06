@@ -1,14 +1,17 @@
 import Head from "next/head";
-import { connectToDatabase } from "../../libs/database";
-import { Item, Backbar, BottomNavbar } from "../../components";
+import { connectToDatabase } from "../../../libs/database";
+import { Item, Backbar, BottomNavbar, LoadingBox } from "../../../components";
 
 export default function ItemDetail({ item }) {
-  return (
+
+  if(!item) return <LoadingBox></LoadingBox>;
+  
+return (
     <div>
       <Head>
         <title>{item.name}</title>
       </Head>
-      <Backbar link="/"></Backbar>
+      <Backbar link='/'></Backbar>
       <div className="flex justify-center m-auto w-11/12 xl:w-2/5">
         <Item item={item} inItemDetail={true}></Item>
       </div>
@@ -46,7 +49,7 @@ export async function getStaticProps({ params }) {
   };
 }
 
-export async function getStaticPaths() {
+export async function getStaticPaths(conte) {
   const { db } = await connectToDatabase();
   const resultItem = await db
     .collection("items")

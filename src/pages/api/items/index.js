@@ -12,6 +12,7 @@ const cors = Cors({
 
 const handler = nextConnect();
 
+handler.use((req, res, next) => { req.uploadDir = 'media/items'; next()});
 handler.use(parseMultipartForm);
 // handler.use(dbmiddleware);
 
@@ -20,7 +21,8 @@ handler
   .post(async (req, res) => {
     const session = await getSession({ req });
     if (session) {
-      const files = req.files.images.map((image) => image.name);
+      console.log(req.files);
+      const files = req.files.images.map((image) => `/api/items/image/${image.name}.webp`);
 
       //contains inputs value from uploadItem form
       const body = req.body;

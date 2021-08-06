@@ -29,18 +29,20 @@ const options = {
                 : baseUrl
         },
         async session(session, token) {
-            const { id, province, address, phoneNumber } = token;
+            console.log(token);
+            const { id, province, address, phoneNumber, isVerified } = token;
             session.user.id = id;
             session.user.province = province;
             session.user.address = address;
             session.user.phoneNumber = phoneNumber;
+            session.user.isVerified = isVerified;
 
             return session;
         }
     },
 
     pages: {
-        newUser: '/signup'
+        newUser: '/accounts/edit'
     }
 
 }

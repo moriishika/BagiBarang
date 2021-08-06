@@ -1,5 +1,4 @@
 html {
-  height: 100%;
   width: 100%;
 }
 
@@ -14,7 +13,6 @@ body {
 }
 
 #__next{
-  height: 100%;
   width: 100%;
 }
 
@@ -35,3 +33,11 @@ body {
 pre{
   font-family: 'Montserrat', sans-serif;
 }
+
+.slick-arrow.slick-next::before {
+ color: black;
+}
+
+.slick-arrow.slick-prev::before {
+  color: black;
+ }

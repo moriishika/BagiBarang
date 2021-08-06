@@ -36,7 +36,7 @@ const Index = () => {
       </Head>
       <div className="h-full w-full">
         <TopNavbar search={search}></TopNavbar>
-        <Items items={data} searchedItems={searchedResult}></Items>
+          <Items items={data} searchedItems={searchedResult}></Items>
         <BottomNavbar></BottomNavbar>
       </div>
     </>

@@ -1,6 +1,17 @@
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+
+
+const NextArrow = ({className, onClick}) => {
+  return (
+    <div className={className} onClick={onClick}></div>
+  )
+}
+
+const PrevArrow = ({className, onClick}) => {
+  return (
+    <div className={className} onClick={onClick}></div>
+  )
+}
 
 const MediaSlider = (props) => {
   const settings = {
@@ -9,12 +20,19 @@ const MediaSlider = (props) => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    adaptiveHeight: true,
     lazyLoad : true,
-    arrows : false,
+    arrows : true,
     customPaging: i => (
       <div className="w-3.5 border-2 h-3.5  bg-white border-black rounded-full"></div>
-    )
+    ),
+    nextArrow : <NextArrow className=""></NextArrow>,
+    prevArrow : <PrevArrow className=""></PrevArrow>,
+    responsive : [{
+      breakpoint : 790,
+      settings : {
+        arrows : false
+      }
+    }]
   };
 
   return (
@@ -22,12 +40,7 @@ const MediaSlider = (props) => {
       <Slider {...settings}>
         {props.images.map((image, index) => {
           return (
-            <div key={index}>
-              <img
-                src={`/api/items/image/${image}.webp`}
-                className="rounded-xl m-auto"
-              />
-            </div>
+              <img src={image} className="rounded-xl m-auto"></img>
           );
         })}
       </Slider>

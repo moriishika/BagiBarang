@@ -11,7 +11,7 @@ const UploadItem = () => {
   }, [loading]);
 
   return (
-    <div className="h-screen xl:fixed w-full">
+    <div>
       {isLoading ? <LoadingBox></LoadingBox> : null}
       <Backbar link="/" />
       <ItemForm userId={session ? session.user.id : null} />

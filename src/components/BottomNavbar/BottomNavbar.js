@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import slugify from 'slugify';
 import { useSession } from 'next-auth/client';
 const BottomNavbar = (props) => {
     const [session, loading] = useSession();
@@ -12,16 +13,16 @@ const BottomNavbar = (props) => {
                 </div>
             </Link>
 
-            <Link href={session ? '/uploaditem' : '/login'}>
+            <Link href={session ? '/upload-item' : '/login'}>
                 <div className="flex flex-col  items-center mx-8 cursor-pointer">
                     <a><img src="/assets/icons/handpackage.svg" className="w-10 h-10" /></a>
                     <p className="font-semibold">Bagi Barangmu</p>
                 </div>
             </Link>
 
-            <Link href={session ? '/profile' : '/login'}>
+            <Link href={session ? '/' + slugify(session.user.name) : '/login'}>
                 <div className="flex flex-col  items-center cursor-pointer">
-                    <a><img src={session ?  session.user.image : '/assets/icons/circleacc.svg'} className="w-10 h-10 rounded-full" /></a>
+                    <a><img src={session ?  session.user.image  : '/assets/icons/circleacc.svg'} className="w-10 h-10 rounded-full" /></a>
                     <p className="font-semibold">Profil</p>
                 </div>
             </Link>

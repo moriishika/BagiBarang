@@ -2,13 +2,16 @@ import axios from "axios";
 import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { Loading } from "../../state";
+import ImagePreview from "../ImagePreview";
 
 const ItemForm = ({ userId }) => {
   const { setLoadingStatus, setLoadingMessage } = useContext(Loading);
+  const [isPreviewImageClicked, setPreviewImageStatus] = useState(false);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -19,14 +22,13 @@ const ItemForm = ({ userId }) => {
   };
 
   const uploadItem = async (data) => {
-    if(!files[0] || files.length > 5){
+    if (!files[0] || files.length > 5) {
       setFile(null);
       return;
     }
 
     setLoadingStatus(true);
-    setLoadingMessage('Mengupload Gambar');
-   
+    setLoadingMessage("Mengupload Gambar");
 
     let formData = new FormData();
 
@@ -48,20 +50,22 @@ const ItemForm = ({ userId }) => {
       })
       .then((res) => {
         setLoadingStatus(false);
-        setLoadingMessage('Mohon Tunggu');
+        reset();
+        setLoadingMessage("Mohon Tunggu");
       })
       .catch((err) => {
         console.log(err);
         setLoadingStatus(false);
-        setLoadingMessage('Mohon Tunggu');
+        setLoadingMessage("Mohon Tunggu");
       });
   };
 
   return (
-    <div className="flex justify-center h-full">
+    <div className="flex justify-center">
+      {isPreviewImageClicked && <ImagePreview images={files} setPreviewImageStatus={setPreviewImageStatus} isPreviewImageClicked={isPreviewImageClicked}></ImagePreview>}
       <form
         onSubmit={handleSubmit(uploadItem)}
-        className="flex flex-col p-4 xl:w-2/6"
+        className="flex flex-col p-4 xl:w-2/6 my-6"
         encType="multipart/form-data"
       >
         <div className="grid grid-cols-1 my-5 mx-7">
@@ -101,6 +105,8 @@ const ItemForm = ({ userId }) => {
             </p>
           </div>
         </div>
+
+        {files[0] && <button onClick={() => setPreviewImageStatus(isPreviewImageClicked ? false : true)}>Lihat Gambar</button>}
         <input
           type="text"
           {...register("name", { required: true, maxLength: 150 })}
@@ -117,7 +123,8 @@ const ItemForm = ({ userId }) => {
           name="description"
           className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
           placeholder="Deskripsi"
-          cols={20} rows={6}
+          cols={20}
+          rows={6}
         />
         <select
           {...register("province", { required: true })}
@@ -209,7 +216,7 @@ const ItemForm = ({ userId }) => {
           {errors.email?.type === "pattern" &&
             "Format email salah contoh : namaemail@gmail.com"}
         </p>
-        <button className="w-full bg-blue-400 xl:h-12 h-44 rounded-lg text-white font-bold hover:bg-blue-600">
+        <button className="w-full bg-blue-400 xl:h-12 h-11 rounded-lg text-white font-bold hover:bg-blue-600">
           Simpan
         </button>
       </form>

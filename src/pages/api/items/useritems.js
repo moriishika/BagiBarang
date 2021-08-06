@@ -29,8 +29,6 @@ handler.get(async (req, res) => {
       ])
       .toArray();
 
-    console.log(items);
-
     res.status(200).json(items);
   } catch (err) {
     res.status(400).json({ message: "failed to get items" });

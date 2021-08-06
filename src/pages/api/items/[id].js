@@ -3,6 +3,7 @@ import nextConnect from "next-connect";
 import Cors from "cors";
 import { connectToDatabase } from "../../../libs/database";
 import { ObjectId } from "mongodb";
+import fs from "fs";
 const cors = Cors({
   methods: ["GET", "UPDATE", "DELETE"],
 });
@@ -14,13 +15,18 @@ handler.use(parseMultipartForm);
 // Jangan lupa buat middleware untuk login ato belum user nya
 handler
   .get((req, res) => {})
-  .put((req, res) => {
-  })
+  .put((req, res) => {})
   .delete(async (req, res) => {
     try {
       console.log("masuk delete");
       const { db } = await connectToDatabase();
       const { id } = req.query;
+      const item = await db.collection("items").findOne({ _id: ObjectId(id) });
+
+      item.images.forEach((imageName) => {
+        fs.unlinkSync(process.cwd() + "/" + "media/items" + "/" + imageName + '.webp');
+      });
+
       await db.collection("items").deleteOne({ _id: ObjectId(id) });
       res.status(200).json({ message: "berhasil" });
     } catch (err) {

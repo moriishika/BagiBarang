@@ -1,0 +1,274 @@
+import { Backbar, BottomNavbar, LoadingBox } from "../../../components";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+// import { Loading } from "../../../state";
+import { useSession } from "next-auth/client";
+import slugify from "slugify";
+import { connectToDatabase } from "../../../libs/database";
+import Slider from "react-slick";
+
+const UpdateItemForm = ({ item }) => {
+  const [session, loading] = useSession();
+  const [previousImage, setPrevItem] = useState(item.images);
+  const [previewImage, setPreviewImages] = useState(item.images);
+  console.log(previewImage);
+  const [value, setValue] = useState(false);
+
+  const changePreviewImage = (image, i) => {
+    const images = [...previewImage];
+
+    images[i] = URL.createObjectURL(image);
+
+    setPreviewImages(images);
+  };
+
+  const removeImage = (i) => {
+    console.log(i);
+    const newArray = [...previewImage];
+
+    newArray.splice(i, 1);
+    setPreviewImages(newArray);
+  };
+
+  const resetImages = () => {
+    setPreviewImages([...previousImage]);
+  };
+
+  const settings = {
+    responsive: [
+      {
+        breakpoint: 790,
+        settings: {
+          arrows: false,
+        },
+      },
+    ],
+  };
+
+  const triggerbox = () => {
+    setValue(value ? false : true);
+  };
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm();
+  const updateItem = () => {
+    axios
+      .update()
+      .then(() => {})
+      .catch(() => {});
+  };
+
+  if (!session) return <LoadingBox></LoadingBox>;
+
+  return (
+    <>
+      <Backbar link={`/${slugify(session.user.name)}`} />
+      <div className="flex justify-center">
+        <form
+          onSubmit={handleSubmit(updateItem)}
+          className="flex flex-col p-4 xl:w-2/6 w-full my-6 justify-center items-center"
+          encType="multipart/form-data"
+        >
+          <div className="w-full">
+            <Slider>
+              {previewImage.map((image, index) => {
+                return (
+                  <div className="relative rounded-lg" key={index}>
+                    <img src={image} className="rounded-lg"></img>
+                    <div
+                      onClick={(e) => {
+                        removeImage(index);
+                      }}
+                      className="w-24 p-1 bg-red-500 absolute text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
+                    >
+                      Hapus
+                    </div>
+                    <label className="w-24 p-1 bg-green-500 absolute text-white bottom-3 right-3 text-center font-bold rounded-md cursor-pointer">
+                      Ubah
+                      <input
+                        hidden
+                        type="file"
+                        name={`image-${index}`}
+                        onChange={(e) => {
+                          e.preventDefault();
+                          changePreviewImage(e.target.files[0], index);
+                        }}
+                      ></input>
+                    </label>
+                  </div>
+                );
+              })}
+            </Slider>
+          </div>
+
+          <div
+            onClick={resetImages}
+            className="p-2 my-2 border border-yellow-500 text-yellow-500 hover:border-0 hover:bg-yellow-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
+          >
+            Balikan Semua Gambar
+          </div>
+
+          <input
+            type="text"
+            {...register("name", {
+              required: true,
+              maxLength: 150,
+              value: item.name,
+            })}
+            name="name"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Nama Barang"
+          />
+          <p className="text-red-500">
+            {errors.name?.type === "required" && "Tolong isi nama barang"}{" "}
+            {errors.name?.type === "maxLength" && "Nama barang terlalu panjang"}
+          </p>
+          <textarea
+            {...register("description", { value: item.description })}
+            name="description"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Deskripsi"
+            cols={20}
+            rows={6}
+          />
+          <select
+            {...register("province", { required: true, value: item.province })}
+            name="province"
+            className="rounded-md w-full"
+          >
+            <option hidden value="">
+              Pilih Wilayah
+            </option>
+            <option value="Aceh">Aceh</option>
+            <option value="Bali">Bali</option>
+            <option value="Banten">Banten</option>
+            <option value="Bengkulu">Bengkulu</option>
+            <option value="Di Yogyakarta">Di Yogyakarta</option>
+            <option value="Dki Jakarta">Dki Jakarta</option>
+            <option value="Gorontalo">Gorontalo</option>
+            <option value="Jambi">Jambi</option>
+            <option value="Jawa Barat">Jawa Barat</option>
+            <option value="Jawa Tengah">Jawa Tengah</option>
+            <option value="Jawa Timur">Jawa Timur</option>
+            <option value="Kalimantan Barat">Kalimantan Barat</option>
+            <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+            <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+            <option value="Kalimantan Timur">Kalimantan Timur</option>
+            <option value="Kalimantan Utara">Kalimantan Utara</option>
+            <option value="Kepulauan Bangka Belitung">
+              Kepulauan Bangka Belitung
+            </option>
+            <option value="Kepulauan Riau">Kepulauan Riau</option>
+            <option value="Lampung">Lampung</option>
+            <option value="Maluku Utara">Maluku Utara</option>
+            <option value="Maluku">Maluku</option>
+            <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+            <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+            <option value="Papua Barat">Papua Barat</option>
+            <option value="Papua">Papua</option>
+            <option value="Riau">Riau</option>
+            <option value="Sulawesi Barat">Sulawesi Barat</option>
+            <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+            <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+            <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+            <option value="Sulawesi Utara">Sulawesi Utara</option>
+            <option value="Sumatera Barat">Sumatera Barat</option>
+            <option value="Sumatera Selatan">Sumatera Selatan</option>
+            <option value="Sumatera Utara">Sumatera Utara</option>
+          </select>
+          <p className="text-red-500">
+            {errors.province?.type === "required" &&
+              "Tolong pilih wilayah anda"}
+          </p>
+          <input
+            type="text"
+            {...register("address", { required: true, value: item.address })}
+            name="address"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Alamat Barang Akan di Terima"
+          />
+          <p className="text-red-500">
+            {errors.address?.type === "required" &&
+              "Tolong isi alamat pengambilan barang"}
+          </p>
+          <input
+            type="tel"
+            {...register("phoneNumber", {
+              required: true,
+              pattern: /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/,
+              value: item.phoneNumber,
+            })}
+            name="phoneNumber"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Nomor Telepon / Whatsapp"
+          />
+          <p className="text-red-500">
+            {errors.phoneNumber?.type === "required" &&
+              "Tolong isi nomor telepon"}
+            {errors.phoneNumber?.type === "pattern" &&
+              "Format No. Telepon salah contoh: 087 123 345 678"}
+          </p>
+
+          <input
+            type="email"
+            {...register("email", {
+              pattern:
+                /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
+              value: item.email,
+            })}
+            name="email"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Email"
+          />
+          <p className="text-red-500">
+            {errors.email?.type === "pattern" &&
+              "Format email salah contoh : namaemail@gmail.com"}
+          </p>
+          <button className="w-full bg-blue-400 xl:h-12 h-11 rounded-lg text-white font-bold hover:bg-blue-600">
+            Simpan
+          </button>
+        </form>
+      </div>
+      <BottomNavbar></BottomNavbar>
+    </>
+  );
+};
+
+export default UpdateItemForm;
+
+export async function getServerSideProps({ query }) {
+  try {
+    const { slug } = query;
+    const { db } = await connectToDatabase();
+    const resultItem = await db
+      .collection("items")
+      .aggregate([
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "uploader",
+          },
+        },
+        {
+          $match: {
+            slug,
+          },
+        },
+      ])
+      .toArray();
+
+    return {
+      props: {
+        item: JSON.parse(JSON.stringify(resultItem[0])),
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
