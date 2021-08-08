@@ -42,6 +42,10 @@ const ItemForm = ({ userId }) => {
 
     formData.append("user_id", userId);
 
+    for (const value of formData.values()) {
+      console.log(value);
+   }
+
     axios
       .post("/api/items", formData, {
         headers: {

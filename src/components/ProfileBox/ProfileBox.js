@@ -7,7 +7,6 @@ import Link from "next/link";
 import slugify from "slugify";
 const ProfileBox = () => {
   const [session, loading] = useSession();
-  console.log(session);
   const {
     register,
     handleSubmit,
@@ -49,6 +48,10 @@ const ProfileBox = () => {
 
     for (const input in data) {
       formData.append(`${input}`, data[input]);
+    }
+
+    for (const value of formData.values()) {
+      console.log(value);
     }
 
     axios
@@ -224,8 +227,10 @@ const ProfileBox = () => {
           </button>
 
           {session.user.province && (
-            <Link href={'/' + slugify(session.user.name)}>
-              <a className="hover:bg-transparent block border border-green-500 w-full py-2 rounded-md mt-4 text-white hover:text-green-500 font-semibold hover bg-green-500 text-center">Kembali</a>
+            <Link href={"/" + slugify(session.user.name)}>
+              <a className="hover:bg-transparent block border border-green-500 w-full py-2 rounded-md mt-4 text-white hover:text-green-500 font-semibold hover bg-green-500 text-center">
+                Kembali
+              </a>
             </Link>
           )}
         </div>

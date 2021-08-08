@@ -1,41 +1,122 @@
 import { Backbar, BottomNavbar, LoadingBox } from "../../../components";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-// import { Loading } from "../../../state";
-import { useSession } from "next-auth/client";
-import slugify from "slugify";
 import { connectToDatabase } from "../../../libs/database";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useSession } from "next-auth/client";
+import axios from "axios";
+import slugify from "slugify";
 import Slider from "react-slick";
 
 const UpdateItemForm = ({ item }) => {
   const [session, loading] = useSession();
+
   const [previousImage, setPrevItem] = useState(item.images);
   const [previewImage, setPreviewImages] = useState(item.images);
-  console.log(previewImage);
-  const [value, setValue] = useState(false);
+  const [selectedImages, setSelectedImages] = useState(item.images);
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    setValue,
+  } = useForm();
+
+  const updateItem = (updateData) => {
+    console.table(selectedImages);
+    delete updateData["images"];
+
+    const formData = new FormData();
+
+    const imageIndex = [];
+
+    for (const data in updateData) {
+      formData.append(`${data}`, updateData[data]);
+    }
+
+    for (const image in selectedImages) {
+      formData.append("images", selectedImages[image]);
+      imageIndex.push(typeof selectedImages[image] === "object")
+    }
+
+    formData.append('imageIndex', imageIndex);
+    formData.append('imageName', item.imagesName);
+    formData.append('fullpath', item.images);
+    
+
+
+    axios
+      .put(`/api/items/${item._id}`, formData, {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const imagesInput = register("images");
 
   const changePreviewImage = (image, i) => {
+    let selectedImage = [...selectedImages];
     const images = [...previewImage];
 
-    images[i] = URL.createObjectURL(image);
+    URL.revokeObjectURL(images[i]);
 
+    selectedImage[i] = image;
+    setSelectedImages([...selectedImage]);
+
+    images[i] = URL.createObjectURL(image);
     setPreviewImages(images);
   };
 
   const removeImage = (i) => {
     console.log(i);
-    const newArray = [...previewImage];
+    const images = [...previewImage];
+    if (images.length === 1) return;
 
-    newArray.splice(i, 1);
-    setPreviewImages(newArray);
+    URL.revokeObjectURL(images[i]);
+
+    images.splice(i, 1);
+
+    setSelectedImages([...images]);
+    setPreviewImages([...images]);
   };
 
   const resetImages = () => {
+    previewImage.forEach((image) => {
+      URL.revokeObjectURL(image);
+    });
+
     setPreviewImages([...previousImage]);
+    setSelectedImages([...previousImage]);
+  };
+
+  const addPreviewImage = (images) => {
+    console.log(images);
+    let selectedImages = [];
+
+    for (let i = 0; i < images.length; i++) {
+      selectedImages.push(images[i]);
+    }
+
+    setSelectedImages((prevImage) => [...prevImage, ...selectedImages]);
+    let blobImages = [];
+
+    for (let i = 0; i < images.length; i++) {
+      blobImages[i] = URL.createObjectURL(images[i]);
+    }
+
+    setPreviewImages((prevImage) => [...prevImage, ...blobImages]);
+    setValue("images", null);
   };
 
   const settings = {
+    infinite: false,
+    adaptiveHeight: true,
     responsive: [
       {
         breakpoint: 790,
@@ -46,21 +127,13 @@ const UpdateItemForm = ({ item }) => {
     ],
   };
 
-  const triggerbox = () => {
-    setValue(value ? false : true);
-  };
-
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm();
-  const updateItem = () => {
-    axios
-      .update()
-      .then(() => {})
-      .catch(() => {});
-  };
+  useEffect(() => {
+    return () => {
+      selectedImages.forEach((image) => {
+        URL.revokeObjectURL(image);
+      });
+    };
+  });
 
   if (!session) return <LoadingBox></LoadingBox>;
 
@@ -70,15 +143,15 @@ const UpdateItemForm = ({ item }) => {
       <div className="flex justify-center">
         <form
           onSubmit={handleSubmit(updateItem)}
-          className="flex flex-col p-4 xl:w-2/6 w-full my-6 justify-center items-center"
+          className="flex flex-col p-4 xl:w-2/5 w-full my-6 justify-center items-center"
           encType="multipart/form-data"
         >
           <div className="w-full">
-            <Slider>
+            <Slider {...settings}>
               {previewImage.map((image, index) => {
                 return (
-                  <div className="relative rounded-lg" key={index}>
-                    <img src={image} className="rounded-lg"></img>
+                  <div className="relative rounded-lg w-full" key={index}>
+                    <img src={image} className="rounded-lg mx-auto"></img>
                     <div
                       onClick={(e) => {
                         removeImage(index);
@@ -105,11 +178,26 @@ const UpdateItemForm = ({ item }) => {
             </Slider>
           </div>
 
-          <div
-            onClick={resetImages}
-            className="p-2 my-2 border border-yellow-500 text-yellow-500 hover:border-0 hover:bg-yellow-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
-          >
-            Balikan Semua Gambar
+          <div className="flex">
+            <div
+              onClick={resetImages}
+              className="p-2 my-2 mr-4 border border-yellow-500 text-yellow-500 hover:border-0 hover:bg-yellow-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
+            >
+              Balikan Semua Gambar
+            </div>
+            <label className="p-2 my-2 border border-blue-500 text-blue-500 hover:border-0 hover:bg-blue-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer">
+              Tambah Gambar
+              <input
+                type="file"
+                multiple
+                hidden
+                {...imagesInput}
+                onChange={(e) => {
+                  imagesInput.onChange(e);
+                  addPreviewImage(e.target.files);
+                }}
+              ></input>
+            </label>
           </div>
 
           <input
@@ -184,6 +272,7 @@ const UpdateItemForm = ({ item }) => {
             {errors.province?.type === "required" &&
               "Tolong pilih wilayah anda"}
           </p>
+
           <input
             type="text"
             {...register("address", { required: true, value: item.address })}
@@ -195,6 +284,7 @@ const UpdateItemForm = ({ item }) => {
             {errors.address?.type === "required" &&
               "Tolong isi alamat pengambilan barang"}
           </p>
+
           <input
             type="tel"
             {...register("phoneNumber", {

@@ -5,6 +5,7 @@ import Cors from "cors";
 import { connectToDatabase } from "../../../libs/database";
 import { ObjectId } from "mongodb";
 import slugify from "slugify";
+import fs from 'fs';
 
 const cors = Cors({
   methods: ["POST"],
@@ -21,8 +22,8 @@ handler
   .post(async (req, res) => {
     const session = await getSession({ req });
     if (session) {
-      console.log(req.files);
       const files = req.files.images.map((image) => `/api/items/image/${image.name}.webp`);
+      const imagesName = req.files.images.map((image) => image.name)
 
       //contains inputs value from uploadItem form
       const body = req.body;
@@ -35,12 +36,13 @@ handler
       const {db} = await connectToDatabase();
 
       db.collection("items").insertOne(
-        { ...body, images: files },
+        { ...body, images: files, imagesName },
         (err, data) => {
           if (err) return console.log(err);
           res.status(200).json(data);
         }
       );
+     
     } else {
       res.status(401).json({ message: "Please Log In" });
     }

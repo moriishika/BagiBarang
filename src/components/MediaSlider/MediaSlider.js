@@ -40,7 +40,7 @@ const MediaSlider = (props) => {
       <Slider {...settings}>
         {props.images.map((image, index) => {
           return (
-              <img src={image} className="rounded-xl m-auto"></img>
+              <img key={index} src={image} className="rounded-xl m-auto"></img>
           );
         })}
       </Slider>
