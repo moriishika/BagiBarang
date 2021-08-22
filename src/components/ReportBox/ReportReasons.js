@@ -46,7 +46,7 @@ const ReportReasons = (props) => {
             }
 
             {props.type !== 'ilegalItems' && <ReportForm reportType={props.type} reportCategory={reportCategory}></ReportForm>}
-            {reportCategory && <ReportForm reportType={props.type} reportCategory={reportCategory}></ReportForm>}
+            {reportCategory && <ReportForm reportType={props.type} reportCategory={reportCategory} itemid={props.itemid}></ReportForm>}
 
         </div>
     )

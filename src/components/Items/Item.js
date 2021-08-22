@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import Link from "next/link";
 import ReportBox from "../ReportBox";
 import MediaSlider from "../MediaSlider";
 import axios from "axios";
 import { mutate } from "swr";
+import { session, useSession } from "next-auth/client";
+
 
 let windowOffset = 0;
-
 const Item = (props) => {
+  const [session, loading] = useSession();
+
   const [isOpened, setOpenedStatus] = useState(false);
   const [isDeleteModalOpened, setDeleteModalOpened] = useState(false);
+  
+
 
   const openReport = async () => {
     console.log(props.inItemDetail);
@@ -29,23 +34,11 @@ const Item = (props) => {
     });
   };
 
-  useEffect(() => {
-    if (isOpened) {
-      windowOffset = window.scrollY;
-      document.body.setAttribute(
-        "style",
-        `position : fixed; left: 0; top : -${windowOffset}px; right : 0;`
-      );
-    } else {
-      document.body.removeAttribute("style");
-      window.scrollTo(0, windowOffset);
-    }
-  }, [isOpened, isDeleteModalOpened]);
 
   return (
-    <div className="w-full my-5 p-0 relative">
+    <div className='w-full my-5 p-0'>
       {isDeleteModalOpened && (
-        <div className="w-full h-full bg-black bg-opacity-10 absolute flex justify-center items-center">
+        <div className="top-0 fixed z-40 w-11/12 xl:w-2/5 h-full bg-black bg-opacity-20 flex justify-center items-center">
           <div
             className="w-full h-full z-30"
             onClick={() => setDeleteModalOpened(false)}
@@ -79,9 +72,9 @@ const Item = (props) => {
             alt={props.item.name}
             className="w-12 rounded-full"
           />
-          <p className="ml-3 font-medium">{props.item.uploader[0].name}</p>
+          <Link href={`/${props.item.uploader[0].slug}`}><a className="ml-3 font-medium">{props.item.uploader[0].name}</a></Link>
         </div>
-        {!props.inProfile && (
+        {props.item.user_id !== session?.user?.id && (
           <button
             className="bg-white  py-1 px-3 rounded-xl shadow-lg font-medium"
             onClick={openReport}
@@ -187,7 +180,7 @@ const Item = (props) => {
                   <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92zM18 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7.02c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" />
                 </svg>
               </button>
-              <Link href={`/items/${props.item.slug}`}>
+              <Link href={`/items/detail/${props.item.slug}`}>
                 <a className="bg-green-500 w-4/5 p-2 rounded-md hover:bg-green-700 duration-150 text-center">
                   Detail 
                 </a>
@@ -195,7 +188,7 @@ const Item = (props) => {
             </>
           )}
 
-          {(props.inProfile && props.uploaderId === props.item.user_id) &&(
+          {props.inProfile && props.item.user_id === session?.user?.id &&(
             <>
               <button
                 onClick={() => setDeleteModalOpened(true)}
@@ -222,6 +215,7 @@ const Item = (props) => {
         <ReportBox
           openReport={openReport}
           closeReport={closeReport}
+          itemid = {props.item._id}
         ></ReportBox>
       ) : (
         ""

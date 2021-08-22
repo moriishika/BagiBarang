@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
 import Adapters from "next-auth/adapters"
 import Models from '../../../models';
+import { signIn } from 'next-auth/client';
 
 const options = {
     providers: [
@@ -28,14 +29,14 @@ const options = {
                 ? 'http://localhost:3000'
                 : baseUrl
         },
-        async session(session, token) {
-            console.log(token);
-            const { id, province, address, phoneNumber, isVerified } = token;
+        async session(session, token) { 
+            const { id, province, address, phoneNumber, isVerified, slug } = token;
             session.user.id = id;
             session.user.province = province;
             session.user.address = address;
             session.user.phoneNumber = phoneNumber;
             session.user.isVerified = isVerified;
+            session.user.slug = slug;
 
             return session;
         }

@@ -4,6 +4,12 @@ import { Item, Backbar, BottomNavbar, LoadingBox } from "../../../components";
 
 export default function ItemDetail({ item }) {
 
+  // shows a box if the user not verified yet where the box has 
+  //message that the person hasn't set the address yet and a button where is 
+  //going to lead him/her to update the account
+  
+  // the protected are uploading, item detail, update item, looking to someone profiles
+
   if(!item) return <LoadingBox></LoadingBox>;
   
 return (
@@ -49,7 +55,7 @@ export async function getStaticProps({ params }) {
   };
 }
 
-export async function getStaticPaths(conte) {
+export async function getStaticPaths() {
   const { db } = await connectToDatabase();
   const resultItem = await db
     .collection("items")

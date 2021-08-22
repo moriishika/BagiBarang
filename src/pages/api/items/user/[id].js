@@ -1,8 +1,7 @@
 import { getSession } from "next-auth/client";
 import { ObjectId } from "mongodb";
 import nextConnect from "next-connect";
-import { connectToDatabase } from "../../../libs/database";
-import { redirect } from "next/dist/next-server/server/api-utils";
+import { connectToDatabase } from "../../../../libs/database";
 import Cors from "cors";
 
 const handler = nextConnect();
@@ -11,10 +10,14 @@ const cors = Cors({
 });
 
 handler.get(async (req, res) => {
-  const session = await getSession({ req });
+  const {skip, id} = req.query;
+
   try {
     const { db } = await connectToDatabase();
-    const items = await db
+
+    const totalItems = await db.collection('items').find({user_id : ObjectId(id)}).count()
+
+    const result = await db
       .collection("items")
       .aggregate([
         {
@@ -25,12 +28,20 @@ handler.get(async (req, res) => {
             as: "uploader",
           },
         },
-        { $match: { user_id: ObjectId(session.user.id) } },
+        { $match: { user_id: ObjectId(id) } },
+        {
+          $sort : {_id : -1}
+        }
       ])
+      .skip(parseInt(skip))
+      .limit(2)
       .toArray();
 
-    res.status(200).json(items);
+      console.log(totalItems);
+    
+      res.status(200).json({result, totalItems});
   } catch (err) {
+    console.log(err)
     res.status(400).json({ message: "failed to get items" });
   }
 });

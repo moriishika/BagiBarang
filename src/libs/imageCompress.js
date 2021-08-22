@@ -1,6 +1,7 @@
 import sharp from "sharp";
 import fs from 'fs';
 
+//this option disable sharp to cache images, unlink cant remove the image because sharp still accessing the image
 sharp.cache(false)
 
 const compressImage = (images) => {

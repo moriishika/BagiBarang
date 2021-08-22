@@ -1,18 +1,22 @@
 import { Backbar, BottomNavbar, LoadingBox } from "../../../components";
 import { connectToDatabase } from "../../../libs/database";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/client";
+import { Loading } from "../../../state";
 import axios from "axios";
 import slugify from "slugify";
 import Slider from "react-slick";
 
 const UpdateItemForm = ({ item }) => {
   const [session, loading] = useSession();
+  const { isLoading, setLoadingStatus, setLoadingMessage, setSuccessStatus } =
+    useContext(Loading);
 
-  const [previousImage, setPrevItem] = useState(item.images);
+  const [previousImage, setPreviousImages] = useState(item.images);
   const [previewImage, setPreviewImages] = useState(item.images);
   const [selectedImages, setSelectedImages] = useState(item.images);
+  const [deletedImages, setDeletedImages] = useState(item.images);
 
   const {
     handleSubmit,
@@ -22,27 +26,40 @@ const UpdateItemForm = ({ item }) => {
   } = useForm();
 
   const updateItem = (updateData) => {
-    console.table(selectedImages);
+    setLoadingStatus(true);
+    setLoadingMessage("Sedang Memperbarui Barang");
+
+    if (!selectedImages[0] || selectedImages.length > 5) {
+      setLoadingStatus(false);
+      setLoadingMessage("Mohon Tunggu");
+      setSuccessStatus(false);
+      return;
+    }
+
     delete updateData["images"];
 
     const formData = new FormData();
 
     const imageIndex = [];
+    let path = [];
 
     for (const data in updateData) {
       formData.append(`${data}`, updateData[data]);
     }
 
     for (const image in selectedImages) {
+      if (typeof selectedImages[image] === "string") {
+        path.push(selectedImages[image]);
+      }
       formData.append("images", selectedImages[image]);
-      imageIndex.push(typeof selectedImages[image] === "object")
+      imageIndex.push(typeof selectedImages[image] === "object");
     }
 
-    formData.append('imageIndex', imageIndex);
-    formData.append('imageName', item.imagesName);
-    formData.append('fullpath', item.images);
-    
-
+    formData.append("images", path);
+    formData.append("imageIndex", imageIndex);
+    formData.append("imageName", item.imagesName);
+    formData.append("fullpath", item.images);
+    formData.append("deletedImage", deletedImages);
 
     axios
       .put(`/api/items/${item._id}`, formData, {
@@ -51,7 +68,15 @@ const UpdateItemForm = ({ item }) => {
         },
       })
       .then((res) => {
-        console.log(res);
+        console.log("Masuk selesai")
+        setLoadingMessage("Barang berhasil di update");
+        setSuccessStatus(true);
+        let delay = setTimeout(() => {
+          setLoadingStatus(false);
+          setLoadingMessage("Mohon Tunggu");
+          setSuccessStatus(false);
+          clearTimeout(delay);
+        }, 1000);
       })
       .catch((error) => {
         console.log(error);
@@ -73,17 +98,28 @@ const UpdateItemForm = ({ item }) => {
     setPreviewImages(images);
   };
 
-  const removeImage = (i) => {
-    console.log(i);
+  const removeImage = (i, imagename) => {
     const images = [...previewImage];
+    const selectedImage = [...selectedImages];
+    const imageStatus = [...deletedImages];
+    const previousImages = [...previousImage];
+
     if (images.length === 1) return;
 
     URL.revokeObjectURL(images[i]);
 
     images.splice(i, 1);
+    selectedImage.splice(i, 1);
 
-    setSelectedImages([...images]);
+    if (imageStatus.indexOf(imagename) !== -1) {
+      imageStatus[imageStatus.indexOf(imagename)] = "deleted";
+      previousImages.splice(i, 1);
+    }
+
+    setSelectedImages([...selectedImage]);
     setPreviewImages([...images]);
+    setPreviousImages([...previousImages]);
+    setDeletedImages([...imageStatus]);
   };
 
   const resetImages = () => {
@@ -91,12 +127,13 @@ const UpdateItemForm = ({ item }) => {
       URL.revokeObjectURL(image);
     });
 
-    setPreviewImages([...previousImage]);
-    setSelectedImages([...previousImage]);
+    setPreviewImages([...item.images]);
+    setSelectedImages([...item.images]);
+    setPreviousImages([...item.images]);
+    setDeletedImages([...item.images]);
   };
 
   const addPreviewImage = (images) => {
-    console.log(images);
     let selectedImages = [];
 
     for (let i = 0; i < images.length; i++) {
@@ -129,13 +166,14 @@ const UpdateItemForm = ({ item }) => {
 
   useEffect(() => {
     return () => {
-      selectedImages.forEach((image) => {
+      previewImage.forEach((image) => {
         URL.revokeObjectURL(image);
       });
     };
-  });
+  }, [session]);
 
   if (!session) return <LoadingBox></LoadingBox>;
+  if (isLoading) return <LoadingBox></LoadingBox>;
 
   return (
     <>
@@ -154,7 +192,7 @@ const UpdateItemForm = ({ item }) => {
                     <img src={image} className="rounded-lg mx-auto"></img>
                     <div
                       onClick={(e) => {
-                        removeImage(index);
+                        removeImage(index, previousImage[index]);
                       }}
                       className="w-24 p-1 bg-red-500 absolute text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
                     >
@@ -185,19 +223,22 @@ const UpdateItemForm = ({ item }) => {
             >
               Balikan Semua Gambar
             </div>
-            <label className="p-2 my-2 border border-blue-500 text-blue-500 hover:border-0 hover:bg-blue-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer">
-              Tambah Gambar
-              <input
-                type="file"
-                multiple
-                hidden
-                {...imagesInput}
-                onChange={(e) => {
-                  imagesInput.onChange(e);
-                  addPreviewImage(e.target.files);
-                }}
-              ></input>
-            </label>
+
+            {selectedImages.length != 5 && (
+              <label className="p-2 my-2 border border-blue-500 text-blue-500 hover:border-0 hover:bg-blue-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer">
+                Tambah Gambar
+                <input
+                  type="file"
+                  multiple
+                  hidden
+                  {...imagesInput}
+                  onChange={(e) => {
+                    imagesInput.onChange(e);
+                    addPreviewImage(e.target.files);
+                  }}
+                ></input>
+              </label>
+            )}
           </div>
 
           <input
@@ -359,6 +400,6 @@ export async function getServerSideProps({ query }) {
       },
     };
   } catch (error) {
-    console.log(error);
+    return;
   }
 }

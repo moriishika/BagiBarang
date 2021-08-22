@@ -1,22 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/client";
 import { useForm } from "react-hook-form";
 import { LoadingBox } from "../../components";
+import { Loading } from "../../state";
 import Link from "next/link";
 import slugify from "slugify";
 const ProfileBox = () => {
-  const [session, loading] = useSession();
+  const { setLoadingStatus, setLoadingMessage, isLoading, setSuccessStatus } =
+    useContext(Loading);
+
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
   } = useForm();
-
+  const [session, loading] = useSession();
   const [userImage, setUserImage] = useState(null);
-
   const userImageInput = register("images");
+
+  useEffect(() => {
+    if (session) {
+      setLoadingStatus(false);
+    } else {
+      setLoadingStatus(true);
+    }
+
+    return () => {
+      URL.revokeObjectURL(userImage);
+    };
+  }, [session]);
 
   const handleImage = (e) => {
     if (
@@ -31,9 +45,9 @@ const ProfileBox = () => {
     }
   };
 
-  if (!session) return <LoadingBox></LoadingBox>;
-
   const onSubmit = (data) => {
+    setLoadingMessage("Memperbarui profil");
+    setLoadingStatus(true);
     let formData = new FormData();
 
     console.log(data.images[0]);
@@ -57,13 +71,26 @@ const ProfileBox = () => {
     axios
       .put("http://localhost:3000/api/user/" + session.user.id, formData)
       .then((res) => {
-        console.log(res.data);
+        
+        setLoadingMessage('Berhasil di update')
+        setSuccessStatus(true)
+
+        let delay = setTimeout(() => {
+          setLoadingStatus(false);
+          setLoadingMessage("Mohon Tunggu");
+          setSuccessStatus(false);
+          clearTimeout(delay);
+        }, 1000);
+
       })
       .catch((err) => console.log("error disiniiiiii", err));
   };
 
+  if (!session) return <LoadingBox></LoadingBox>;
+
   return (
     <div className="flex h-screen justify-center items-center">
+      {isLoading && <LoadingBox></LoadingBox>}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-11/12 xl:w-2/5"

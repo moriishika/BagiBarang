@@ -12,9 +12,10 @@ export default class User extends Adapters.TypeORM.Models.User.model {
     phoneNumber,
     province,
     address,
-    isVerified
+    isVerified,
+    slug
   ) {
-    super(name, email, image, emailVerified, phoneNumber, province, address, isVerified);
+    super(name, email, image, emailVerified, phoneNumber, province, address, isVerified, slug);
   }
 }
 
@@ -38,6 +39,10 @@ export const UserSchema = {
     },
     isVerified: {
       type: "boolean",
+      nullable: true,
+    },
+    slug: {
+      type: "varchar",
       nullable: true,
     },
   },

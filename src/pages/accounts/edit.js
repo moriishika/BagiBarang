@@ -1,9 +1,7 @@
-import {ProfileBox} from '../../components';
+import { ProfileBox } from "../../components";
 
 const EditProfile = () => {
-    return (
-        <ProfileBox></ProfileBox>
-    );
-}
+  return <ProfileBox></ProfileBox>;
+};
 
 export default EditProfile;

@@ -10,6 +10,7 @@ import { Loading } from "../state";
 const App = ({ Component, pageProps }) => {
   const [isLoading, setLoadingStatus] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Mohon Tunggu");
+  const [isSuccess, setSuccessStatus] = useState(false);
 
 
   return (
@@ -20,6 +21,8 @@ const App = ({ Component, pageProps }) => {
           setLoadingStatus,
           loadingMessage,
           setLoadingMessage,
+          isSuccess,
+          setSuccessStatus
         }}
       >
         <Component {...pageProps} />

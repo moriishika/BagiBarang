@@ -5,7 +5,8 @@ import { Loading } from "../../state";
 import ImagePreview from "../ImagePreview";
 
 const ItemForm = ({ userId }) => {
-  const { setLoadingStatus, setLoadingMessage } = useContext(Loading);
+  const { setLoadingStatus, setLoadingMessage, setSuccessStatus } =
+    useContext(Loading);
   const [isPreviewImageClicked, setPreviewImageStatus] = useState(false);
 
   const {
@@ -23,6 +24,9 @@ const ItemForm = ({ userId }) => {
 
   const uploadItem = async (data) => {
     if (!files[0] || files.length > 5) {
+      setLoadingStatus(false);
+      setLoadingMessage("Mohon Tunggu");
+      setSuccessStatus(false);
       setFile(null);
       return;
     }
@@ -42,10 +46,6 @@ const ItemForm = ({ userId }) => {
 
     formData.append("user_id", userId);
 
-    for (const value of formData.values()) {
-      console.log(value);
-   }
-
     axios
       .post("/api/items", formData, {
         headers: {
@@ -53,9 +53,15 @@ const ItemForm = ({ userId }) => {
         },
       })
       .then((res) => {
-        setLoadingStatus(false);
-        reset();
-        setLoadingMessage("Mohon Tunggu");
+        setSuccessStatus(true);
+        setLoadingMessage("Berhasil di Tambah");
+        let delay = setTimeout(() => {
+          setLoadingStatus(false);
+          setLoadingMessage("Mohon Tunggu");
+          setSuccessStatus(false);
+          reset();
+          clearTimeout(delay)
+        }, 1000);
       })
       .catch((err) => {
         console.log(err);
@@ -66,7 +72,13 @@ const ItemForm = ({ userId }) => {
 
   return (
     <div className="flex justify-center">
-      {isPreviewImageClicked && <ImagePreview images={files} setPreviewImageStatus={setPreviewImageStatus} isPreviewImageClicked={isPreviewImageClicked}></ImagePreview>}
+      {isPreviewImageClicked && (
+        <ImagePreview
+          images={files}
+          setPreviewImageStatus={setPreviewImageStatus}
+          isPreviewImageClicked={isPreviewImageClicked}
+        ></ImagePreview>
+      )}
       <form
         onSubmit={handleSubmit(uploadItem)}
         className="flex flex-col p-4 xl:w-2/6 my-6"
@@ -110,7 +122,15 @@ const ItemForm = ({ userId }) => {
           </div>
         </div>
 
-        {files[0] && <button onClick={() => setPreviewImageStatus(isPreviewImageClicked ? false : true)}>Lihat Gambar</button>}
+        {files[0] && (
+          <button
+            onClick={() =>
+              setPreviewImageStatus(isPreviewImageClicked ? false : true)
+            }
+          >
+            Lihat Gambar
+          </button>
+        )}
         <input
           type="text"
           {...register("name", { required: true, maxLength: 150 })}
@@ -229,44 +249,3 @@ const ItemForm = ({ userId }) => {
 };
 
 export default ItemForm;
-
-// const [imgFiles, setImgFiles] = useState([]);
-//     const [session, loading] = useSession();
-//     const [inputs, setInputs] = useState({ name: '', description: '', province: '', address: '', phoneNumber: '', email: '' });
-
-//     //refactor kode yang ini, sebenernya perlu inputs aja img file nya ga perlu
-//     const onChangeHandler = ({ target }) => {
-//         const { name, value } = target;
-//         setInputs(prevInputs => ({ ...prevInputs, [name]: value }));
-//     }
-
-//     const onFileChange = ({ target }) => {
-//         setImgFiles(target.files)
-//     }
-
-//     const onSubmitHandler = async (e) => {
-//         e.preventDefault();
-//         let formData = new FormData();
-//         for (const input in inputs) {
-//             formData.append(input, inputs[input]);
-//         }
-
-//         for (const imgFile in imgFiles) {
-//             console.log(imgFiles[imgFile])
-//             formData.append('images', imgFiles[imgFile]);
-//         }
-
-//         axios.post('http://localhost:3000/api/items', formData, {
-//             headers: {
-//                 'content-type': 'multipart/form-data',
-//             }
-//         })
-//             .then((res) => {
-//                 console.log(res.data)
-//             })
-//             .catch(err => console.log(err))
-//     }
-
-//     useEffect(() => {
-//         setInputs(session ? { province: session.user.province, address: session.user.address, phoneNumber: session.user.phoneNumber, email: session.user.email } : {});
-//     }, [loading])

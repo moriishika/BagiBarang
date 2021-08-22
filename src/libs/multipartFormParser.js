@@ -52,7 +52,6 @@ export default async function parseMultipartForm(req, res, next) {
       next();
     });
   } else {
-    console.log('error type');
     next();
   }
 }
