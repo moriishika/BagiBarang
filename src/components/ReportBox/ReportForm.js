@@ -1,26 +1,55 @@
-import { useForm, useState} from "react-hook-form";
+import { useContext } from "react";
+import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useSession } from "next-auth/client";
+import { Loading } from "../../state";
 
 const ReportForm = (props) => {
   const { register, handleSubmit } = useForm();
   const [session, loading] = useSession();
-  const [isReportSuccess, setReportStatus] = useState(false); 
+  const {
+    setLoadingStatus,
+    setLoadingMessage,
+    setSuccessStatus,
+    loadingMessage,
+    isLoading,
+    isSuccess,
+  } = useContext(Loading);
 
   const onSubmit = (input) => {
+    setLoadingStatus(true);
+    setLoadingMessage("Mengirim Data Laporan");
     axios
       .put(`/api/items/report/${props.itemid}`, {
         type: props.reportType,
         category: props.reportCategory,
         detail: input.reportDetail,
-        userid : session.user.id
+        userid: session?.user?.id,
       })
       .then((res) => {
-        
+        setSuccessStatus(true);
+        setLoadingMessage("Berhasil Melaporkan Barang");
+        let delay = setTimeout(() => {
+          setLoadingStatus(false);
+          setLoadingMessage("Mohon Tunggu");
+          setSuccessStatus(false);
+          props.closeReport();
+          clearTimeout(delay);
+        }, 1000);
       })
-      .catch((res) => {});
+      .catch((err) => {
+        console.log(err);
+        setLoadingStatus(false);
+        setSuccessStatus(false);
+        setLoadingMessage("Mohon Tunggu");
+      });
   };
 
+  if(isLoading) return (
+  <div className={`w-full h-40 my-8 rounded-lg ${isLoading ? 'bg-blue-300' : ''} ${isSuccess ? 'bg-green-300' : 'bg-red-300'} flex justify-center items-center`}>
+    <p className="text-white text-xl font-bold">{loadingMessage}</p>
+  </div>)
+  
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}

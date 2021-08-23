@@ -18,6 +18,7 @@ const handler = async (req, res) => {
         $push: { reports: req.body },
       }
     );
+    res.status(200).json({message : "Berhasil Melaporkan Barang"})
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: "Unable to report item" });

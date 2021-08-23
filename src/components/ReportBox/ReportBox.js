@@ -56,7 +56,7 @@ const ReportBox = (props) => {
                     </button>
                 </div>
                 }
-                {reasonType && <ReportReasons type={reasonType} setReportTitle={handleReportTitle} itemid={props.itemid}></ReportReasons>}
+                {reasonType && <ReportReasons type={reasonType} setReportTitle={handleReportTitle} itemid={props.itemid} closeReport={props.closeReport}></ReportReasons>}
             </div>
         </div>
     );
