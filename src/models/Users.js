@@ -1,11 +1,28 @@
-import Adapters from "next-auth/adapters"
-
+import Adapters from "next-auth/adapters";
 // Extend the built-in models using class inheritance
 export default class User extends Adapters.TypeORM.Models.User.model {
   // You can extend the options in a model but you should not remove the base
   // properties or change the order of the built-in options on the constructor
-  constructor(name, email, image, emailVerified, phoneNumber) {
-    super(name, email, image, emailVerified, phoneNumber)
+  constructor(
+    name,
+    email,
+    image,
+    emailVerified,
+    phoneNumber,
+    province,
+    address,
+    isVerified,
+    slug
+  ) {
+    super(name, email, image, emailVerified, phoneNumber, province, address, isVerified, slug);
+    this.slug = "";
+    this.name = "";
+    this.province = "";
+    this.address = "";
+    this.phoneNumber = "";
+    this.email = email;
+    this.image = image;
+    this.isVerified = false;
   }
 }
 
@@ -19,8 +36,24 @@ export const UserSchema = {
       type: "varchar",
       nullable: true,
     },
+    province: {
+      type: "varchar",
+      nullable: true,
+    },
+    address: {
+      type: "varchar",
+      nullable: true,
+    },
+    isVerified: {
+      type: "boolean",
+      nullable: true,
+    },
+    slug: {
+      type: "varchar",
+      nullable: true,
+    },
   },
-}
+};
 
 // import mongoose from 'mongoose';
 // import db from '../libs/database.js'
@@ -51,8 +84,6 @@ export const UserSchema = {
 //   }
 // }
 
-
-
 // export const UserSchema = {
 //   name: "User",
 //   target: User,
@@ -71,10 +102,8 @@ export const UserSchema = {
 //       nullable : 'true'
 //     },
 //     password : {
-//       type : 'varchar', 
+//       type : 'varchar',
 //       nullable : 'true'
 //     }
 //   },
 // }
-
-

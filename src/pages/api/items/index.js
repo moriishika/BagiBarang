@@ -5,6 +5,7 @@ import Cors from "cors";
 import { connectToDatabase } from "../../../libs/database";
 import { ObjectId } from "mongodb";
 import slugify from "slugify";
+import fs from "fs";
 
 const cors = Cors({
   methods: ["POST"],
@@ -12,6 +13,10 @@ const cors = Cors({
 
 const handler = nextConnect();
 
+handler.use((req, res, next) => {
+  req.uploadDir = "media/items";
+  next();
+});
 handler.use(parseMultipartForm);
 // handler.use(dbmiddleware);
 
@@ -20,7 +25,10 @@ handler
   .post(async (req, res) => {
     const session = await getSession({ req });
     if (session) {
-      const files = req.files.images.map((image) => image.name);
+      const files = req.files.images.map(
+        (image) => `/api/items/image/${image.name}.webp`
+      );
+      const imagesName = req.files.images.map((image) => image.name);
 
       //contains inputs value from uploadItem form
       const body = req.body;
@@ -30,10 +38,10 @@ handler
       body.reports = [];
       body.slug = slugify(`${body.name} ${Date.now()}`);
 
-      const {db} = await connectToDatabase();
+      const { db } = await connectToDatabase();
 
       db.collection("items").insertOne(
-        { ...body, images: files },
+        { ...body, images: files, imagesName },
         (err, data) => {
           if (err) return console.log(err);
           res.status(200).json(data);
@@ -44,7 +52,11 @@ handler
     }
   })
   .get(async (req, res) => {
-    const {db} = await connectToDatabase();
+    const { db } = await connectToDatabase();
+    const skip = parseInt(req.query.skip);
+    const itemsTotal = await db.collection('items').estimatedDocumentCount({});
+    console.log(itemsTotal);
+
     db.collection("items")
       .aggregate([
         {
@@ -55,10 +67,15 @@ handler
             as: "uploader",
           },
         },
+        {
+          $sort : {_id : -1}
+        }
       ])
+      .skip(skip)
+      .limit(2)
       .toArray((err, result) => {
-        if (err) return console.log(err);
-        res.status(200).json(result);
+        if (err) return res.status(400).json({message : "Unable to get items data due to database error"});
+        res.status(200).json({ result , itemsTotal});
       });
   });
 

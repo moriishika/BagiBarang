@@ -40,6 +40,17 @@
   animation-duration: 0.6s;
 }
 
+.spinning{
+  display: inline-block;
+  animation: endless-spin 1s infinite linear;
+}
+
+@keyframes endless-spin{
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes reportGoingUp {
   from {
     height: 0%;

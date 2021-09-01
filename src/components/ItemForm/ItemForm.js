@@ -1,14 +1,20 @@
 import axios from "axios";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Loading } from "../../state";
+import {useSession} from 'next-auth/client';
+import router from 'next/router';
 
 const ItemForm = ({ userId }) => {
-  const { setLoadingStatus, setLoadingMessage } = useContext(Loading);
+  const { setLoadingStatus, setLoadingMessage, setSuccessStatus } =
+    useContext(Loading);
+
+    const [session, loading] = useSession()
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -19,14 +25,16 @@ const ItemForm = ({ userId }) => {
   };
 
   const uploadItem = async (data) => {
-    if(!files[0] || files.length > 5){
+    if (!files[0] || files.length > 5) {
+      setLoadingStatus(false);
+      setLoadingMessage("Mohon Tunggu");
+      setSuccessStatus(false);
       setFile(null);
       return;
     }
 
     setLoadingStatus(true);
-    setLoadingMessage('Mengupload Gambar');
-   
+    setLoadingMessage("Mengupload Gambar");
 
     let formData = new FormData();
 
@@ -47,26 +55,42 @@ const ItemForm = ({ userId }) => {
         },
       })
       .then((res) => {
-        setLoadingStatus(false);
-        setLoadingMessage('Mohon Tunggu');
+        setSuccessStatus(true);
+        setLoadingMessage("Berhasil di Tambah");
+        let delay = setTimeout(() => {
+          setLoadingStatus(false);
+          setLoadingMessage("Mohon Tunggu");
+          setSuccessStatus(null);
+          reset();
+          clearTimeout(delay)
+        }, 1000);
       })
       .catch((err) => {
         console.log(err);
         setLoadingStatus(false);
-        setLoadingMessage('Mohon Tunggu');
+        setLoadingMessage("Mohon Tunggu");
+        setSuccessStatus(false)
       });
+
+     
   };
 
+  useEffect(() => {
+    if(!session) router.back();
+  }, [session])
+
+  if(!session && !loading) return <div className="min-h-screen"></div>
+
   return (
-    <div className="flex justify-center h-full">
+    <div className="flex justify-center">
       <form
         onSubmit={handleSubmit(uploadItem)}
-        className="flex flex-col p-4 xl:w-2/6"
+        className="flex flex-col p-4 md:w-4/5 xl:w-2/6 my-6 min-h-screen"
         encType="multipart/form-data"
       >
         <div className="grid grid-cols-1 my-5 mx-7">
           <div className="flex flex-col items-center justify-center w-full">
-            <label className="flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-green-300 hover:fill-current hover:text-green-600 group">
+            <label className="flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-blue-300 hover:fill-current hover:text-blue-600 group">
               <div className="flex flex-col items-center justify-center pt-7">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -101,6 +125,7 @@ const ItemForm = ({ userId }) => {
             </p>
           </div>
         </div>
+        
         <input
           type="text"
           {...register("name", { required: true, maxLength: 150 })}
@@ -109,7 +134,7 @@ const ItemForm = ({ userId }) => {
           placeholder="Nama Barang"
         />
         <p className="text-red-500">
-          {errors.name?.type === "required" && "Tolong isi nama barang"}{" "}
+          {errors.name?.type === "required" && "Tolong isi nama barang"}
           {errors.name?.type === "maxLength" && "Nama barang terlalu panjang"}
         </p>
         <textarea
@@ -117,7 +142,8 @@ const ItemForm = ({ userId }) => {
           name="description"
           className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
           placeholder="Deskripsi"
-          cols={20} rows={6}
+          cols={20}
+          rows={6}
         />
         <select
           {...register("province", { required: true })}
@@ -209,7 +235,7 @@ const ItemForm = ({ userId }) => {
           {errors.email?.type === "pattern" &&
             "Format email salah contoh : namaemail@gmail.com"}
         </p>
-        <button className="w-full bg-blue-400 xl:h-12 h-44 rounded-lg text-white font-bold hover:bg-blue-600">
+        <button className="w-full bg-blue-400 xl:h-12 h-11 rounded-lg text-white font-bold hover:bg-blue-600">
           Simpan
         </button>
       </form>
@@ -218,44 +244,3 @@ const ItemForm = ({ userId }) => {
 };
 
 export default ItemForm;
-
-// const [imgFiles, setImgFiles] = useState([]);
-//     const [session, loading] = useSession();
-//     const [inputs, setInputs] = useState({ name: '', description: '', province: '', address: '', phoneNumber: '', email: '' });
-
-//     //refactor kode yang ini, sebenernya perlu inputs aja img file nya ga perlu
-//     const onChangeHandler = ({ target }) => {
-//         const { name, value } = target;
-//         setInputs(prevInputs => ({ ...prevInputs, [name]: value }));
-//     }
-
-//     const onFileChange = ({ target }) => {
-//         setImgFiles(target.files)
-//     }
-
-//     const onSubmitHandler = async (e) => {
-//         e.preventDefault();
-//         let formData = new FormData();
-//         for (const input in inputs) {
-//             formData.append(input, inputs[input]);
-//         }
-
-//         for (const imgFile in imgFiles) {
-//             console.log(imgFiles[imgFile])
-//             formData.append('images', imgFiles[imgFile]);
-//         }
-
-//         axios.post('http://localhost:3000/api/items', formData, {
-//             headers: {
-//                 'content-type': 'multipart/form-data',
-//             }
-//         })
-//             .then((res) => {
-//                 console.log(res.data)
-//             })
-//             .catch(err => console.log(err))
-//     }
-
-//     useEffect(() => {
-//         setInputs(session ? { province: session.user.province, address: session.user.address, phoneNumber: session.user.phoneNumber, email: session.user.email } : {});
-//     }, [loading])

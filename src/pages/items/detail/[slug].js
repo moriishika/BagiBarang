@@ -1,19 +1,40 @@
 
 import Head from "next/head";
-import { connectToDatabase } from "../../libs/database";
-import { Item, Backbar, BottomNavbar } from "../../components";
+import { connectToDatabase } from "../../../libs/database";
+import { Item, Backbar, BottomNavbar, LoadingBox } from "../../../components";
+import { useSession } from "next-auth/client";
+import router from "next/router";
 
 export default function ItemDetail({ item }) {
+  // shows a box if the user not verified yet where the box has
+  //message that the person hasn't set the address yet and a button where is
+  //going to lead him/her to update the account
+
+  // the protected are uploading, item detail, update item, looking to someone profiles
+  const [session, loading] = useSession();
+
+  if (!item && !loading && !session) return <LoadingBox></LoadingBox>;
+
+  if (!loading && !session) router.push("/login");
+
   return (
     <div>
       <Head>
         <title>{item.name}</title>
       </Head>
-      <Backbar link="/"></Backbar>
-      <div className="flex justify-center m-auto w-11/12 xl:w-2/5">
-        <Item item={item} inItemDetail={true}></Item>
-      </div>
-      <BottomNavbar></BottomNavbar>
+
+      {session && (
+        <>
+          <Backbar></Backbar>
+
+          <div className="flex justify-center m-auto w-11/12 xl:w-2/5">
+            <Item item={item} inItemDetail={true}></Item>
+          </div>
+
+          <BottomNavbar></BottomNavbar>
+        </>
+      )}
+      
     </div>
   );
 }
