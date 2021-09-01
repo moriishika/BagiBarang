@@ -192,7 +192,8 @@ const UpdateItemForm = ({ item }) => {
   };
 
   useEffect(() => {
-    if (session?.user.id !== item.user_id || !session) router.back();
+    if(!session) router.push('/login')
+    if(session?.user.id !== item.user_id) router.back();
     return () => {
       previewImage.forEach((image) => {
         URL.revokeObjectURL(image);
@@ -200,12 +201,14 @@ const UpdateItemForm = ({ item }) => {
     };
   }, [session]);
 
-  if (!session && !item && loading) return <LoadingBox></LoadingBox>;
+  if(!session && !loading) return <div></div>;
+  if(session?.user.id !== item.user_id) return <div></div>;
   
+  if (!session && !item && loading) return <LoadingBox></LoadingBox>;  
 
   return (
     <>
-      <Backbar link={`/${slugify(session.user.name)}`} />
+      <Backbar />
       <div className="flex justify-center">
         <form
           onSubmit={handleSubmit(updateItem)}
@@ -434,6 +437,7 @@ export async function getServerSideProps({ query }) {
       },
     };
   } catch (error) {
+    console.log(error)
     return;
   }
 }

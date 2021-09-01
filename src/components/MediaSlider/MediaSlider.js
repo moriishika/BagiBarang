@@ -9,18 +9,17 @@ const PrevArrow = ({ className, onClick }) => {
   return <div className={className} onClick={onClick}></div>;
 };
 
-const MediaImage = ({ imageUrl }) => {
+const MediaImage = ({ imageUrl, itemName }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   return (
     <div>
       {!isLoaded && <div className="bg-gray-400 w-full" style={{height : '100vh'}}></div>}
-      <img src={imageUrl} onLoad={() => setIsLoaded(true)}></img>
+      <img src={imageUrl} alt={`Gambar dari barang ${itemName}`} onLoad={() => setIsLoaded(true)}></img>
     </div>
   );
 };
 
-const MediaSlider = (props) => {
-  const [isLoaded, setIsLoaded] = useState(false);
+const MediaSlider = ({images, itemName}) => {
   const settings = {
     dots: true,
     infinite: true,
@@ -46,10 +45,10 @@ const MediaSlider = (props) => {
 
   return (
     <div>
-      {props.images && (
+      {images && (
         <Slider {...settings}>
-          {props.images.map((image, index) => {
-            return <MediaImage key={index} imageUrl={image}></MediaImage>;
+          {images.map((image, index) => {
+            return <MediaImage key={index} imageUrl={image} itemName={itemName}></MediaImage>;
           })}
         </Slider>
       )}

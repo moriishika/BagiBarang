@@ -4,7 +4,7 @@ import { useSession } from "next-auth/client";
 import { useForm } from "react-hook-form";
 import { LoadingBox } from "../../components";
 import { Loading } from "../../state";
-import router from 'next/router';
+import router from "next/router";
 import Link from "next/link";
 import slugify from "slugify";
 const ProfileBox = () => {
@@ -16,7 +16,7 @@ const ProfileBox = () => {
     handleSubmit,
     setError,
     formState: { errors },
-    setValue
+    setValue,
   } = useForm();
   const [session, loading] = useSession();
   const [userImage, setUserImage] = useState(null);
@@ -26,12 +26,11 @@ const ProfileBox = () => {
     if (session) {
       setLoadingStatus(false);
 
-      setValue('name', session.user.name)
-      setValue('province', session.user.province);
-      setValue('phoneNumber', session.user.phoneNumber);
-      setValue('email', session.user.email);
-      setValue('address', session.user.address);
-
+      setValue("name", session.user.name);
+      setValue("province", session.user.province);
+      setValue("phoneNumber", session.user.phoneNumber);
+      setValue("email", session.user.email);
+      setValue("address", session.user.address);
     } else {
       setLoadingStatus(true);
     }
@@ -60,11 +59,11 @@ const ProfileBox = () => {
     let formData = new FormData();
 
     console.log(data.images[0]);
-    
-    if(!session.user.isVerified){ 
-      formData.append('phoneNumber', session.user.phoneNumber);
-      formData.append('email', session.user.email);
-      formData.append('address', session.user.address);
+
+    if (!session.user.isVerified) {
+      formData.append("phoneNumber", session.user.phoneNumber);
+      formData.append("email", session.user.email);
+      formData.append("address", session.user.address);
     }
 
     if (!data.images.length) {
@@ -88,18 +87,17 @@ const ProfileBox = () => {
       .then((res) => {
         setLoadingMessage("Berhasil di update");
         setSuccessStatus(true);
-        
+
         let delay = setTimeout(() => {
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");
           setSuccessStatus(false);
-          router.push(`/${slugify(session?.user?.name)}`)
+          router.push(`/${slugify(session?.user?.name)}`);
           clearTimeout(delay);
         }, 1000);
-
       })
       .catch((err) => {
-        if(err.response.data.status === 'DUPLICATE_NAME'){
+        if (err.response.data.status === "DUPLICATE_NAME") {
           setLoadingMessage("Nama telah digunakan");
 
           let delay = setTimeout(() => {
@@ -108,15 +106,11 @@ const ProfileBox = () => {
             setSuccessStatus(false);
             clearTimeout(delay);
           }, 1000);
-
         }
       });
   };
 
   if (!session) return <LoadingBox></LoadingBox>;
-
-  if (session?.user?.isVerified) {
-  }
 
   return (
     <div className="flex h-screen justify-center items-center">
@@ -164,6 +158,11 @@ const ProfileBox = () => {
           </div>
         </div>
         <div className="p-4 w-full mt-2">
+          
+          {!session?.user.isVerified && (
+            <p className="text-center font-bold ">Nama dan wilayah harus diisi agar bisa mengakses setiap halaman</p>
+          )}
+
           <input
             type="text"
             {...register("name", {
@@ -271,15 +270,14 @@ const ProfileBox = () => {
           >
             Simpan
           </button>
-          
-          {session.user.isVerified && (
-          <Link href={"/" + slugify(session.user.name)}>
-            <a className="hover:bg-transparent block border border-green-500 w-full py-2 rounded-md mt-4 text-white hover:text-green-500 font-semibold hover bg-green-500 text-center">
-              Kembali
-            </a>
-          </Link>
-          )}
 
+          {session.user.isVerified && (
+            <Link href={"/" + slugify(session.user.name)}>
+              <a className="hover:bg-transparent block border border-green-500 w-full py-2 rounded-md mt-4 text-white hover:text-green-500 font-semibold hover bg-green-500 text-center">
+                Kembali
+              </a>
+            </Link>
+          )}
         </div>
       </form>
     </div>

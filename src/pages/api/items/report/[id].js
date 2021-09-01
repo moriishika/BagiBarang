@@ -13,7 +13,7 @@ const handler = nextConnect();
 
 handler.use(isAuthorized);
 
-handler.post(async (req, res) => {
+handler.put(async (req, res) => {
   try {
     const { id } = req.query;
     const { db } = await connectToDatabase();

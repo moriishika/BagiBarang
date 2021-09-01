@@ -92,7 +92,7 @@ const Item = (props) => {
         )}
       </div>
       <div className="flex-col justify-center">
-        <MediaSlider images={props.item.images}></MediaSlider>
+        <MediaSlider images={props.item.images} itemName={props.item.name}></MediaSlider>
       </div>
       <div>
         <h1 className="text-2xl mt-8 font-semibold">{props.item.name}</h1>

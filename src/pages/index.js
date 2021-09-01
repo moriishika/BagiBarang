@@ -136,15 +136,13 @@ const Index = () => {
       <div className="h-full w-full">
         <TopNavbar search={search}></TopNavbar>
 
-
-        
-
         <Items
           items={itemsData}
           inProfile={false}
           keywords={searchKeyword}
           province={searchProvince}
         ></Items>
+        
         <div className="w-full h-20 flex justify-center items-center" ref={loadMoreRef}>
           {isSearching && <h1 className="text-2xl font-semibold">Sedang Meng-loding data 🤹‍♀️</h1>}
         </div>
