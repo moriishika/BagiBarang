@@ -1,13 +1,15 @@
 import axios from "axios";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Loading } from "../../state";
-import ImagePreview from "../ImagePreview";
+import {useSession} from 'next-auth/client';
+import router from 'next/router';
 
 const ItemForm = ({ userId }) => {
   const { setLoadingStatus, setLoadingMessage, setSuccessStatus } =
     useContext(Loading);
-  const [isPreviewImageClicked, setPreviewImageStatus] = useState(false);
+
+    const [session, loading] = useSession()
 
   const {
     register,
@@ -58,7 +60,7 @@ const ItemForm = ({ userId }) => {
         let delay = setTimeout(() => {
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");
-          setSuccessStatus(false);
+          setSuccessStatus(null);
           reset();
           clearTimeout(delay)
         }, 1000);
@@ -67,26 +69,28 @@ const ItemForm = ({ userId }) => {
         console.log(err);
         setLoadingStatus(false);
         setLoadingMessage("Mohon Tunggu");
+        setSuccessStatus(false)
       });
+
+     
   };
+
+  useEffect(() => {
+    if(!session) router.back();
+  }, [session])
+
+  if(!session && !loading) return <div className="min-h-screen"></div>
 
   return (
     <div className="flex justify-center">
-      {isPreviewImageClicked && (
-        <ImagePreview
-          images={files}
-          setPreviewImageStatus={setPreviewImageStatus}
-          isPreviewImageClicked={isPreviewImageClicked}
-        ></ImagePreview>
-      )}
       <form
         onSubmit={handleSubmit(uploadItem)}
-        className="flex flex-col p-4 xl:w-2/6 my-6"
+        className="flex flex-col p-4 md:w-4/5 xl:w-2/6 my-6 min-h-screen"
         encType="multipart/form-data"
       >
         <div className="grid grid-cols-1 my-5 mx-7">
           <div className="flex flex-col items-center justify-center w-full">
-            <label className="flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-green-300 hover:fill-current hover:text-green-600 group">
+            <label className="flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-blue-300 hover:fill-current hover:text-blue-600 group">
               <div className="flex flex-col items-center justify-center pt-7">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -121,16 +125,7 @@ const ItemForm = ({ userId }) => {
             </p>
           </div>
         </div>
-
-        {files[0] && (
-          <button
-            onClick={() =>
-              setPreviewImageStatus(isPreviewImageClicked ? false : true)
-            }
-          >
-            Lihat Gambar
-          </button>
-        )}
+        
         <input
           type="text"
           {...register("name", { required: true, maxLength: 150 })}
@@ -139,7 +134,7 @@ const ItemForm = ({ userId }) => {
           placeholder="Nama Barang"
         />
         <p className="text-red-500">
-          {errors.name?.type === "required" && "Tolong isi nama barang"}{" "}
+          {errors.name?.type === "required" && "Tolong isi nama barang"}
           {errors.name?.type === "maxLength" && "Nama barang terlalu panjang"}
         </p>
         <textarea

@@ -74,7 +74,7 @@ handler
       .skip(skip)
       .limit(2)
       .toArray((err, result) => {
-        if (err) return console.log(err);
+        if (err) return res.status(400).json({message : "Unable to get items data due to database error"});
         res.status(200).json({ result , itemsTotal});
       });
   });

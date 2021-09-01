@@ -1,5 +1,4 @@
 import Adapters from "next-auth/adapters";
-
 // Extend the built-in models using class inheritance
 export default class User extends Adapters.TypeORM.Models.User.model {
   // You can extend the options in a model but you should not remove the base
@@ -16,6 +15,14 @@ export default class User extends Adapters.TypeORM.Models.User.model {
     slug
   ) {
     super(name, email, image, emailVerified, phoneNumber, province, address, isVerified, slug);
+    this.slug = "";
+    this.name = "";
+    this.province = "";
+    this.address = "";
+    this.phoneNumber = "";
+    this.email = email;
+    this.image = image;
+    this.isVerified = false;
   }
 }
 

@@ -7,16 +7,19 @@ import { Loading } from "../../../state";
 import axios from "axios";
 import slugify from "slugify";
 import Slider from "react-slick";
+import router from "next/router";
 
 const UpdateItemForm = ({ item }) => {
   const [session, loading] = useSession();
-  const { isLoading, setLoadingStatus, setLoadingMessage, setSuccessStatus } =
+  const { setLoadingStatus, setLoadingMessage, setSuccessStatus } =
     useContext(Loading);
 
   const [previousImage, setPreviousImages] = useState(item.images);
   const [previewImage, setPreviewImages] = useState(item.images);
   const [selectedImages, setSelectedImages] = useState(item.images);
   const [deletedImages, setDeletedImages] = useState(item.images);
+  const [isImageSizeReachedLimit, setReachedStatus] = useState(false);
+  const [isDataNotChanged, setDataChangedStatus] = useState(true);
 
   const {
     handleSubmit,
@@ -25,16 +28,40 @@ const UpdateItemForm = ({ item }) => {
     setValue,
   } = useForm();
 
-  const updateItem = (updateData) => {
-    setLoadingStatus(true);
-    setLoadingMessage("Sedang Memperbarui Barang");
+  const isNothingChanged = (updatedData, selectedImages) => {
+    const previousItemData = {
+      images: {},
+      name: item.name,
+      description: item.description,
+      province: item.province,
+      address: item.address,
+      phoneNumber: item.phoneNumber,
+      email: item.email,
+    };
+    if (JSON.stringify(updatedData) === JSON.stringify(previousItemData)) {
+      return true;
+    }
 
-    if (!selectedImages[0] || selectedImages.length > 5) {
-      setLoadingStatus(false);
-      setLoadingMessage("Mohon Tunggu");
-      setSuccessStatus(false);
+    if (selectedImages === item.images) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const updateItem = (updateData) => {
+    if (isNothingChanged(updateData, selectedImages)) {
+      setDataChangedStatus(false);
       return;
     }
+
+    if (!selectedImages[0] || selectedImages.length > 5) {
+      setReachedStatus(true);
+      return;
+    }
+
+    setLoadingStatus(true);
+    setLoadingMessage("Memperbarui Barang");
 
     delete updateData["images"];
 
@@ -68,8 +95,8 @@ const UpdateItemForm = ({ item }) => {
         },
       })
       .then((res) => {
-        console.log("Masuk selesai")
-        setLoadingMessage("Barang berhasil di update");
+        console.log("Masuk selesai");
+        setLoadingMessage("Telah diperbarui");
         setSuccessStatus(true);
         let delay = setTimeout(() => {
           setLoadingStatus(false);
@@ -165,6 +192,7 @@ const UpdateItemForm = ({ item }) => {
   };
 
   useEffect(() => {
+    if (session?.user.id !== item.user_id || !session) router.back();
     return () => {
       previewImage.forEach((image) => {
         URL.revokeObjectURL(image);
@@ -172,8 +200,8 @@ const UpdateItemForm = ({ item }) => {
     };
   }, [session]);
 
-  if (!session) return <LoadingBox></LoadingBox>;
-  if (isLoading) return <LoadingBox></LoadingBox>;
+  if (!session && !item && loading) return <LoadingBox></LoadingBox>;
+  
 
   return (
     <>
@@ -189,7 +217,7 @@ const UpdateItemForm = ({ item }) => {
               {previewImage.map((image, index) => {
                 return (
                   <div className="relative rounded-lg w-full" key={index}>
-                    <img src={image} className="rounded-lg mx-auto"></img>
+                    <img src={image} className="rounded-lg mx-auto" alt={`Gambar dari ${item.name}`}></img>
                     <div
                       onClick={(e) => {
                         removeImage(index, previousImage[index]);
@@ -216,6 +244,10 @@ const UpdateItemForm = ({ item }) => {
             </Slider>
           </div>
 
+          {isImageSizeReachedLimit && (
+            <p className="text-red-500">Gambar minimal 1 maksimal 5</p>
+          )}
+
           <div className="flex">
             <div
               onClick={resetImages}
@@ -224,7 +256,7 @@ const UpdateItemForm = ({ item }) => {
               Balikan Semua Gambar
             </div>
 
-            {selectedImages.length != 5 && (
+            {selectedImages.length > !5 && (
               <label className="p-2 my-2 border border-blue-500 text-blue-500 hover:border-0 hover:bg-blue-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer">
                 Tambah Gambar
                 <input
@@ -240,6 +272,8 @@ const UpdateItemForm = ({ item }) => {
               </label>
             )}
           </div>
+
+          {!isDataNotChanged && <p>Belum Ada perubahan data</p>}
 
           <input
             type="text"

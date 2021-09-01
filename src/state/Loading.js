@@ -3,7 +3,7 @@ import {createContext} from 'react';
 const Loading  = createContext({
     isLoading : false,
     loadingMessage : 'Mohon Tunggu',
-    isSuccess : false,
+    isSuccess : null,
     setLoadingStatus : (status) => {},
     setLoadingMessage : (message)=> {},
     setSuccessStatus : (status) => {}

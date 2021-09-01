@@ -1,9 +1,10 @@
 import nextConnect from "next-connect";
 import parseMultipartForm from "../../../libs/multipartFormParser";
+import isAuthorized from '../../../libs/isAuthorized';
 import { connectToDatabase } from "../../../libs/database";
 import Cors from "cors";
 import { getSession } from "next-auth/client";
-import { ObjectID, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import slugify from "slugify";
 
 const handler = nextConnect();
@@ -11,10 +12,13 @@ Cors({
   methods: ["PUT"],
 });
 
+handler.use(isAuthorized);
+
 handler.use((req, res, next) => {
   req.uploadDir = "media/user";
   next();
 });
+
 handler.use(parseMultipartForm);
 
 handler.put(async (req, res) => {
@@ -26,7 +30,13 @@ handler.put(async (req, res) => {
       delete req.body["uploadDir"];
 
       const { name, email, images, phoneNumber, province, address } = req.body;
-      console.log("INI ISI FILENYA " + req.files);
+
+      const isDuplicateName = await db.collection("users").find({_id : {$nin : [ObjectId(session.user.id)] }, name : name}).count();
+
+      if(isDuplicateName){
+        return res.status(400).json({message : 'Nama telah di gunakan', status : 'DUPLICATE_NAME'});
+      }
+
 
       db.collection("users").updateOne(
         { _id: ObjectId(session.user.id) },
@@ -41,14 +51,14 @@ handler.put(async (req, res) => {
             province,
             address,
             slug: slugify(name),
-            isVerified: phoneNumber && province && address ? true : false,
-          },
+            isVerified : province ? true : false
+          }
         },
         { upsert: true }
       );
-      return res.status(200).json({ message: "Berhasil update" });
+      return res.status(200).json({ message: "Berhasil update", status : 'success' });
     } else {
-      res.status(401).json({ message: "please log in" });
+      res.status(401).json({ message: "please log in", status : 'fail' });
     }
   } catch (err) {
     console.log(err);

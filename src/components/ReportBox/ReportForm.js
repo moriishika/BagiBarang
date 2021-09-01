@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useSession } from "next-auth/client";
@@ -39,11 +39,21 @@ const ReportForm = (props) => {
       })
       .catch((err) => {
         console.log(err);
-        setLoadingStatus(false);
+        setLoadingMessage(err.response.data.message);
         setSuccessStatus(false);
-        setLoadingMessage("Mohon Tunggu");
+        let delay = setTimeout(() => {
+          setLoadingStatus(false);
+          setLoadingMessage("Mohon Tunggu");
+          setSuccessStatus(false);
+          props.closeReport();
+          clearTimeout(delay);
+        }, 1000);
       });
   };
+
+  useEffect(() => {
+    console.log(isLoading);
+  }, [])
 
   if(isLoading) return (
   <div className={`w-full h-40 my-8 rounded-lg ${isLoading ? 'bg-blue-300' : ''} ${isSuccess ? 'bg-green-300' : 'bg-red-300'} flex justify-center items-center`}>

@@ -1,11 +1,12 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import ReportBox from "../ReportBox";
 import MediaSlider from "../MediaSlider";
+import ShareButton from "../ShareButton";
 import axios from "axios";
 import { mutate } from "swr";
-import { session, useSession } from "next-auth/client";
-
+import { useSession } from "next-auth/client";
+import router from "next/router";
 
 let windowOffset = 0;
 const Item = (props) => {
@@ -13,10 +14,10 @@ const Item = (props) => {
 
   const [isOpened, setOpenedStatus] = useState(false);
   const [isDeleteModalOpened, setDeleteModalOpened] = useState(false);
-  
-
 
   const openReport = async () => {
+    if(!session) return router.push('/login');
+
     console.log(props.inItemDetail);
     windowOffset = window.scrollY;
     await setOpenedStatus(true);
@@ -27,18 +28,17 @@ const Item = (props) => {
   };
 
   const deleteItem = async (id) => {
-    mutate("/api/items/useritems/", async (items) => {
+    mutate(`/api/items/user/${session?.user?.id}?skip=0`, async (items) => {
       await axios.delete(`/api/items/${id}`).catch((err) => console.log(err));
-      const result = items.filter(item => item._id !== id);
-      return result;
+      const result = items.result.filter((item) => item._id !== id);
+      return { result: [...result], itemsTotal: items.itemsTotal };
     });
   };
 
-
   return (
-    <div className='w-full my-5 p-0'>
+    <div className="w-full xl:w-full md:w-4/5 my-5 p-0">
       {isDeleteModalOpened && (
-        <div className="top-0 fixed z-40 w-11/12 xl:w-2/5 h-full bg-black bg-opacity-20 flex justify-center items-center">
+        <div className="top-0 fixed z-40 w-11/12 w-full h-full left-0 bg-black bg-opacity-20 flex justify-center items-center">
           <div
             className="w-full h-full z-30"
             onClick={() => setDeleteModalOpened(false)}
@@ -67,12 +67,20 @@ const Item = (props) => {
 
       <div className="pb-4 flex justify-between items-center">
         <div className="flex items-center">
-          <img
-            src={props.item.uploader[0].image}
-            alt={props.item.name}
-            className="w-12 rounded-full"
-          />
-          <Link href={`/${props.item.uploader[0].slug}`}><a className="ml-3 font-medium">{props.item.uploader[0].name}</a></Link>
+          <Link href={`/${props.item.uploader[0].slug}`}>
+            <a>
+              <img
+                src={props.item.uploader[0].image}
+                alt={props.item.uploader[0].name}
+                className="w-12 rounded-full"
+              />
+            </a>
+          </Link>
+          <Link href={!session ? '/login' : `/${props.item.uploader[0].slug}`}>
+            <a className="ml-3 font-medium hover:text-blue-600">
+              {props.item.uploader[0].name}
+            </a>
+          </Link>
         </div>
         {props.item.user_id !== session?.user?.id && (
           <button
@@ -121,7 +129,7 @@ const Item = (props) => {
                   focusable="false"
                   data-prefix="fas"
                   data-icon="envelope"
-                  class="svg-inline--fa fa-envelope fa-w-16"
+                  className="svg-inline--fa fa-envelope fa-w-16"
                   role="img"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 512 512"
@@ -140,7 +148,7 @@ const Item = (props) => {
                   focusable="false"
                   data-prefix="fas"
                   data-icon="map-marked-alt"
-                  class="svg-inline--fa fa-map-marked-alt fa-w-18"
+                  className="svg-inline--fa fa-map-marked-alt fa-w-18"
                   role="img"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 576 512"
@@ -165,30 +173,21 @@ const Item = (props) => {
 
       {!props.inItemDetail && (
         <div className="flex w-full justify-between text-white text-3xl mt-4">
-          {!props.inProfile && (
+          {(!props.inProfile || props.item.user_id !== session?.user?.id) && (
             <>
-              <button className="bg-blue-400 w-1/6 p-2 rounded-md hover:bg-blue-700 duration-150 flex justify-center items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="fill-current text-white"
-                  height="35px"
-                  viewBox="0 0 24 24"
-                  width="35px"
-                  fill="#000000"
-                >
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92zM18 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM6 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm12 7.02c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z" />
-                </svg>
-              </button>
-              <Link href={`/items/detail/${props.item.slug}`}>
+              <ShareButton
+                title={props.item.name}
+                url={`https://bagibarang.com/items/detail/${props.item.slug}`}
+              ></ShareButton>
+              <Link href={!session ? '/login' : `/items/detail/${props.item.slug}`}>
                 <a className="bg-green-500 w-4/5 p-2 rounded-md hover:bg-green-700 duration-150 text-center">
-                  Detail 
+                  Detail
                 </a>
               </Link>
             </>
           )}
 
-          {props.inProfile && props.item.user_id === session?.user?.id &&(
+          {props.inProfile && props.item.user_id === session?.user?.id && (
             <>
               <button
                 onClick={() => setDeleteModalOpened(true)}
@@ -215,7 +214,7 @@ const Item = (props) => {
         <ReportBox
           openReport={openReport}
           closeReport={closeReport}
-          itemid = {props.item._id}
+          itemid={props.item._id}
         ></ReportBox>
       ) : (
         ""

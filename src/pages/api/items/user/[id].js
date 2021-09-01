@@ -1,13 +1,16 @@
-import { getSession } from "next-auth/client";
 import { ObjectId } from "mongodb";
 import nextConnect from "next-connect";
 import { connectToDatabase } from "../../../../libs/database";
 import Cors from "cors";
+import isAuthorized from '../../../../libs/isAuthorized';
 
 const handler = nextConnect();
-const cors = Cors({
+
+Cors({
   methods: ["GET", "UPDATE", "DELETE"],
 });
+
+handler.use(isAuthorized);
 
 handler.get(async (req, res) => {
   const {skip, id} = req.query;
@@ -15,7 +18,7 @@ handler.get(async (req, res) => {
   try {
     const { db } = await connectToDatabase();
 
-    const totalItems = await db.collection('items').find({user_id : ObjectId(id)}).count()
+    const itemsTotal = await db.collection('items').find({user_id : ObjectId(id)}).count()
 
     const result = await db
       .collection("items")
@@ -36,10 +39,8 @@ handler.get(async (req, res) => {
       .skip(parseInt(skip))
       .limit(2)
       .toArray();
-
-      console.log(totalItems);
     
-      res.status(200).json({result, totalItems});
+    res.status(200).json({result, itemsTotal});
   } catch (err) {
     console.log(err)
     res.status(400).json({ message: "failed to get items" });

@@ -2,10 +2,13 @@ import nextConnect from "next-connect";
 import Cors from "cors";
 import fs from "fs";
 import path from "path";
+import isAuthorized from '../../../libs/isAuthorized';
 
 const cors = Cors({
   methods: ["POST"],
 });
+
+handler.use(isAuthorized);
 
 const handler = nextConnect();
 

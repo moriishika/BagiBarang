@@ -4,6 +4,7 @@ import { useSession } from "next-auth/client";
 import { useForm } from "react-hook-form";
 import { LoadingBox } from "../../components";
 import { Loading } from "../../state";
+import router from 'next/router';
 import Link from "next/link";
 import slugify from "slugify";
 const ProfileBox = () => {
@@ -15,6 +16,7 @@ const ProfileBox = () => {
     handleSubmit,
     setError,
     formState: { errors },
+    setValue
   } = useForm();
   const [session, loading] = useSession();
   const [userImage, setUserImage] = useState(null);
@@ -23,6 +25,13 @@ const ProfileBox = () => {
   useEffect(() => {
     if (session) {
       setLoadingStatus(false);
+
+      setValue('name', session.user.name)
+      setValue('province', session.user.province);
+      setValue('phoneNumber', session.user.phoneNumber);
+      setValue('email', session.user.email);
+      setValue('address', session.user.address);
+
     } else {
       setLoadingStatus(true);
     }
@@ -51,6 +60,12 @@ const ProfileBox = () => {
     let formData = new FormData();
 
     console.log(data.images[0]);
+    
+    if(!session.user.isVerified){ 
+      formData.append('phoneNumber', session.user.phoneNumber);
+      formData.append('email', session.user.email);
+      formData.append('address', session.user.address);
+    }
 
     if (!data.images.length) {
       data.images = session.user.image;
@@ -71,22 +86,37 @@ const ProfileBox = () => {
     axios
       .put("http://localhost:3000/api/user/" + session.user.id, formData)
       .then((res) => {
+        setLoadingMessage("Berhasil di update");
+        setSuccessStatus(true);
         
-        setLoadingMessage('Berhasil di update')
-        setSuccessStatus(true)
-
         let delay = setTimeout(() => {
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");
           setSuccessStatus(false);
+          router.push(`/${slugify(session?.user?.name)}`)
           clearTimeout(delay);
         }, 1000);
 
       })
-      .catch((err) => console.log("error disiniiiiii", err));
+      .catch((err) => {
+        if(err.response.data.status === 'DUPLICATE_NAME'){
+          setLoadingMessage("Nama telah digunakan");
+
+          let delay = setTimeout(() => {
+            setLoadingStatus(false);
+            setLoadingMessage("Mohon Tunggu");
+            setSuccessStatus(false);
+            clearTimeout(delay);
+          }, 1000);
+
+        }
+      });
   };
 
   if (!session) return <LoadingBox></LoadingBox>;
+
+  if (session?.user?.isVerified) {
+  }
 
   return (
     <div className="flex h-screen justify-center items-center">
@@ -140,7 +170,6 @@ const ProfileBox = () => {
               required: true,
               minLength: 5,
               maxLength: 40,
-              value: session.user.name,
             })}
             placeholder="Nama"
             className="mt-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
@@ -149,49 +178,15 @@ const ProfileBox = () => {
           {errors.name?.type === "minLength" && "Minimal 5 huruf"}
           {errors.name?.type === "maxLength" && "Maksimal 40 huruf"}
 
-          <input
-            type="text"
-            {...register("phoneNumber", {
-              required: true,
-              pattern: /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
-              value: session.user.phoneNumber,
-            })}
-            placeholder="Nomer Telepon / Whatsapp"
-            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-          />
-          <p>
-            {errors.phoneNumber?.type === "required" &&
-              "Tolong isi nomor telepon / whatsapp anda"}
-            {errors.phoneNumber?.type === "pattern" &&
-              "Format nomor salah, Contoh : 085-123-456-789"}
-          </p>
-
-          <input
-            type="text"
-            {...register("email", {
-              required: true,
-              pattern:
-                /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
-              value: session.user.email,
-            })}
-            placeholder="Email"
-            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-          />
-          {errors.phoneNumber?.type === "required" &&
-            "Tolong isi alamat email anda"}
-          {errors.email?.type === "pattern" &&
-            "Format email salah, Contoh : emailanda@gmail.com"}
-
           <select
             {...register("province", {
               required: true,
-              value: session.user.province,
             })}
             name="province"
             className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
           >
             <option hidden value="">
-              Pilih Wilayah
+              Pilih Wilayah Anda
             </option>
             <option value="Aceh">Aceh</option>
             <option value="Bali">Bali</option>
@@ -232,34 +227,59 @@ const ProfileBox = () => {
           </select>
           {errors.province?.type === "required" && "Tolong pilih wilayah anda"}
 
-          <input
-            type="text"
-            {...register("address", {
-              required: true,
-              minLength: 5,
-              value: session.user.address,
-            })}
-            placeholder="Alamat yang jelas"
-            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-            multiple
-          />
-          {errors.address?.type === "required" && "Tolong beri alamat anda"}
-          {errors.address?.type === "minLength" && "Minimal 5 huruf"}
+          {session.user.isVerified && (
+            <>
+              <input
+                type="text"
+                {...register("phoneNumber", {
+                  pattern: /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
+                })}
+                placeholder="Nomer Telepon / Whatsapp"
+                className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+              />
+              <p>
+                {errors.phoneNumber?.type === "pattern" &&
+                  "Format nomor salah, Contoh : 085-123-456-789"}
+              </p>
 
+              <input
+                type="text"
+                {...register("email", {
+                  pattern:
+                    /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
+                })}
+                placeholder="Email yang dapat dihubungi penerima"
+                className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+              />
+              {errors.email?.type === "pattern" &&
+                "Format email salah, Contoh : emailanda@gmail.com"}
+
+              <input
+                type="text"
+                {...register("address", {
+                  minLength: 5,
+                })}
+                placeholder="Alamat yang sering digunakan"
+                className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+              />
+              {errors.address?.type === "minLength" && "Minimal 5 huruf"}
+            </>
+          )}
           <button
             type="submit"
             className="mt-8 hover:bg-transparent block border border-blue-500 w-full py-2 rounded-md mt-4 text-white hover:text-blue-500 font-semibold hover bg-blue-500 "
           >
             Simpan
           </button>
-
-          {session.user.province && (
-            <Link href={"/" + slugify(session.user.name)}>
-              <a className="hover:bg-transparent block border border-green-500 w-full py-2 rounded-md mt-4 text-white hover:text-green-500 font-semibold hover bg-green-500 text-center">
-                Kembali
-              </a>
-            </Link>
+          
+          {session.user.isVerified && (
+          <Link href={"/" + slugify(session.user.name)}>
+            <a className="hover:bg-transparent block border border-green-500 w-full py-2 rounded-md mt-4 text-white hover:text-green-500 font-semibold hover bg-green-500 text-center">
+              Kembali
+            </a>
+          </Link>
           )}
+
         </div>
       </form>
     </div>

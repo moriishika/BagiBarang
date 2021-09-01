@@ -4,19 +4,23 @@ import Cors from "cors";
 import { connectToDatabase } from "../../../libs/database";
 import { ObjectId } from "mongodb";
 import fs from "fs";
-import image from "next/image";
+import isAuthorized from '../../../libs/isAuthorized';
 
-const cors = Cors({
+Cors({
   methods: ["GET", "PUT", "DELETE"],
 });
 
 const handler = nextConnect();
 
+handler.use(isAuthorized);
+
 handler.use((req, res, next) => {
   req.uploadDir = "media/items";
   next();
 });
+
 handler.use(parseMultipartForm);
+
 handler
   .put(async (req, res) => {
     try {
