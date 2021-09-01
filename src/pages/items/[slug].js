@@ -1,3 +1,4 @@
+
 import Head from "next/head";
 import { connectToDatabase } from "../../libs/database";
 import { Item, Backbar, BottomNavbar } from "../../components";
@@ -64,8 +65,8 @@ export async function getStaticPaths() {
 
   const paths = resultItem.map((item) => {
     return {
-      params: {
-        slug: item.slug,
+      params: {	
+	slug: String(item.slug)
       },
     };
   });
