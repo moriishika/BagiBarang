@@ -235,6 +235,7 @@ const UpdateItemForm = ({ item }) => {
                         hidden
                         type="file"
                         name={`image-${index}`}
+                        accept="image/*;capture=camera"
                         onChange={(e) => {
                           e.preventDefault();
                           changePreviewImage(e.target.files[0], index);

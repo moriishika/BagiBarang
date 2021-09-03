@@ -161,12 +161,6 @@ const Item = (props) => {
                 <p className="ml-3">{props.item.address}</p>
               </div>
             </div>
-            <div className="w-full p-3 mt-8 bg-red-400 rounded-md">
-              <p className="text-white text-lg text-justify">
-                Perhatian : Jangan lupa bawa alat keamanan untuk berjaga - jaga,
-                pastikan keamanan anda pada saat bertemu pemberi / penerima
-              </p>
-            </div>
           </div>
         )}
       </div>
