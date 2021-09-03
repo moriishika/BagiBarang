@@ -2,16 +2,14 @@ import nextConnect from "next-connect";
 import parseMultipartForm from "../../../libs/multipartFormParser";
 import isAuthorized from '../../../libs/isAuthorized';
 import { connectToDatabase } from "../../../libs/database";
-import Cors from "cors";
 import { getSession } from "next-auth/client";
 import { ObjectId } from "mongodb";
 import slugify from "slugify";
+import Cors from 'cors';
+import  initMiddleware from '../../../libs/init-middleware';
 
 const handler = nextConnect();
-Cors({
-  methods: ["PUT"],
-});
-
+const cors= initMiddleware(Cors({methods : ['PUT']}))
 handler.use(isAuthorized);
 
 handler.use((req, res, next) => {
@@ -23,6 +21,7 @@ handler.use(parseMultipartForm);
 
 handler.put(async (req, res) => {
   try {
+    await cors(req, res);
     const session = await getSession({ req });
     if (session) {
       const { db } = await connectToDatabase();

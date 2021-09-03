@@ -83,7 +83,7 @@ const ProfileBox = () => {
     }
 
     axios
-      .put("http://localhost:3000/api/user/" + session.user.id, formData)
+      .put("/api/user/" + session.user.id, formData)
       .then((res) => {
         setLoadingMessage("Berhasil di update");
         setSuccessStatus(true);
