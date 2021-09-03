@@ -7,7 +7,6 @@ const EditProfile = () => {
   const [session, loading] = useSession();
   
   useEffect(() => {
-    console.log(session);
     if (!session) router.push('/login');
   }, [session]);
 

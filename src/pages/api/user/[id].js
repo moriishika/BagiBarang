@@ -8,6 +8,7 @@ import { ObjectId } from "mongodb";
 import slugify from "slugify";
 
 const handler = nextConnect();
+
 Cors({
   methods: ["PUT"],
 });
