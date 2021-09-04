@@ -8,9 +8,9 @@ const cors = Cors({
   methods: ["POST"],
 });
 
-handler.use(isAuthorized);
-
 const handler = nextConnect();
+
+handler.use(isAuthorized);
 
 handler.get(async (req, res) => {
   console.log(req.query.imagename);
