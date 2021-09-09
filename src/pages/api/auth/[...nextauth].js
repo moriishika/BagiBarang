@@ -26,7 +26,11 @@ const options = {
   ),
   callbacks: {
     async redirect(url, baseUrl) {
+<<<<<<< HEAD
       return url.startsWith(baseUrl) ? 'https://bagibarang.com' : "https://bagibarang.com";
+=======
+      return url.startsWith(baseUrl) ? "https://bagibarang.com" : baseUrl;
+>>>>>>> 77fb3c4adad51c1e04dac0fec97f9b3f4a366187
     },
     async session(session, token) {
       const { id, province, address, phoneNumber, isVerified, slug, name, image, email } = token;

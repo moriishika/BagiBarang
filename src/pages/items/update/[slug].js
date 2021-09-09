@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/client";
 import { Loading } from "../../../state";
 import axios from "axios";
-import slugify from "slugify";
 import Slider from "react-slick";
 import router from "next/router";
 
@@ -38,11 +37,8 @@ const UpdateItemForm = ({ item }) => {
       phoneNumber: item.phoneNumber,
       email: item.email,
     };
-    if (JSON.stringify(updatedData) === JSON.stringify(previousItemData)) {
-      return true;
-    }
 
-    if (selectedImages === item.images) {
+    if (JSON.stringify(updatedData) === JSON.stringify(previousItemData) && selectedImages === item.images) {
       return true;
     }
 
