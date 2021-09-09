@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import slugify from 'slugify';
 import { useSession } from 'next-auth/client';
-import router from 'next/router';
 
 const BottomNavbar = (props) => {
     const [session, loading] = useSession();
