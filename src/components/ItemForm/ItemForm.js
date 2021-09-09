@@ -118,7 +118,7 @@ const ItemForm = ({ userId }) => {
                 onChange={inputFileHandler}
                 name="images"
                 multiple
-                accept="image/*;capture=camera"
+                accept="image/*"
               />
             </label>
             <p className="text-red-500">

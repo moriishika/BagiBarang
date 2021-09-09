@@ -26,7 +26,7 @@ const options = {
   ),
   callbacks: {
     async redirect(url, baseUrl) {
-      return url.startsWith(baseUrl) ? "http://localhost:3000" : baseUrl;
+      return url.startsWith(baseUrl) ? 'https://bagibarang.com' : "https://bagibarang.com";
     },
     async session(session, token) {
       const { id, province, address, phoneNumber, isVerified, slug, name, image, email } = token;

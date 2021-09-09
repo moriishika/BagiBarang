@@ -109,7 +109,7 @@ const Profile = ({ user }) => {
                 Tidak
               </button>
               <button
-                onClick={signOut}
+                onClick={() => signOut({ callbackUrl: 'https://bagibarang.com/' })}
                 className="drop-shadow-red-md filter font-semibold bg-red-500 w-24 p-2 rounded-md hover:bg-red-700 duration-150 text-center"
               >
                 Iya
