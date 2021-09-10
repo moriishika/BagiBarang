@@ -200,6 +200,7 @@ export const getStaticProps = async ({ params }) => {
     props: {
       user: JSON.parse(JSON.stringify(user)),
     },
+   revalidate : 1
   };
 };
 

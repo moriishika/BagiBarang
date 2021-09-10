@@ -13,11 +13,6 @@ Cors({
   methods: ["PUT"],
 })
 
-<<<<<<< HEAD
-const cors= initMiddleware(Cors({methods : ['PUT']}))
-
-=======
->>>>>>> 77fb3c4adad51c1e04dac0fec97f9b3f4a366187
 handler.use(isAuthorized);
 
 handler.use((req, res, next) => {
