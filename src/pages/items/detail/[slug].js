@@ -6,15 +6,12 @@ import { useSession } from "next-auth/client";
 import router from "next/router";
 
 export default function ItemDetail({ item }) {
-  // shows a box if the user not verified yet where the box has
-  //message that the person hasn't set the address yet and a button where is
-  //going to lead him/her to update the account
-
-  // the protected are uploading, item detail, update item, looking to someone profiles
   const [session, loading] = useSession();
 
   if (!item && !loading && !session) return <LoadingBox></LoadingBox>;
-
+  
+  if (router.isFallback) return <LoadingBox></LoadingBox>;
+  
   if (!loading && !session) router.push("/login");
 
   return (
@@ -94,6 +91,6 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: "blocking",
+    fallback: true,
   };
 }

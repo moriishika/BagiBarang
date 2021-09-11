@@ -200,6 +200,7 @@ export const getStaticProps = async ({ params }) => {
     props: {
       user: JSON.parse(JSON.stringify(user)),
     },
+    revalidate: 1,
   };
 };
 
@@ -217,7 +218,7 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: "blocking",
+    fallback: true,
   };
 }
 
