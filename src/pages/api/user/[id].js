@@ -11,7 +11,7 @@ const handler = nextConnect();
 
 Cors({
   methods: ["PUT"],
-});
+})
 
 handler.use(isAuthorized);
 

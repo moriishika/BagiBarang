@@ -148,7 +148,8 @@ const ProfileBox = () => {
               <input
                 type="file"
                 className="hidden"
-                accept="image/*;capture=camera"
+                accept="image/*"
+		capture="camera"
                 {...userImageInput}
                 onChange={(e) => {
                   userImageInput.onChange(e);
