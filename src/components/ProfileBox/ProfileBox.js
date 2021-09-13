@@ -4,7 +4,7 @@ import { useSession } from "next-auth/client";
 import { useForm } from "react-hook-form";
 import { LoadingBox } from "../../components";
 import { Loading } from "../../state";
-import router from "next/router";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import slugify from "slugify";
 const ProfileBox = () => {
@@ -21,6 +21,8 @@ const ProfileBox = () => {
   const [session, loading] = useSession();
   const [userImage, setUserImage] = useState(null);
   const userImageInput = register("images");
+
+  const router = useRouter();
 
   useEffect(() => {
     if (session) {
@@ -92,7 +94,7 @@ const ProfileBox = () => {
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");
           setSuccessStatus(false);
-          router.push(`/${slugify(session?.user?.name)}`);
+          router.replace(`/${slugify(data.name)}`);
           clearTimeout(delay);
         }, 1000);
       })
@@ -149,7 +151,7 @@ const ProfileBox = () => {
                 type="file"
                 className="hidden"
                 accept="image/*"
-		capture="camera"
+                capture="camera"
                 {...userImageInput}
                 onChange={(e) => {
                   userImageInput.onChange(e);
@@ -160,9 +162,10 @@ const ProfileBox = () => {
           </div>
         </div>
         <div className="p-4 w-full mt-2">
-          
           {!session?.user.isVerified && (
-            <p className="text-center font-bold ">Nama dan wilayah harus diisi agar bisa mengakses setiap halaman</p>
+            <p className="text-center font-bold ">
+              Nama dan wilayah harus diisi agar bisa mengakses setiap halaman
+            </p>
           )}
 
           <input

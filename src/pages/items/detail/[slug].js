@@ -1,18 +1,20 @@
-
 import Head from "next/head";
 import { connectToDatabase } from "../../../libs/database";
 import { Item, Backbar, BottomNavbar, LoadingBox } from "../../../components";
 import { useSession } from "next-auth/client";
-import router from "next/router";
+import { useRouter } from "next/router";
 
 export default function ItemDetail({ item }) {
   const [session, loading] = useSession();
+  const router = useRouter();
 
   if (!item && !loading && !session) return <LoadingBox></LoadingBox>;
-  
-  if (router.isFallback) return <LoadingBox></LoadingBox>;
-  
+
   if (!loading && !session) router.push("/login");
+
+  if (router.isFallback) {
+    return <LoadingBox></LoadingBox>;
+  }
 
   return (
     <div>
@@ -31,7 +33,6 @@ export default function ItemDetail({ item }) {
           <BottomNavbar></BottomNavbar>
         </>
       )}
-      
     </div>
   );
 }
@@ -83,8 +84,8 @@ export async function getStaticPaths() {
 
   const paths = resultItem.map((item) => {
     return {
-      params: {	
-	slug: String(item.slug)
+      params: {
+        slug: String(item.slug),
       },
     };
   });

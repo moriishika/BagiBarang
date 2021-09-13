@@ -3,7 +3,6 @@ import Providers from "next-auth/providers";
 import Adapters from "next-auth/adapters";
 import Models from "../../../models";
 
-
 const options = {
   providers: [
     Providers.Google({
@@ -26,10 +25,20 @@ const options = {
   ),
   callbacks: {
     async redirect(url, baseUrl) {
-      return url.startsWith(baseUrl) ? 'https://bagibarang.com' : baseUrl;
+      return url.startsWith(baseUrl) ? process.env.NEXTAUTH_URL : baseUrl;
     },
     async session(session, token) {
-      const { id, province, address, phoneNumber, isVerified, slug, name, image, email } = token;
+      const {
+        id,
+        province,
+        address,
+        phoneNumber,
+        isVerified,
+        slug,
+        name,
+        image,
+        email,
+      } = token;
 
       session.user = {
         id,
@@ -46,7 +55,6 @@ const options = {
       return session;
     },
   },
-
   pages: {
     newUser: "/accounts/edit",
   },
