@@ -57,6 +57,7 @@ const options = {
   },
   pages: {
     newUser: "/accounts/edit",
+    error : '/login'
   },
 };
 

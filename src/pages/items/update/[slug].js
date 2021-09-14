@@ -10,7 +10,7 @@ import router from "next/router";
 
 const UpdateItemForm = ({ item }) => {
   const [session, loading] = useSession();
-  const { setLoadingStatus, setLoadingMessage, setSuccessStatus } =
+  const { setLoadingStatus, setLoadingMessage, setSuccessStatus, isLoading } =
     useContext(Loading);
 
   const [previousImage, setPreviousImages] = useState(item.images);
@@ -38,7 +38,10 @@ const UpdateItemForm = ({ item }) => {
       email: item.email,
     };
 
-    if (JSON.stringify(updatedData) === JSON.stringify(previousItemData) && selectedImages === item.images) {
+    if (
+      JSON.stringify(updatedData) === JSON.stringify(previousItemData) &&
+      selectedImages === item.images
+    ) {
       return true;
     }
 
@@ -188,8 +191,8 @@ const UpdateItemForm = ({ item }) => {
   };
 
   useEffect(() => {
-    if(!session) router.push('/login')
-    if(session?.user.id !== item.user_id) router.back();
+    if (!session) router.push("/login");
+    if (session?.user.id !== item.user_id) router.back();
     return () => {
       previewImage.forEach((image) => {
         URL.revokeObjectURL(image);
@@ -197,15 +200,16 @@ const UpdateItemForm = ({ item }) => {
     };
   }, [session]);
 
-  if(!session && !loading) return <div></div>;
-  if(session?.user.id !== item.user_id) return <div></div>;
-  
-  if (!session && !item && loading) return <LoadingBox></LoadingBox>;  
+  if (!session && !loading) return <div></div>;
+  if (session?.user.id !== item.user_id) return <div></div>;
+
+  if (!session && !item && loading) return <LoadingBox></LoadingBox>;
 
   return (
     <>
       <Backbar />
       <div className="flex justify-center">
+        {isLoading && <LoadingBox></LoadingBox>}
         <form
           onSubmit={handleSubmit(updateItem)}
           className="flex flex-col p-4 xl:w-2/5 w-full my-6 justify-center items-center"
@@ -216,7 +220,11 @@ const UpdateItemForm = ({ item }) => {
               {previewImage.map((image, index) => {
                 return (
                   <div className="relative rounded-lg w-full" key={index}>
-                    <img src={image} className="rounded-lg mx-auto" alt={`Gambar dari ${item.name}`}></img>
+                    <img
+                      src={image}
+                      className="rounded-lg mx-auto"
+                      alt={`Gambar dari ${item.name}`}
+                    ></img>
                     <div
                       onClick={(e) => {
                         removeImage(index, previousImage[index]);
@@ -434,7 +442,7 @@ export async function getServerSideProps({ query }) {
       },
     };
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return;
   }
 }

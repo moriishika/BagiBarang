@@ -7,6 +7,7 @@ import Backbar from "./Backbar";
 import LoadingBox from "./LoadingBox";
 import MediaSlider from "./MediaSlider";
 import CheckVerifiedStatus  from "./CheckVerifiedStatus";
+import LoginError from "./LoginError";
 export {
   TopNavbar,
   Items,
@@ -17,5 +18,6 @@ export {
   Backbar,
   LoadingBox,
   MediaSlider,
-  CheckVerifiedStatus
+  CheckVerifiedStatus,
+  LoginError
 };

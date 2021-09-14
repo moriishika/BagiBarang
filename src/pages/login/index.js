@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { signIn } from "next-auth/client";
-import { Backbar } from "../../components";
+import { Backbar, LoginError } from "../../components";
 import { useSession } from "next-auth/client";
-import router from "next/router";
+import { useRouter } from "next/router";
 
 const Login = () => {
   const [session, loading] = useSession();
+  const router = useRouter();
+  const { error } = useRouter().query;
 
   useEffect(() => {
     if (session) router.back();
@@ -16,10 +18,13 @@ const Login = () => {
   return (
     <div>
       <Backbar link="/"></Backbar>
-      <div className="w-11/12 xl:w-2/5 p-4 flex flex-col justify-center justify-items-center mx-auto">
+      <div className="w-11/12 xl:w-2/5 p-4 flex flex-col justify-center mx-auto">
         <h1 className="text-center my-4 font-semibold text-lg">
           Mau Barang? <br></br>Login Dulu Dong Gak lama kok
         </h1>
+
+        {error && <LoginError error={error}></LoginError>}
+
         <div className="flex flex-col mt-6">
           <button
             onClick={() => {

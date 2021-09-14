@@ -21,7 +21,7 @@ const BottomNavbar = (props) => {
         "w-full flex justify-center bg-white bottom-0 py-3 sticky z-50"
       }
     >
-      <Link href="/"  as="/" shallow={true}>
+      <Link href="/">
         <div className="flex flex-col items-center cursor-pointer">
           <a>
             <img src="/assets/icons/home.svg" className="w-10 h-10" />

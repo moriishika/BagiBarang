@@ -23,15 +23,13 @@ const Index = () => {
     if (data.itemsTotal !== data.result.length && skip < data.result.length) {
       setSearchingStatus(true);
       mutate(async (items) => {
-        const newData = await axios
-          .get(url)
-          .then((res) => {
-            if (res.data.result) {
-              setSearchingStatus(false);
-              setSkip((prev) => prev + 2);
-              return res.data.result;
-            }
-          });
+        const newData = await axios.get(url).then((res) => {
+          if (res.data.result) {
+            setSearchingStatus(false);
+            setSkip((prev) => prev + 2);
+            return res.data.result;
+          }
+        });
 
         return {
           result: [...items.result, ...newData],
@@ -46,7 +44,6 @@ const Index = () => {
   const loadMoreRef = useRef(null);
 
   const search = async (keywords, province) => {
-    
     if (keywords || province) {
       if (fetchToken) {
         fetchToken.cancel();
@@ -60,7 +57,6 @@ const Index = () => {
         })
         .then((res) => {
           mutate(() => {
-
             setSearchKeyword(keywords);
             setSearchProvince(province);
             setSkip(0);
@@ -69,7 +65,6 @@ const Index = () => {
           }, false);
         });
     } else {
-
       if (fetchToken) {
         fetchToken.cancel();
       }
@@ -127,13 +122,13 @@ const Index = () => {
     };
   }, [data]);
 
-  if (!data) return <LoadingBox></LoadingBox>;
   return (
     <>
       <Head>
         <title>Bagi Barang</title>
       </Head>
       <div className="h-full w-full">
+        {!data && <LoadingBox></LoadingBox>}
         <TopNavbar search={search}></TopNavbar>
 
         <Items
@@ -142,9 +137,16 @@ const Index = () => {
           keywords={searchKeyword}
           province={searchProvince}
         ></Items>
-        
-        <div className="w-full h-20 flex justify-center items-center" ref={loadMoreRef}>
-          {isSearching && <h1 className="text-2xl font-semibold">Sedang Meng-loding data 🤹‍♀️</h1>}
+
+        <div
+          className="w-full h-20 flex justify-center items-center"
+          ref={loadMoreRef}
+        >
+          {isSearching && (
+            <h1 className="text-2xl font-semibold">
+              Sedang Meng-loding data 🤹‍♀️
+            </h1>
+          )}
         </div>
         <BottomNavbar></BottomNavbar>
       </div>
