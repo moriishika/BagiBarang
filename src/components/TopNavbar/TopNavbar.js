@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Link from 'next/link';
+import Link from "next/link";
 const TopNavbar = ({ search }) => {
   const { register, handleSubmit, getValues } = useForm();
   //needs to change with only one handler and one state
@@ -13,7 +13,7 @@ const TopNavbar = ({ search }) => {
 
   useEffect(() => {
     //this condition is unnecessary
-    search(keywords ? keywords : "", province ? province : "");
+      search(keywords, province);
   }, [keywords, province]);
 
   return (
@@ -21,7 +21,9 @@ const TopNavbar = ({ search }) => {
       <div className=" w-11/12 xl:w-2/5 flex-col py-4">
         <form onSubmit={handleSubmit(searchItem)}>
           <div className="flex justify-between items-center">
-            <Link href='/' ><a className="font-bold text-2xl">Bagi Barang</a></Link>
+            <Link href="/">
+              <a className="font-bold text-2xl">Bagi Barang</a>
+            </Link>
             <div className="relative inline-block text-gray-700">
               <select
                 className="w-36 h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline"

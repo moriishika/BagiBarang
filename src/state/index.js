@@ -1,3 +1,4 @@
 import Loading from "./Loading";
+import FetchedData from "./FetchedData";
 
-export { Loading };
+export { Loading, FetchedData };

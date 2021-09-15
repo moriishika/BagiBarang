@@ -5,13 +5,15 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useState } from "react";
 import { Provider } from "next-auth/client";
-import { Loading } from "../state";
+import { Loading, FetchedData } from "../state";
 import { CheckVerifiedStatus } from "../components";
 
 const App = ({ Component, pageProps }) => {
   const [isLoading, setLoadingStatus] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("Mohon Tunggu");
   const [isSuccess, setSuccessStatus] = useState(false);
+  const [fetchedData, setFetchedData] = useState([]);
+  const [lastSkip, setLastSkip] = useState(0);
 
   return (
     <Provider session={pageProps.session}>
@@ -26,7 +28,16 @@ const App = ({ Component, pageProps }) => {
         }}
       >
         <CheckVerifiedStatus {...pageProps}>
-          <Component {...pageProps} />
+          <FetchedData.Provider
+            value={{
+              fetchedData,
+              setFetchedData,
+              lastSkip,
+              setLastSkip
+            }}
+          >
+            <Component {...pageProps} />
+          </FetchedData.Provider>
         </CheckVerifiedStatus>
       </Loading.Provider>
     </Provider>

@@ -21,7 +21,7 @@ const BottomNavbar = (props) => {
         "w-full flex justify-center bg-white bottom-0 py-3 sticky z-50"
       }
     >
-      <Link href="/">
+      <Link href="/" scroll={false}>
         <div className="flex flex-col items-center cursor-pointer">
           <a>
             <img src="/assets/icons/home.svg" className="w-10 h-10" />
@@ -30,7 +30,7 @@ const BottomNavbar = (props) => {
         </div>
       </Link>
 
-      <Link href={session ? "/upload-item" : "/login"}>
+      <Link href={session ? "/upload-item" : "/login"} scroll={false}>
         <div className="flex flex-col  items-center mx-8 cursor-pointer">
           <a>
             <img src="/assets/icons/handpackage.svg" className="w-10 h-10" />
