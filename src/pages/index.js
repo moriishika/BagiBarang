@@ -14,38 +14,61 @@ const Index = () => {
 
   let fetchToken;
 
-  const { data , mutate } = useSWR(`/api/items?skip=0`, fetcher, {
-    revalidateOnFocus: false,
-  });
+  const getInitialData = async () => {
+    try{
+      const data = await axios.get("/api/items?skip=0").then((res) => res.data);
+      setFetchedData([...data.result]);
+      setLastSkip(0);
+    }catch(err) { 
+      console.log(err);
+    }
+  };
+
+  const fetchMoreData = async (url) => {
+    console.log(url)
+    try {
+      const data = await axios.get(url).then(res => {
+        setLastSkip((skip) => skip + 2);
+        return res.data
+      });
+      setFetchedData((prevData) => [...prevData, ...data.result]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // const { data , mutate } = useSWR(`/api/items?skip=0`, fetcher, {
+  //   revalidateOnFocus: false,
+  // });
 
   const [isSearching, setSearchingStatus] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchProvince, setSearchProvince] = useState("");
 
-  const mutation = (url) => {
-    console.table(data.itemsTotal, data.result.length, lastSkip, fetchedData.length);
-    if (
-      data.itemsTotal !== data.result.length &&
-      lastSkip < data.result.length
-    ) {
-      setSearchingStatus(true);
-      mutate(async (items) => {
-        const newData = await axios.get(url).then((res) => {
-          if (res.data.result) {
-            setSearchingStatus(false);
-            setLastSkip((prev) => prev + 2);
-            return res.data.result;
-          }
-        });
-        return {
-          result: [...items.result, ...newData],
-          itemsTotal: items.itemsTotal,
-        };
-      }, false);
-    }
-  };
+  // const mutation = (url) => {
+  //   console.table(data.itemsTotal, data.result.length, lastSkip, fetchedData.length);
+  //   if (
+  //     data.itemsTotal !== data.result.length &&
+  //     lastSkip < data.result.length
+  //   ) {
+  //     setSearchingStatus(true);
+  //     mutate(async (items) => {
+  //       const newData = await axios.get(url).then((res) => {
+  //         if (res.data.result) {
+  //           setSearchingStatus(false);
+  //           setLastSkip((prev) => prev + 2);
+  //           return res.data.result;
+  //         }
+  //       });
+  //       return {
+  //         result: [...items.result, ...newData],
+  //         itemsTotal: items.itemsTotal,
+  //       };
+  //     }, false);
+  //   }
+  // };
 
-  const itemsData = data ? [].concat(...data.result) : [];
+  // const itemsData = data ? [].concat(...data.result) : [];
 
   const loadMoreRef = useRef(null);
 
@@ -54,59 +77,62 @@ const Index = () => {
       if (fetchToken) {
         fetchToken.cancel();
       }
-
       fetchToken = axios.CancelToken.source();
-
       await axios
         .get(`/api/items/search?q=${keywords}&province=${province}&skip=0`, {
           cancelToken: fetchToken.token,
         })
         .then((res) => {
-          mutate(() => {
             setSearchKeyword(keywords);
             setSearchProvince(province);
-              setLastSkip(0);
-
-            return { ...res.data };
-          }, false);
+            setLastSkip(0);
+            setFetchedData([...res.data.result]);
         });
     } else {
       if (fetchToken) {
         fetchToken.cancel();
       }
-
       fetchToken = axios.CancelToken.source();
-
       await axios
         .get("/api/items?skip=0", { cancelToken: fetchToken.token })
         .then((res) => {
-          mutate(() => {
-              setLastSkip(0);
-
             setSearchKeyword("");
             setSearchProvince("");
-            return {
-              result: res.data.result,
-              itemsTotal: res.data.itemsTotal,
-            };
-          }, false);
+            getInitialData()
         });
     }
   };
+
+  // const observerCallback = (entries) => {
+  //   try {
+  //     const [entry] = entries;
+  //     if (entry.isIntersecting) {
+  //       if (!searchKeyword) {
+  //         mutate(
+  //           `/api/items?skip=${ lastSkip + 2 }`
+  //         )
+  //       } else {
+  //        mutate(
+  //           `/api/items/search?q=${searchKeyword}&province=${searchProvince}&skip=${
+  //             lastSkip + 2
+  //           }`
+  //         )
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const observerCallback = (entries) => {
     try {
       const [entry] = entries;
       if (entry.isIntersecting) {
-        if (!searchKeyword) {
-          mutation(`/api/items?skip=${lastSkip + 2}`);
-        } else {
-          mutation(
-            `/api/items/search?q=${searchKeyword}&province=${searchProvince}&skip=${
-              lastSkip + 2
-            }`
-          );
-        }
+          if (!searchKeyword && !searchProvince) {
+            fetchMoreData(`/api/items?skip=${ lastSkip + 2 }`);
+          } else {
+            fetchMoreData(`/api/items/search?q=${searchKeyword}&province=${searchProvince}&skip=${lastSkip + 2}`);
+          }
       }
     } catch (err) {
       console.log(err);
@@ -119,18 +145,38 @@ const Index = () => {
     thershold: 1.0,
   };
 
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(observerCallback, options);
+  //   if (loadMoreRef.current) {
+  //     observer.observe(loadMoreRef.current);
+  //   }
+
+  //   setFetchedData([...itemsData]);
+
+  //   return () => {
+  //     if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
+  //   };
+  // }, [fetchedData]);
+
   useEffect(() => {
     const observer = new IntersectionObserver(observerCallback, options);
     if (loadMoreRef.current) {
       observer.observe(loadMoreRef.current);
     }
 
-    setFetchedData([...itemsData]);
-
     return () => {
       if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
     };
-  }, [data]);
+  }, [fetchedData]);
+
+  useEffect(() => {
+    
+    if (!fetchedData.length) {
+      getInitialData();
+    }
+
+    console.log(fetchedData);
+  }, []);
 
   return (
     <>
@@ -138,7 +184,7 @@ const Index = () => {
         <title>Bagi Barang</title>
       </Head>
       <div className="h-full w-full">
-        {!data && <LoadingBox></LoadingBox>}
+        {!fetchedData && <LoadingBox></LoadingBox>}
         <TopNavbar search={search}></TopNavbar>
 
         <Items

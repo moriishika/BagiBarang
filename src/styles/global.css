@@ -6,13 +6,13 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  font-family: 'Montserrat', sans-serif;
-  background-color: #F6F6F6;
+  font-family: "Montserrat", sans-serif;
+  background-color: #f6f6f6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#__next{
+#__next {
   width: 100%;
 }
 
@@ -20,24 +20,29 @@ body {
   border-radius: 2rem;
 }
 
-.slick-dots li div{
+.slick-dots li div {
   margin-top: 5px;
   margin-right: 2px;
   background-color: white;
-  border-color : black;
+  border-color: black;
 }
-.slick-dots li.slick-active div{
+.slick-dots li.slick-active div {
   background-color: black;
 }
 
-pre{
-  font-family: 'Montserrat', sans-serif;
+pre {
+  font-family: "Montserrat", sans-serif;
+  white-space: pre-wrap; 
+  white-space: -moz-pre-wrap; 
+  white-space: -pre-wrap; 
+  white-space: -o-pre-wrap; 
+  word-wrap: break-word;
 }
 
 .slick-arrow.slick-next::before {
- color: black;
+  color: black;
 }
 
 .slick-arrow.slick-prev::before {
   color: black;
- }
+}

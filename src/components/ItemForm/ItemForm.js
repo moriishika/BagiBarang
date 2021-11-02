@@ -2,34 +2,40 @@ import axios from "axios";
 import React, { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Loading } from "../../state";
-import {useSession} from 'next-auth/client';
-import router from 'next/router';
+import { useSession } from "next-auth/client";
+import router from "next/router";
+import Slider from "react-slick";
 
 const ItemForm = ({ userId }) => {
   const { setLoadingStatus, setLoadingMessage, setSuccessStatus } =
     useContext(Loading);
 
-    const [session, loading] = useSession()
+  const [session, loading] = useSession();
+  const [previousImage, setPreviousImages] = useState([]);
+  const [previewImage, setPreviewImages] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [deletedImages, setDeletedImages] = useState([]);
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
+    setValue,
   } = useForm();
 
-  const [files, setFile] = useState([]);
+  // const [files, setFile] = useState([]);
 
-  const inputFileHandler = ({ target }) => {
-    setFile(target.files);
-  };
+  // const inputFileHandler = ({ target }) => {
+  //   setFile(target.files);
+  // };
 
   const uploadItem = async (data) => {
-    if (!files[0] || files.length > 5) {
+    if (!selectedImages[0] || selectedImages.length > 5) {
       setLoadingStatus(false);
       setLoadingMessage("Mohon Tunggu");
       setSuccessStatus(false);
-      setFile(null);
+      setSelectedImages([]);
       return;
     }
 
@@ -42,8 +48,8 @@ const ItemForm = ({ userId }) => {
       formData.append(input, data[input]);
     }
 
-    for (const image in files) {
-      formData.append("images", files[image]);
+    for (const image in selectedImages) {
+      formData.append("images", selectedImages[image]);
     }
 
     formData.append("user_id", userId);
@@ -62,24 +68,111 @@ const ItemForm = ({ userId }) => {
           setLoadingMessage("Mohon Tunggu");
           setSuccessStatus(null);
           reset();
-          clearTimeout(delay)
+          clearTimeout(delay);
         }, 1000);
       })
       .catch((err) => {
         console.log(err);
         setLoadingStatus(false);
         setLoadingMessage("Mohon Tunggu");
-        setSuccessStatus(false)
+        setSuccessStatus(false);
       });
+  };
 
-     
+  const imagesInput = register("images");
+
+  const changePreviewImage = (image, i) => {
+    let selectedImage = [...selectedImages];
+    const images = [...previewImage];
+
+    URL.revokeObjectURL(images[i]);
+
+    selectedImage[i] = image;
+    setSelectedImages([...selectedImage]);
+
+    images[i] = URL.createObjectURL(image);
+    setPreviewImages(images);
+  };
+
+  const removeImage = (i, imagename) => {
+    const images = [...previewImage];
+    const selectedImage = [...selectedImages];
+    const imageStatus = [...deletedImages];
+    const previousImages = [...previousImage];
+
+    if (images.length === 1) return;
+
+    URL.revokeObjectURL(images[i]);
+
+    images.splice(i, 1);
+    selectedImage.splice(i, 1);
+
+    if (imageStatus.indexOf(imagename) !== -1) {
+      imageStatus[imageStatus.indexOf(imagename)] = "deleted";
+      previousImages.splice(i, 1);
+    }
+
+    setSelectedImages([...selectedImage]);
+    setPreviewImages([...images]);
+    setPreviousImages([...previousImages]);
+    setDeletedImages([...imageStatus]);
+  };
+
+  const resetImages = () => {
+    previewImage.forEach((image) => {
+      URL.revokeObjectURL(image);
+    });
+
+    setPreviewImages([]);
+    setSelectedImages([]);
+    setPreviousImages([]);
+    setDeletedImages([]);
+  };
+
+  const addPreviewImage = (images) => {
+    console.log(images);
+    let selectedImages = [];
+
+    for (let i = 0; i < images.length; i++) {
+      selectedImages.push(images[i]);
+    }
+
+    console.log(selectedImages);
+
+    setSelectedImages((prevImage) => [...prevImage, ...selectedImages]);
+    let blobImages = [];
+
+    for (let i = 0; i < images.length; i++) {
+      blobImages[i] = URL.createObjectURL(images[i]);
+    }
+
+    setPreviewImages((prevImage) => [...prevImage, ...blobImages]);
+    setValue("images", null);
+  };
+
+  const settings = {
+    infinite: false,
+    adaptiveHeight: true,
+    responsive: [
+      {
+        breakpoint: 790,
+        settings: {
+          arrows: false,
+        },
+      },
+    ],
   };
 
   useEffect(() => {
-    if(!session) router.back();
-  }, [session])
+    if (!session) router.back();
+    return () => {
+      previewImage.forEach((image) => {
+        URL.revokeObjectURL(image);
+      });
+    };
+  }, [session]);
 
-  if(!session && !loading) return <div className="min-h-screen"></div>
+  if (!session && !loading) return <div className="min-h-screen"></div>;
 
   return (
     <div className="flex justify-center">
@@ -90,43 +183,109 @@ const ItemForm = ({ userId }) => {
       >
         <div className="grid grid-cols-1 my-5 mx-7">
           <div className="flex flex-col items-center justify-center w-full">
-            <label className="flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-blue-300 hover:fill-current hover:text-blue-600 group">
-              <div className="flex flex-col items-center justify-center pt-7">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-12 h-12"
-                  enableBackground="new 0 0 24 24"
-                  viewBox="0 0 24 24"
-                >
-                  <g>
-                    <rect fill="none" height="24" width="24" />
-                  </g>
-                  <g>
+            {!previewImage.length && (
+              <label className="flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-blue-300 hover:fill-current hover:text-blue-600 group">
+                <div className="flex flex-col items-center justify-center pt-7">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-12 h-12"
+                    enableBackground="new 0 0 24 24"
+                    viewBox="0 0 24 24"
+                  >
                     <g>
-                      <path d="M20,2H4C3,2,2,2.9,2,4v3.01C2,7.73,2.43,8.35,3,8.7V20c0,1.1,1.1,2,2,2h14c0.9,0,2-0.9,2-2V8.7c0.57-0.35,1-0.97,1-1.69V4 C22,2.9,21,2,20,2z M19,20H5V9h14V20z M20,7H4V4h16V7z" />
-                      <rect height="2" width="6" x="9" y="12" />
+                      <rect fill="none" height="24" width="24" />
                     </g>
-                  </g>
-                </svg>
-                <p className="text-sm font-medium text-gray-600 group-hover:text-green-600 pt-1 tracking-wider">
-                  Pilih Foto Barang
-                </p>
-              </div>
-              <input
-                type="file"
-                className="hidden"
-                onChange={inputFileHandler}
-                name="images"
-                multiple
-                accept="image/*"
-              />
-            </label>
-            <p className="text-red-500">
-              {!files && "Tolong pilih gambar min 1 dan max 5 gambar"}
+                    <g>
+                      <g>
+                        <path d="M20,2H4C3,2,2,2.9,2,4v3.01C2,7.73,2.43,8.35,3,8.7V20c0,1.1,1.1,2,2,2h14c0.9,0,2-0.9,2-2V8.7c0.57-0.35,1-0.97,1-1.69V4 C22,2.9,21,2,20,2z M19,20H5V9h14V20z M20,7H4V4h16V7z" />
+                        <rect height="2" width="6" x="9" y="12" />
+                      </g>
+                    </g>
+                  </svg>
+                  <p className="text-sm font-medium text-gray-600 group-hover:text-green-600 pt-1 tracking-wider">
+                    Pilih Foto Barang
+                  </p>
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  name="images"
+                  multiple
+                  accept="image/*"
+                  {...imagesInput}
+                  onChange={(e) => {
+                    imagesInput.onChange(e);
+                    console.log(e.target.files);
+                    addPreviewImage(e.target.files);
+                  }}
+                />
+                <p className="text-red-500 text-center mt-1">
+              {!selectedImages.length && "Tolong pilih gambar min 1 dan max 5 gambar"}
             </p>
+              </label>
+            )}
+            <div className="w-full">
+              <Slider {...settings}>
+                {previewImage.map((image, index) => {
+                  return (
+                    <div className="relative rounded-lg w-full" key={index}>
+                      <img src={image} className="rounded-lg mx-auto"></img>
+                      <div
+                        onClick={(e) => {
+                          removeImage(index, previousImage[index]);
+                        }}
+                        className="w-24 p-1 bg-red-500 absolute text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
+                      >
+                        Hapus
+                      </div>
+                      <label className="w-24 p-1 bg-green-500 absolute text-white bottom-3 right-3 text-center font-bold rounded-md cursor-pointer">
+                        Ubah
+                        <input
+                          hidden
+                          type="file"
+                          name={`image-${index}`}
+                          accept="image/*;capture=camera"
+                          onChange={(e) => {
+                            e.preventDefault();
+                            changePreviewImage(e.target.files[0], index);
+                          }}
+                        ></input>
+                      </label>
+                    </div>
+                  );
+                })}
+              </Slider>
+            </div>
+
+            <div className="flex">
+              {selectedImages?.length > !5 && (
+                <>
+                  <div
+                    onClick={resetImages}
+                    className="p-2 my-2 mr-4 border border-yellow-500 text-yellow-500 hover:border-0 hover:bg-yellow-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
+                  >
+                    Balikan Semua Gambar
+                  </div>
+                  <label className="p-2 my-2 border border-blue-500 text-blue-500 hover:border-0 hover:bg-blue-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer">
+                    Tambah Gambar
+                    <input
+                      type="file"
+                      multiple
+                      hidden
+                      {...imagesInput}
+                      onChange={(e) => {
+                        imagesInput.onChange(e);
+                        addPreviewImage(e.target.files);
+                      }}
+                    ></input>
+                  </label>
+                </>
+              )}
+            </div>
+            
           </div>
         </div>
-        
+
         <input
           type="text"
           {...register("name", { required: true, maxLength: 150 })}

@@ -30,7 +30,7 @@ export default function ItemDetail({ item }) {
             <Item item={item} inItemDetail={true}></Item>
           </div>
 
-          <BottomNavbar></BottomNavbar>
+          {/* <BottomNavbar></BottomNavbar> */}
         </>
       )}
     </div>

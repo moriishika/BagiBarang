@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/client";
+import router from "next/router";
 
 const BottomNavbar = (props) => {
   const [session, setSession] = useState(null);
@@ -29,6 +30,13 @@ const BottomNavbar = (props) => {
           <p className="font-semibold">Beranda</p>
         </div>
       </Link>
+      {/* <div
+        className="flex flex-col items-center cursor-pointer"
+        onClick={() => router.push("/")}
+      >
+        <img src="/assets/icons/home.svg" className="w-10 h-10" />
+        <p className="font-semibold">Beranda</p>
+      </div> */}
 
       <Link href={session ? "/upload-item" : "/login"} scroll={false}>
         <div className="flex flex-col  items-center mx-8 cursor-pointer">
@@ -39,7 +47,12 @@ const BottomNavbar = (props) => {
         </div>
       </Link>
 
-      <Link href={session ? "/" + session.user.slug : "/login"}>
+      {/* <div className="flex flex-col  items-center mx-8 cursor-pointer" onClick={() => router.push(session ? "/upload-item" : "/login")}>
+          <img src="/assets/icons/handpackage.svg" className="w-10 h-10" />
+        <p className="font-semibold">Bagi Barangmu</p>
+      </div> */}
+
+      <Link href={session ? "/" + session.user.slug : "/login"} scroll={false}>
         <div className="flex flex-col  items-center cursor-pointer">
           <a>
             <img

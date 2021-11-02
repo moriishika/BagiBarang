@@ -173,11 +173,14 @@ const Item = (props) => {
                 title={props.item.name}
                 url={`https://bagibarang.com/items/detail/${props.item.slug}`}
               ></ShareButton>
-              <Link href={!session ? '/login' : `/items/detail/${props.item.slug}`}>
+              <Link href={!session ? '/login' : `/items/detail/${props.item.slug}`} scroll={false}>
                 <a className="bg-green-500 w-4/5 p-2 rounded-md hover:bg-green-700 duration-150 text-center">
                   Detail
                 </a>
               </Link>
+                {/* <div onClick={() => router.push(!session ? '/login' : `/items/detail/${props.item.slug}`)} className="bg-green-500 w-4/5 p-2 rounded-md hover:bg-green-700 duration-150 text-center">
+                  Detail
+                </div> */}
             </>
           )}
 

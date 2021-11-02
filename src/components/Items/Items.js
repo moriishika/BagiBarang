@@ -3,7 +3,7 @@ function Items({ items, inProfile, uploaderId, keywords, province }) {
   return (
     <div className="flex flex-col items-center  min-h-screen">
       <div className="flex flex-col w-11/12 lg:w-5/6 xl:w-2/5  items-center">
-        {!items.length && (
+        {!items?.length && (
           <div className="flex flex-col items-center justify-center">
             <h2 className="font-medium text-xl">
               Hmmm belum ada yang bagi barang 

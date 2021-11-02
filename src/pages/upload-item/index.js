@@ -13,7 +13,7 @@ const UploadItem = () => {
   return (
     <div>
       {isLoading ? <LoadingBox></LoadingBox> : null}
-      <Backbar link="/" />
+      <Backbar />
       <ItemForm userId={session ? session.user.id : null} />
       <BottomNavbar />
     </div>
