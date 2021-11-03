@@ -1,25 +1,12 @@
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-const TopNavbar = ({ search }) => {
-  const { register, handleSubmit, getValues } = useForm();
-  //needs to change with only one handler and one state
-  const [keywords, setKeyword] = useState("");
-  const [province, setProvince] = useState("");
-
-  const searchItem = () => {
-    search(keywords, province);
-  };
-
-  useEffect(() => {
-    //this condition is unnecessary
-      search(keywords, province);
-  }, [keywords, province]);
-
+const TopNavbar = ({ search, keywords, province }) => {
+  const { register } = useForm();
+  
   return (
     <div className="w-full flex justify-center bg-white sticky top-0 z-50">
       <div className=" w-11/12 xl:w-2/5 flex-col py-4">
-        <form onSubmit={handleSubmit(searchItem)}>
+        <form >
           <div className="flex justify-between items-center">
             <Link href="/">
               <a className="font-bold text-2xl">Bagi Barang</a>
@@ -28,7 +15,7 @@ const TopNavbar = ({ search }) => {
               <select
                 className="w-36 h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline"
                 {...register("province")}
-                onChange={(e) => setProvince(e.target.value)}
+                onChange={(e) => search(keywords, e.target.value)}
               >
                 <option hidden value="">
                   Pilih Wilayah
@@ -76,8 +63,7 @@ const TopNavbar = ({ search }) => {
           <input
             type="text"
             {...register("keywords")}
-            value={keywords}
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={(e) => search(e.target.value, province)}
             className="border-1 mt-3.5 py-3 pl-4 border-black focus:ring-0 focus:border-blue-500 block w-full shadow-sm sm:text-sm rounded-md"
             placeholder="Mau nyari barang apa hari ini?"
           />

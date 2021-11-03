@@ -15,6 +15,7 @@ const App = ({ Component, pageProps }) => {
   const [isSuccess, setSuccessStatus] = useState(false);
   const [fetchedData, setFetchedData] = useState([]);
   const [lastSkip, setLastSkip] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
     // history.scrollRestoration = "manual"
@@ -71,7 +72,9 @@ const App = ({ Component, pageProps }) => {
               fetchedData,
               setFetchedData,
               lastSkip,
-              setLastSkip
+              setLastSkip,
+              totalItems,
+              setTotalItems
             }}
           >
             <Component {...pageProps} />
