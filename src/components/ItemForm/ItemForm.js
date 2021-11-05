@@ -5,6 +5,7 @@ import { Loading } from "../../state";
 import { useSession } from "next-auth/client";
 import router from "next/router";
 import Slider from "react-slick";
+import resizeImage from "../../libs/compressBeforeUpload";
 
 const ItemForm = ({ userId }) => {
   const { setLoadingStatus, setLoadingMessage, setSuccessStatus } =
@@ -23,12 +24,6 @@ const ItemForm = ({ userId }) => {
     formState: { errors },
     setValue,
   } = useForm();
-
-  // const [files, setFile] = useState([]);
-
-  // const inputFileHandler = ({ target }) => {
-  //   setFile(target.files);
-  // };
 
   const uploadItem = async (data) => {
     if (!selectedImages[0] || selectedImages.length > 5) {
@@ -49,7 +44,10 @@ const ItemForm = ({ userId }) => {
     }
 
     for (const image in selectedImages) {
-      formData.append("images", selectedImages[image]);
+      let compressedImage = await resizeImage(selectedImages[image])
+      console.log(compressedImage);
+      console.log(selectedImages[image]);
+      formData.append("images", compressedImage);
     }
 
     formData.append("user_id", userId);
@@ -220,7 +218,7 @@ const ItemForm = ({ userId }) => {
                   }}
                 />
                 <p className="text-red-500 text-center mt-1">
-              {!selectedImages.length && "Tolong pilih gambar min 1 dan max 5 gambar"}
+              {!selectedImages.length && "Tolong pilih gambar min 1 dan maks 5 gambar"}
             </p>
               </label>
             )}

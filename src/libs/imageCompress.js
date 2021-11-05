@@ -8,7 +8,7 @@ const compressImage = (images) => {
   images.forEach((image) => {
     sharp(image.path)
       .resize(800, 800, { fit: "contain", gravity: "center",  background: { r: 255, g: 255, b: 255, alpha: 1 } })
-      .webp({ quality: 100 })
+      .webp({ quality: 80 })
       .toFile(`${image.path}.webp`)
       .then(() => {
         fs.unlinkSync(image.path);

@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import Head from "next/head";
 import { TopNavbar, Items, BottomNavbar, LoadingBox } from "../components";
-// import useSWR from "swr";
 import axios from "axios";
 import { FetchedData } from "../state";
-
-// const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 const Index = () => {
   const {
@@ -19,10 +16,8 @@ const Index = () => {
 
   const [skip, setSkip] = useState(lastSkip);
 
-  let fetchToken;
-
   const getInitialData = async () => {
-    const data = await axios.get("/api/items?skip=0").then((res) => {
+    await axios.get("/api/items?skip=0").then((res) => {
       setTotalItems(res.data.itemsTotal);
       setSkip(2);
       setFetchedData([...res.data.result]);
@@ -30,58 +25,39 @@ const Index = () => {
   };
 
   const fetchMoreData = async (url) => {
-    console.log(url);
+    setSearchingStatus(true);
     const data = await axios.get(url).then((res) => {
       return res.data;
     });
+    setSearchingStatus(false);
     setSkip((prev) => prev + 2);
-    setFetchedData((prevData) => [...prevData, ...data.result]);
+    if (
+      JSON.stringify(fetchedData[fetchedData.length - 1]) ===
+      JSON.stringify(data.result[0])
+    ) {
+      setFetchedData((prevData) => {
+        return [...prevData, data.result[1]];
+      });
+    } else {
+      setFetchedData((prevData) => [...prevData, ...data.result]);
+    }
   };
-
-  // const { data , mutate } = useSWR(`/api/items?skip=0`, fetcher, {
-  //   revalidateOnFocus: false,
-  // });
 
   const [isSearching, setSearchingStatus] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchProvince, setSearchProvince] = useState("");
 
-  // const mutation = (url) => {
-  //   console.table(data.itemsTotal, data.result.length, lastSkip, fetchedData.length);
-  //   if (
-  //     data.itemsTotal !== data.result.length &&
-  //     lastSkip < data.result.length
-  //   ) {
-  //     setSearchingStatus(true);
-  //     mutate(async (items) => {
-  //       const newData = await axios.get(url).then((res) => {
-  //         if (res.data.result) {
-  //           setSearchingStatus(false);
-  //           setLastSkip((prev) => prev + 2);
-  //           return res.data.result;
-  //         }
-  //       });
-  //       return {
-  //         result: [...items.result, ...newData],
-  //         itemsTotal: items.itemsTotal,
-  //       };
-  //     }, false);
-  //   }
-  // };
-
-  // const itemsData = data ? [].concat(...data.result) : [];
-
   const loadMoreRef = useRef(null);
+  let fetchToken;
 
   const search = async (keywords, province) => {
-    console.log("MASUK KE SEARCH");
     setSearchingStatus(true);
 
     if (keywords || province) {
-      console.log("masuk ke keyowrd search");
       if (fetchToken) {
         fetchToken.cancel();
       }
+
       fetchToken = axios.CancelToken.source();
 
       await axios
@@ -91,13 +67,13 @@ const Index = () => {
         .then((res) => {
           setSearchKeyword(keywords);
           setSearchProvince(province);
-          setTotalItems(res.data.itemsTotal)
+          setTotalItems(res.data.itemsTotal);
           setSearchingStatus(false);
           setSkip(0);
+          console.log("INI SEARCH", res.data.result);
           setFetchedData([...res.data.result]);
         });
     } else {
-      console.log("masuk ke else Search");
       if (fetchToken) {
         fetchToken.cancel();
       }
@@ -114,35 +90,11 @@ const Index = () => {
     }
   };
 
-  // const observerCallback = (entries) => {
-  //   try {
-  //     const [entry] = entries;
-  //     if (entry.isIntersecting) {
-  //       if (!searchKeyword) {
-  //         mutate(
-  //           `/api/items?skip=${ lastSkip + 2 }`
-  //         )
-  //       } else {
-  //        mutate(
-  //           `/api/items/search?q=${searchKeyword}&province=${searchProvince}&skip=${
-  //             lastSkip + 2
-  //           }`
-  //         )
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
   const observerCallback = (entries) => {
     try {
       const [entry] = entries;
       if (entry.isIntersecting) {
-        if (
-          totalItems !== fetchedData.length &&
-          skip < totalItems ) {
-          console.count("masuk");
+        if (totalItems !== fetchedData.length && skip < totalItems) {
           if (!searchKeyword && !searchProvince) {
             fetchMoreData(`/api/items?skip=${skip}`);
           } else {
@@ -165,26 +117,11 @@ const Index = () => {
     thershold: 1.0,
   };
 
-  // useEffect(() => {
-  //   const observer = new IntersectionObserver(observerCallback, options);
-  //   if (loadMoreRef.current) {
-  //     observer.observe(loadMoreRef.current);
-  //   }
-
-  //   setFetchedData([...itemsData]);
-
-  //   return () => {
-  //     if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
-  //   };
-  // }, [fetchedData]);
-
   useEffect(() => {
     const observer = new IntersectionObserver(observerCallback, options);
     if (loadMoreRef.current) {
       observer.observe(loadMoreRef.current);
     }
-
-    console.table([fetchedData, totalItems, lastSkip]);
 
     return () => {
       if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
@@ -193,15 +130,22 @@ const Index = () => {
   }, [fetchedData]);
 
   useEffect(() => {
+    const newDataChecker = async () => {
+      const data = await axios
+        .get("/api/items?skip=0")
+        .then((res) => res.data.result[0]);
+      if (JSON.stringify(data) !== JSON.stringify(fetchedData[0])) {
+        console.log("MASUK DI BENER");
+        setFetchedData((prev) => [data, ...prev]);
+      }
+    };
+
+    newDataChecker();
+
     if (!fetchedData.length) {
-      console.log("MASUK KESINI ");
       getInitialData();
     }
   }, []);
-
-  useEffect(() => {
-    console.table(["LAST SKIP", lastSkip]);
-  }, [lastSkip]);
 
   return (
     <>

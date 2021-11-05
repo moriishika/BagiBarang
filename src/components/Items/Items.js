@@ -15,7 +15,9 @@ function Items({ items, inProfile, uploaderId, keywords, province }) {
         )}
 
         {items &&
-          items.map((item, index) => {
+          items.map((item) => {
+            console.log("MASUK KE MAPPING ITEMS", item);
+            console.log(items);
             return (
               <Item
                 item={item}
