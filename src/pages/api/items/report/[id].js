@@ -51,8 +51,8 @@ handler.put(async (req, res) => {
       message: "Berhasil Melaporkan Barang",
       status: "REPORT_ITEM_SUCCESS",
     });
+
   } catch (err) {
-    console.log(err.response.data.message);
     res.status(400).json({
       message: "Unable to report item",
       status: "FAILED_TO_REPORT_ITEM",

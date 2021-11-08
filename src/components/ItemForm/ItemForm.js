@@ -33,6 +33,7 @@ const ItemForm = ({ userId }) => {
       setSelectedImages([]);
       return;
     }
+    
 
     setLoadingStatus(true);
     setLoadingMessage("Mengupload Gambar");
@@ -65,6 +66,10 @@ const ItemForm = ({ userId }) => {
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");
           setSuccessStatus(null);
+          router.push('/')
+          previewImage.forEach((image) => {
+            URL.revokeObjectURL(image);
+          });
           reset();
           clearTimeout(delay);
         }, 1000);
@@ -182,7 +187,7 @@ const ItemForm = ({ userId }) => {
         <div className="grid grid-cols-1 my-5 mx-7">
           <div className="flex flex-col items-center justify-center w-full">
             {!previewImage.length && (
-              <label className="flex flex-col border-4 border-dashed w-full h-36 hover:bg-gray-100 hover:border-blue-300 hover:fill-current hover:text-blue-600 group">
+              <label className="flex flex-col border-4 border-dashed w-full h-44 hover:bg-gray-100 hover:border-blue-300 hover:fill-current hover:text-blue-600 group">
                 <div className="flex flex-col items-center justify-center pt-7">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

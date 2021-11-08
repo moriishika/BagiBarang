@@ -3,7 +3,8 @@ module.exports = pwaConfig({
   pwa: {
     dest: "public",
   },
+
   experimental: {
-    scrollRestoration: true
-  }
+    scrollRestoration: true,
+  },
 });

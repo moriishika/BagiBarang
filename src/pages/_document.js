@@ -16,7 +16,7 @@ class MyDocument extends Document {
             rel="stylesheet"
           />
 
-          <link rel="shortcut icon" href="/bb.png" type="image/x-icon" />
+          <link rel="shortcut icon" href="/icon-512x512.png" type="image/x-icon" />
           <meta name="description" content="Bagi Barang Bagi Kebaikan" />
           <meta name="bagibarang" content="Bagi Barang" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -49,14 +49,14 @@ class MyDocument extends Document {
             href="/touch-icon-ipad-retina.png"
           />
 
-          <link rel="icon" type="image/png" sizes="32x32" href="/bb.png" />
-          <link rel="icon" type="image/png" sizes="16x16" href="/bb.png" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/icon-512x512.png" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/icon-512x512.png" />
           <link rel="manifest" href="/manifest.json" />
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <link rel="shortcut icon" href="/bb.ico" />
 
           <meta name="twitter:card" content="summary" />
-          <meta name="twitter:url" content="https://bagibarang.vercel.app/" />
+          <meta name="twitter:url" content="https://bagibarang.com/" />
           <meta name="twitter:title" content="Bagi Barang" />
           <meta
             name="twitter:description"
@@ -64,17 +64,17 @@ class MyDocument extends Document {
           />
           <meta
             name="twitter:image"
-            content="https://bagibarang.vercel.app/android-chrome-192x192.png"
+            content="https://bagibarang.com/android-chrome-192x192.png"
           />
           <meta name="twitter:creator" content="@moriishikaa" />
           <meta property="og:type" content="website" />
           <meta property="og:title" content="PWA App" />
           <meta property="og:description" content="Bagi Barang Bagi Kebaikan" />
           <meta property="og:site_name" content="Bagi Barang" />
-          <meta property="og:url" content="https://bagibarang.vercel.app" />
+          <meta property="og:url" content="https://bagibarang.com" />
           <meta
             property="og:image"
-            content="https://bagibarang.vercel.app/apple-touch-icon.png"
+            content="https://bagibarang.com/apple-touch-icon.png"
           />
         </Head>
         <body>

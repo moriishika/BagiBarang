@@ -7,6 +7,8 @@ import { Loading } from "../../state";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import slugify from "slugify";
+import resizeImage from "../../libs/compressBeforeUpload";
+
 const ProfileBox = () => {
   const { setLoadingStatus, setLoadingMessage, isLoading, setSuccessStatus } =
     useContext(Loading);
@@ -55,7 +57,7 @@ const ProfileBox = () => {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setLoadingMessage("Memperbarui profil");
     setLoadingStatus(true);
     let formData = new FormData();
@@ -71,9 +73,7 @@ const ProfileBox = () => {
     if (!data.images.length) {
       data.images = session.user.image;
     } else {
-      for (const image in data.images) {
-        formData.append("images", data.images[image]);
-      }
+        formData.append("images", await resizeImage(data.images[0]))
     }
 
     for (const input in data) {
@@ -261,7 +261,7 @@ const ProfileBox = () => {
                 {...register("address", {
                   minLength: 5,
                 })}
-                placeholder="Alamat yang sering digunakan"
+                placeholder="Alamat pengambilan barang"
                 className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
               />
               {errors.address?.type === "minLength" && "Minimal 5 huruf"}

@@ -1,4 +1,5 @@
 import Loading from "./Loading";
 import FetchedData from "./FetchedData";
+import ScrollPositition from "./ScrollPositition";
 
-export { Loading, FetchedData };
+export { Loading, FetchedData, ScrollPositition };

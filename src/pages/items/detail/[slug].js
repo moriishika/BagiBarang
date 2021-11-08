@@ -20,6 +20,20 @@ export default function ItemDetail({ item }) {
     <div>
       <Head>
         <title>{item.name}</title>
+        <meta name="title" content={`${item.name} GRATIS`}></meta>
+        <meta name="description" content="Bagi Barang Bagi Kebaikan"></meta>
+
+        <meta property="og:type" content="website"></meta>
+        <meta property="og:url" content="https://bagibarang.com/items/detail/Helm-bogo-masih-mulus-1636272209273"></meta>
+        <meta property="og:title" content={`${item.name} GRATIS`}></meta>
+        <meta property="og:description" content="Bagi Barang Bagi Kebaikan"></meta>
+        <meta property="og:image" content="https://bagibarang.com/apple-touch-icon.png"></meta>
+
+        <meta property="twitter:card" content="summary_large_image"></meta>
+        <meta property="twitter:url" content="https://bagibarang.com/items/detail/Helm-bogo-masih-mulus-1636272209273"></meta>
+        <meta property="twitter:title" content={`${item.name} GRATIS`}></meta>
+        <meta property="twitter:description" content="Bagi Barang Bagi Kebaikan"></meta>
+        <meta property="twitter:image" content="https://bagibarang.com/apple-touch-icon.png"></meta>
       </Head>
 
       {session && (

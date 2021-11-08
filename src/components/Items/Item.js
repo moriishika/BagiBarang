@@ -17,8 +17,6 @@ const Item = (props) => {
 
   const openReport = async () => {
     if(!session) return router.push('/login');
-
-    console.log(props.inItemDetail);
     windowOffset = window.scrollY;
     await setOpenedStatus(true);
   };
@@ -71,7 +69,6 @@ const Item = (props) => {
             <a>
               <img
                 src={props.item.uploader[0].image}
-                alt={props.item.uploader[0].name}
                 className="w-12 rounded-full"
               />
             </a>

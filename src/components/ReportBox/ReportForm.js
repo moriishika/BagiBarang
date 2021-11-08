@@ -38,10 +38,10 @@ const ReportForm = (props) => {
         }, 1000);
       })
       .catch((err) => {
-        console.log(err);
-        setLoadingMessage(err.response.data.message);
         setSuccessStatus(false);
+        setLoadingMessage(err.response.data.message);
         let delay = setTimeout(() => {
+          console.log(isSuccess)
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");
           setSuccessStatus(false);
@@ -51,12 +51,8 @@ const ReportForm = (props) => {
       });
   };
 
-  useEffect(() => {
-    console.log(isLoading);
-  }, [])
-
   if(isLoading) return (
-  <div className={`w-full h-40 my-8 rounded-lg ${isLoading ? 'bg-blue-300' : ''} ${isSuccess ? 'bg-green-300' : 'bg-red-300'} flex justify-center items-center`}>
+  <div className={`w-full h-40 my-8 rounded-lg  ${isLoading && 'bg-blue-300'} ${isSuccess &&'bg-green-300'} ${!isSuccess && 'bg-red-300'} flex justify-center items-center`}>
     <p className="text-white text-xl font-bold">{loadingMessage}</p>
   </div>)
   

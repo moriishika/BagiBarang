@@ -7,6 +7,7 @@ import { Loading } from "../../../state";
 import axios from "axios";
 import Slider from "react-slick";
 import router from "next/router";
+import resizeImage from "../../../libs/compressBeforeUpload";
 
 const UpdateItemForm = ({ item }) => {
   const [session, loading] = useSession();
@@ -48,7 +49,7 @@ const UpdateItemForm = ({ item }) => {
     return false;
   };
 
-  const updateItem = (updateData) => {
+  const updateItem = async (updateData) => {
     if (isNothingChanged(updateData, selectedImages)) {
       setDataChangedStatus(false);
       return;
@@ -77,7 +78,12 @@ const UpdateItemForm = ({ item }) => {
       if (typeof selectedImages[image] === "string") {
         path.push(selectedImages[image]);
       }
-      formData.append("images", selectedImages[image]);
+      if(typeof selectedImages[image] === "object"){
+        formData.append("images",  await resizeImage(selectedImages[image]));
+      }else{
+        formData.append("images",  selectedImages[image]);
+      }
+      console.log(selectedImages[image]);
       imageIndex.push(typeof selectedImages[image] === "object");
     }
 
@@ -295,7 +301,7 @@ const UpdateItemForm = ({ item }) => {
             placeholder="Nama Barang"
           />
           <p className="text-red-500">
-            {errors.name?.type === "required" && "Tolong isi nama barang"}{" "}
+            {errors.name?.type === "required" && "Tolong isi nama barang"}
             {errors.name?.type === "maxLength" && "Nama barang terlalu panjang"}
           </p>
           <textarea

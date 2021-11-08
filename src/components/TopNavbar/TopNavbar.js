@@ -4,7 +4,7 @@ const TopNavbar = ({ search, keywords, province }) => {
   const { register } = useForm();
   
   return (
-    <div className="w-full flex justify-center bg-white sticky top-0 z-50">
+    <div className="w-full flex justify-center bg-white sticky top-0 z-50" onClick={() => console.log(window.scrollY)}>
       <div className=" w-11/12 xl:w-2/5 flex-col py-4">
         <form >
           <div className="flex justify-between items-center">

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useContext } from "react";
 import Head from "next/head";
 import { TopNavbar, Items, BottomNavbar, LoadingBox } from "../components";
 import axios from "axios";
-import { FetchedData } from "../state";
+import { FetchedData, ScrollPositition } from "../state";
 
 const Index = () => {
   const {
@@ -13,6 +13,8 @@ const Index = () => {
     totalItems,
     setTotalItems,
   } = useContext(FetchedData);
+
+  const {scrollHeight, setScrollHeight} = useContext(ScrollPositition)
 
   const [skip, setSkip] = useState(lastSkip);
 
@@ -70,7 +72,6 @@ const Index = () => {
           setTotalItems(res.data.itemsTotal);
           setSearchingStatus(false);
           setSkip(0);
-          console.log("INI SEARCH", res.data.result);
           setFetchedData([...res.data.result]);
         });
     } else {
@@ -122,7 +123,7 @@ const Index = () => {
     if (loadMoreRef.current) {
       observer.observe(loadMoreRef.current);
     }
-
+    
     return () => {
       if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
       setLastSkip(skip);
@@ -135,7 +136,6 @@ const Index = () => {
         .get("/api/items?skip=0")
         .then((res) => res.data.result[0]);
       if (JSON.stringify(data) !== JSON.stringify(fetchedData[0])) {
-        console.log("MASUK DI BENER");
         setFetchedData((prev) => [data, ...prev]);
       }
     };
@@ -148,7 +148,7 @@ const Index = () => {
   }, []);
 
   return (
-    <>
+    <div>
       <Head>
         <title>Bagi Barang</title>
       </Head>
@@ -161,7 +161,6 @@ const Index = () => {
           keywords={searchKeyword}
           province={searchProvince}
         ></TopNavbar>
-
         <Items
           items={fetchedData}
           inProfile={false}
@@ -181,7 +180,7 @@ const Index = () => {
         </div>
         <BottomNavbar></BottomNavbar>
       </div>
-    </>
+    </div>
   );
 };
 export default Index;

@@ -1,6 +1,6 @@
 {
-  "short_name": "BagiBarang",
-  "name": "BagiBarang PWA",
+  "short_name": "Bagi Barang",
+  "name": "Bagi Barang",
   "icons": [
     {
       "src": "16x16.png",
@@ -23,12 +23,12 @@
       "type": "image/x-icon"
     },
     {
-      "src": "bb.png",
+      "src": "icon-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "bb.png",
+      "src": "icon-521x512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
