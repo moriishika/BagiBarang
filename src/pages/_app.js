@@ -8,6 +8,7 @@ import { Provider } from "next-auth/client";
 import { Loading, FetchedData, ScrollPositition } from "../state";
 import { CheckVerifiedStatus } from "../components";
 import Router from 'next/router';
+import * as ga from '../libs/ga';
 // import 'scroll-restoration-polyfill';
 
 const App = ({ Component, pageProps }) => {
@@ -32,19 +33,34 @@ const App = ({ Component, pageProps }) => {
     //   }, 100);
     //   return true;
     // });
-    const cachedPageHeight = []
-    const html = document.querySelector('html')
-    Router.events.on('routeChangeStart', () => {
-      cachedPageHeight.push(window.scrollY)
-    })
-    Router.events.on('routeChangeComplete', () => {
-      html.style.height = 'initial'
-    })
-    Router.beforePopState(() => {
-      html.style.height = `${cachedPageHeight.pop()}px`
-      return true
-    })
+    // const cachedPageHeight = []
+    // const html = document.querySelector('html')
+    // Router.events.on('routeChangeStart', () => {
+    //   cachedPageHeight.push(window.scrollY)
+    // })
+    // Router.events.on('routeChangeComplete', () => {
+    //   html.style.height = 'initial'
+    // })
+    // Router.beforePopState(() => {
+    //   html.style.height = `${cachedPageHeight.pop()}px`
+    //   return true
+    // })
   }, []);
+
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      ga.pageview(url)
+    }
+    //When the component is mounted, subscribe to router changes
+    //and log those page views
+    Router.events.on('routeChangeComplete', handleRouteChange)
+
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method
+    return () => {
+      Router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [Router.events])
 
   return (
     <Provider session={pageProps.session}>

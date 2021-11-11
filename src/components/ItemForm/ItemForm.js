@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Loading } from "../../state";
 import { useSession } from "next-auth/client";
@@ -23,20 +23,41 @@ const ItemForm = ({ userId }) => {
     reset,
     formState: { errors },
     setValue,
+    setError,
   } = useForm();
 
   const uploadItem = async (data) => {
+    console.log(errors.images?.type);
+    console.log(data);
     if (!selectedImages[0] || selectedImages.length > 5) {
       setLoadingStatus(false);
       setLoadingMessage("Mohon Tunggu");
       setSuccessStatus(false);
       setSelectedImages([]);
+      console.log("masuk ek erorr");
+      setError("images", {
+        type: "manual",
+        message: "Tolong pilih gambar min 1 dan maks 5 gambar",
+      });
+      console.log("masuk disini");
       return;
     }
-    
 
-    setLoadingStatus(true);
-    setLoadingMessage("Mengupload Gambar");
+    if (
+      !data.instagram &&
+      !data.phoneNumber &&
+      !data.facebook &&
+      !data.twitter
+    ) {
+      setError("instagram", {
+        type: "emptyValue",
+        message:
+          "Tolong cantumkan No. Telp atau Akun media sosial yang dapat dihubungi",
+      });
+      return;
+    }
+
+    console.log(data);
 
     let formData = new FormData();
 
@@ -45,11 +66,26 @@ const ItemForm = ({ userId }) => {
     }
 
     for (const image in selectedImages) {
-      let compressedImage = await resizeImage(selectedImages[image])
-      console.log(compressedImage);
-      console.log(selectedImages[image]);
-      formData.append("images", compressedImage);
+      // let compressedImage = await resizeImage(selectedImages[image])
+      // console.log(compressedImage);
+      console.log(selectedImages[image].type);
+      if (
+        ["image/jpg", "image/png", "image/gif", "image/jpeg", "image/webp"].includes(
+          selectedImages[image].type
+        )
+      ) {
+        formData.append("images", selectedImages[image]);
+      } else {
+        setError("images", {
+          type: "wrongFormat",
+          message: "Hanya format jpg, jpeg, gif, dan webp",
+        });
+        return;
+      }
     }
+
+    setLoadingStatus(true);
+    setLoadingMessage("Mengupload Gambar");
 
     formData.append("user_id", userId);
 
@@ -66,7 +102,7 @@ const ItemForm = ({ userId }) => {
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");
           setSuccessStatus(null);
-          router.push('/')
+          router.push("/");
           previewImage.forEach((image) => {
             URL.revokeObjectURL(image);
           });
@@ -132,21 +168,19 @@ const ItemForm = ({ userId }) => {
     setDeletedImages([]);
   };
 
-  const addPreviewImage = (images) => {
+  const addPreviewImage = async (images) => {
     console.log(images);
     let selectedImages = [];
 
     for (let i = 0; i < images.length; i++) {
-      selectedImages.push(images[i]);
+      selectedImages.push(await images[i]);
     }
-
-    console.log(selectedImages);
 
     setSelectedImages((prevImage) => [...prevImage, ...selectedImages]);
     let blobImages = [];
 
     for (let i = 0; i < images.length; i++) {
-      blobImages[i] = URL.createObjectURL(images[i]);
+      blobImages[i] = URL.createObjectURL(await images[i]);
     }
 
     setPreviewImages((prevImage) => [...prevImage, ...blobImages]);
@@ -183,6 +217,7 @@ const ItemForm = ({ userId }) => {
         onSubmit={handleSubmit(uploadItem)}
         className="flex flex-col p-4 md:w-4/5 xl:w-2/6 my-6 min-h-screen"
         encType="multipart/form-data"
+        autoComplete="off"
       >
         <div className="grid grid-cols-1 my-5 mx-7">
           <div className="flex flex-col items-center justify-center w-full">
@@ -222,11 +257,11 @@ const ItemForm = ({ userId }) => {
                     addPreviewImage(e.target.files);
                   }}
                 />
-                <p className="text-red-500 text-center mt-1">
-              {!selectedImages.length && "Tolong pilih gambar min 1 dan maks 5 gambar"}
-            </p>
               </label>
             )}
+            <p className="text-red-500 text-center mt-1">
+              {errors.images && errors.images.message}
+            </p>
             <div className="w-full">
               <Slider {...settings}>
                 {previewImage.map((image, index) => {
@@ -247,7 +282,7 @@ const ItemForm = ({ userId }) => {
                           hidden
                           type="file"
                           name={`image-${index}`}
-                          accept="image/*;capture=camera"
+                          accept="image/*"
                           onChange={(e) => {
                             e.preventDefault();
                             changePreviewImage(e.target.files[0], index);
@@ -267,7 +302,7 @@ const ItemForm = ({ userId }) => {
                     onClick={resetImages}
                     className="p-2 my-2 mr-4 border border-yellow-500 text-yellow-500 hover:border-0 hover:bg-yellow-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
                   >
-                    Balikan Semua Gambar
+                    Kosongkan Semua Gambar
                   </div>
                   <label className="p-2 my-2 border border-blue-500 text-blue-500 hover:border-0 hover:bg-blue-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer">
                     Tambah Gambar
@@ -275,6 +310,7 @@ const ItemForm = ({ userId }) => {
                       type="file"
                       multiple
                       hidden
+                      accept="image/*"
                       {...imagesInput}
                       onChange={(e) => {
                         imagesInput.onChange(e);
@@ -285,7 +321,6 @@ const ItemForm = ({ userId }) => {
                 </>
               )}
             </div>
-            
           </div>
         </div>
 
@@ -304,7 +339,7 @@ const ItemForm = ({ userId }) => {
           {...register("description")}
           name="description"
           className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-          placeholder="Deskripsi"
+          placeholder="Deskripsi barang atau kontak tambahan yang dapat dihubungi"
           cols={20}
           rows={6}
         />
@@ -367,21 +402,45 @@ const ItemForm = ({ userId }) => {
           {errors.address?.type === "required" &&
             "Tolong isi alamat pengambilan barang"}
         </p>
+
         <input
           type="tel"
           {...register("phoneNumber", {
-            required: true,
             pattern: /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/,
           })}
           name="phoneNumber"
           className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
           placeholder="Nomor Telepon / Whatsapp"
         />
+
         <p className="text-red-500">
-          {errors.phoneNumber?.type === "required" &&
-            "Tolong isi nomor telepon"}
           {errors.phoneNumber?.type === "pattern" &&
             "Format No. Telepon salah contoh: 087 123 345 678"}
+        </p>
+
+        <input
+          type="text"
+          {...register("instagram")}
+          name="instagram"
+          className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+          placeholder="Instagram"
+        />
+        <input
+          type="text"
+          {...register("facebook")}
+          name="facebook"
+          className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+          placeholder="Facebook"
+        />
+        <input
+          type="text"
+          {...register("twitter")}
+          name="twitter"
+          className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+          placeholder="Twitter"
+        />
+        <p className="text-red-500">
+          {errors.instagram?.type === "emptyValue" && errors.instagram.message}
         </p>
 
         <input

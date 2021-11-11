@@ -1,16 +1,20 @@
 import { useForm } from "react-hook-form";
-import Link from "next/link";
+import {useRouter} from 'next/router';
 const TopNavbar = ({ search, keywords, province }) => {
   const { register } = useForm();
-  
+  const router = useRouter();
+
   return (
-    <div className="w-full flex justify-center bg-white sticky top-0 z-50" onClick={() => console.log(window.scrollY)}>
+    <div
+      className="w-full flex justify-center bg-white sticky top-0 z-50"
+      onClick={() => console.log(window.scrollY)}
+    >
       <div className=" w-11/12 xl:w-2/5 flex-col py-4">
-        <form >
+        <form>
           <div className="flex justify-between items-center">
-            <Link href="/">
-              <a className="font-bold text-2xl">Bagi Barang</a>
-            </Link>
+            <div className="cursor-pointer">
+              <a className="font-bold text-2xl" onClick={() => router.reload()}>Bagi Barang</a>
+            </div>
             <div className="relative inline-block text-gray-700">
               <select
                 className="w-36 h-10 pl-3 pr-6 text-base placeholder-gray-600 border rounded-lg appearance-none focus:shadow-outline"

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useSession } from "next-auth/client";
@@ -7,6 +7,7 @@ import { Loading } from "../../state";
 const ReportForm = (props) => {
   const { register, handleSubmit } = useForm();
   const [session, loading] = useSession();
+  const [isReporting, setReportingStatus] = useState(false);
   const {
     setLoadingStatus,
     setLoadingMessage,
@@ -38,13 +39,13 @@ const ReportForm = (props) => {
         }, 1000);
       })
       .catch((err) => {
+        console.log('masuk error')
         setSuccessStatus(false);
         setLoadingMessage(err.response.data.message);
+        console.log(isSuccess);
         let delay = setTimeout(() => {
-          console.log(isSuccess)
-          setLoadingStatus(false);
-          setLoadingMessage("Mohon Tunggu");
           setSuccessStatus(false);
+          setLoadingMessage("Mohon Tunggu");
           props.closeReport();
           clearTimeout(delay);
         }, 1000);
@@ -52,8 +53,8 @@ const ReportForm = (props) => {
   };
 
   if(isLoading) return (
-  <div className={`w-full h-40 my-8 rounded-lg  ${isLoading && 'bg-blue-300'} ${isSuccess &&'bg-green-300'} ${!isSuccess && 'bg-red-300'} flex justify-center items-center`}>
-    <p className="text-white text-xl font-bold">{loadingMessage}</p>
+  <div className={`w-full h-40 my-8 rounded-lg  ${isLoading ? 'bg-blue-300' : ''} ${isSuccess ? 'bg-green-300' : 'bg-red-300'} flex justify-center items-center`}>
+    <p className="text-white text-base font-bold text-center">{loadingMessage}</p>
   </div>)
   
   return (

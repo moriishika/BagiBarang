@@ -92,6 +92,7 @@ const Index = () => {
   };
 
   const observerCallback = (entries) => {
+    console.table([totalItems, fetchedData.length, skip])
     try {
       const [entry] = entries;
       if (entry.isIntersecting) {

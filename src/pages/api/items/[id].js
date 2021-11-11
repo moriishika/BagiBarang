@@ -4,7 +4,7 @@ import Cors from "cors";
 import { connectToDatabase } from "../../../libs/database";
 import { ObjectId } from "mongodb";
 import fs from "fs";
-import isAuthorized from '../../../libs/isAuthorized';
+import isAuthorized from "../../../libs/isAuthorized";
 
 Cors({
   methods: ["GET", "PUT", "DELETE"],
@@ -24,18 +24,18 @@ handler.use(parseMultipartForm);
 handler
   .put(async (req, res) => {
     try {
-      console.log(req.body)
+      console.log(req.body);
       let fullpath = req.body.fullpath.split(",");
       let imagesName = req.body.imageName.split(",");
       // let images = req.body.images.split(',');
       let deletedImages = req.body.deletedImage.split(",");
-    
+
       console.log(deletedImages);
-      
+
       const deleted = [...deletedImages];
-      
+
       await deletedImages.forEach((isDeleted) => {
-        console.log(imagesName)
+        console.log(imagesName);
         if (isDeleted === "deleted") {
           fs.unlinkSync(
             process.cwd() +
@@ -45,10 +45,10 @@ handler
               imagesName[deleted.indexOf(isDeleted)] +
               ".webp"
           );
-          console.log(deleted.indexOf(isDeleted))
+          console.log(deleted.indexOf(isDeleted));
           fullpath.splice(deleted.indexOf(isDeleted), 1);
           imagesName.splice(deleted.indexOf(isDeleted), 1);
-          deleted.splice(deleted.indexOf(isDeleted), 1)
+          deleted.splice(deleted.indexOf(isDeleted), 1);
         }
       });
 
@@ -85,8 +85,17 @@ handler
         });
       }
 
-      const { name, email, phoneNumber, province, address, description } =
-        req.body;
+      const {
+        name,
+        email,
+        phoneNumber,
+        instagram,
+        facebook,
+        twitter,
+        province,
+        address,
+        description,
+      } = req.body;
 
       const { id } = req.query;
       const { db } = await connectToDatabase();
@@ -99,13 +108,16 @@ handler
             images: fullpath,
             imagesName,
             phoneNumber,
+            instagram,
+            facebook,
+            twitter,
             province,
             address,
             description,
           },
         }
       );
-      res.status(200).json({message : 'Update Success'})
+      res.status(200).json({ message: "Update Success" });
     } catch (error) {
       console.log(error);
       res.status(400).json({ message: "Failed to Update Data" });

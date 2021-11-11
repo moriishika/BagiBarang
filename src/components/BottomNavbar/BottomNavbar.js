@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/client";
-import router from "next/router";
-
 const BottomNavbar = (props) => {
   const [session, setSession] = useState(null);
 

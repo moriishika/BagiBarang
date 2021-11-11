@@ -26,6 +26,7 @@ const UpdateItemForm = ({ item }) => {
     register,
     formState: { errors },
     setValue,
+    setError,
   } = useForm();
 
   const isNothingChanged = (updatedData, selectedImages) => {
@@ -36,6 +37,9 @@ const UpdateItemForm = ({ item }) => {
       province: item.province,
       address: item.address,
       phoneNumber: item.phoneNumber,
+      instagram: item.instagram,
+      facebook: item.facebook,
+      twitter: item.twitter,
       email: item.email,
     };
 
@@ -60,8 +64,21 @@ const UpdateItemForm = ({ item }) => {
       return;
     }
 
-    setLoadingStatus(true);
-    setLoadingMessage("Memperbarui Barang");
+    if (
+      !updateData.instagram &&
+      !updateData.phoneNumber &&
+      !updateData.facebook &&
+      !updateData.twitter
+    ) {
+      setError("instagram", {
+        type: "emptyValue",
+        message:
+          "Tolong cantumkan No. Telp atau Akun media sosial yang dapat dihubungi",
+      });
+      return;
+    }
+
+    
 
     delete updateData["images"];
 
@@ -78,10 +95,27 @@ const UpdateItemForm = ({ item }) => {
       if (typeof selectedImages[image] === "string") {
         path.push(selectedImages[image]);
       }
-      if(typeof selectedImages[image] === "object"){
-        formData.append("images",  await resizeImage(selectedImages[image]));
-      }else{
-        formData.append("images",  selectedImages[image]);
+      if (typeof selectedImages[image] === "object") {
+        if (
+          [
+            "image/jpg",
+            "image/png",
+            "image/gif",
+            "image/jpeg",
+            "image/webp",
+          ].includes(selectedImages[image].type)
+        ) {
+          formData.append("images", await resizeImage(selectedImages[image]));
+        } else {
+          setError("images", {
+            type: "wrongFormat",
+            message: "Hanya format jpg, jpeg, gif, dan webp",
+          });
+
+          return;
+        }
+      } else {
+        formData.append("images", selectedImages[image]);
       }
       console.log(selectedImages[image]);
       imageIndex.push(typeof selectedImages[image] === "object");
@@ -92,6 +126,9 @@ const UpdateItemForm = ({ item }) => {
     formData.append("imageName", item.imagesName);
     formData.append("fullpath", item.images);
     formData.append("deletedImage", deletedImages);
+
+    setLoadingStatus(true);
+    setLoadingMessage("Memperbarui Barang");
 
     axios
       .put(`/api/items/${item._id}`, formData, {
@@ -108,6 +145,7 @@ const UpdateItemForm = ({ item }) => {
           setLoadingMessage("Mohon Tunggu");
           setSuccessStatus(false);
           clearTimeout(delay);
+          router.push(`/${session.user.slug}`);
         }, 1000);
       })
       .catch((error) => {
@@ -245,7 +283,7 @@ const UpdateItemForm = ({ item }) => {
                         hidden
                         type="file"
                         name={`image-${index}`}
-                        accept="image/*;capture=camera"
+                        accept="image/*"
                         onChange={(e) => {
                           e.preventDefault();
                           changePreviewImage(e.target.files[0], index);
@@ -262,6 +300,8 @@ const UpdateItemForm = ({ item }) => {
             <p className="text-red-500">Gambar minimal 1 maksimal 5</p>
           )}
 
+          {errors.images && <p className="text-red-500 my-3"> {errors.images.message} </p>}
+
           <div className="flex">
             <div
               onClick={resetImages}
@@ -277,6 +317,7 @@ const UpdateItemForm = ({ item }) => {
                   type="file"
                   multiple
                   hidden
+                  accept="image/*"
                   {...imagesInput}
                   onChange={(e) => {
                     imagesInput.onChange(e);
@@ -308,7 +349,7 @@ const UpdateItemForm = ({ item }) => {
             {...register("description", { value: item.description })}
             name="description"
             className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-            placeholder="Deskripsi"
+            placeholder="Deskripsi barang atau kontak tambahan yang dapat dihubungi"
             cols={20}
             rows={6}
           />
@@ -377,19 +418,44 @@ const UpdateItemForm = ({ item }) => {
           <input
             type="tel"
             {...register("phoneNumber", {
-              required: true,
               pattern: /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/,
               value: item.phoneNumber,
             })}
             name="phoneNumber"
             className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-            placeholder="Nomor Telepon / Whatsapp"
+            placeholder="Nomor Telepon / Whatsapp | Tidak Wajib"
           />
           <p className="text-red-500">
-            {errors.phoneNumber?.type === "required" &&
-              "Tolong isi nomor telepon"}
             {errors.phoneNumber?.type === "pattern" &&
               "Format No. Telepon salah contoh: 087 123 345 678"}
+          </p>
+
+          <input
+            type="text"
+            {...register("instagram", {
+              value: item.instagram,
+            })}
+            name="instagram"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Instagram"
+          />
+          <input
+            type="text"
+            {...register("facebook", { value: item.facebook })}
+            name="facebook"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Facebook"
+          />
+          <input
+            type="text"
+            {...register("twitter", { value: item.instagram })}
+            name="twitter"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Twitter"
+          />
+          <p className="text-red-500">
+            {errors.instagram?.type === "emptyValue" &&
+              errors.instagram.message}
           </p>
 
           <input

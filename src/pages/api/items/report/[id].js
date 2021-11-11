@@ -26,7 +26,7 @@ handler.put(async (req, res) => {
         _id: ObjectId(id),
         reports: {
           $exists: true,
-          $elemMatch: { userid: session.user.id() },
+          $elemMatch: { userid: session.user.id },
         },
       })
       .count();
@@ -53,6 +53,7 @@ handler.put(async (req, res) => {
     });
 
   } catch (err) {
+    console.log(err);
     res.status(400).json({
       message: "Unable to report item",
       status: "FAILED_TO_REPORT_ITEM",

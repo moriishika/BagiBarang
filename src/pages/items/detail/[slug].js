@@ -1,6 +1,12 @@
 import Head from "next/head";
 import { connectToDatabase } from "../../../libs/database";
-import { Item, Backbar, BottomNavbar, LoadingBox } from "../../../components";
+import {
+  Item,
+  Backbar,
+  BottomNavbar,
+  LoadingBox,
+  ShareButton,
+} from "../../../components";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 
@@ -24,16 +30,34 @@ export default function ItemDetail({ item }) {
         <meta name="description" content="Bagi Barang Bagi Kebaikan"></meta>
 
         <meta property="og:type" content="website"></meta>
-        <meta property="og:url" content="https://bagibarang.com/items/detail/Helm-bogo-masih-mulus-1636272209273"></meta>
+        <meta
+          property="og:url"
+          content="https://bagibarang.com/items/detail/Helm-bogo-masih-mulus-1636272209273"
+        ></meta>
         <meta property="og:title" content={`${item.name} GRATIS`}></meta>
-        <meta property="og:description" content="Bagi Barang Bagi Kebaikan"></meta>
-        <meta property="og:image" content="https://bagibarang.com/apple-touch-icon.png"></meta>
+        <meta
+          property="og:description"
+          content="Bagi Barang Bagi Kebaikan"
+        ></meta>
+        <meta
+          property="og:image"
+          content="https://bagibarang.com/apple-touch-icon.png"
+        ></meta>
 
         <meta property="twitter:card" content="summary_large_image"></meta>
-        <meta property="twitter:url" content="https://bagibarang.com/items/detail/Helm-bogo-masih-mulus-1636272209273"></meta>
+        <meta
+          property="twitter:url"
+          content="https://bagibarang.com/items/detail/Helm-bogo-masih-mulus-1636272209273"
+        ></meta>
         <meta property="twitter:title" content={`${item.name} GRATIS`}></meta>
-        <meta property="twitter:description" content="Bagi Barang Bagi Kebaikan"></meta>
-        <meta property="twitter:image" content="https://bagibarang.com/apple-touch-icon.png"></meta>
+        <meta
+          property="twitter:description"
+          content="Bagi Barang Bagi Kebaikan"
+        ></meta>
+        <meta
+          property="twitter:image"
+          content="https://bagibarang.com/apple-touch-icon.png"
+        ></meta>
       </Head>
 
       {session && (
@@ -42,6 +66,7 @@ export default function ItemDetail({ item }) {
 
           <div className="flex justify-center m-auto w-11/12 xl:w-2/5">
             <Item item={item} inItemDetail={true}></Item>
+            
           </div>
 
           <BottomNavbar></BottomNavbar>

@@ -46,14 +46,17 @@ const ProfileBox = () => {
 
   const handleImage = (e) => {
     if (
-      ["image/jpg", "image/jpeg", "image/png", "image/webp"].includes(
+      ["image/jpg", "image/jpeg", "image/png", "image/webp",'image/gif'].includes(
         e.target.files[0].type
       )
     ) {
       console.log(e.target.files[0]);
       setUserImage(URL.createObjectURL(e.target.files[0]));
     } else {
-      setError("invalidType", {});
+      setError("images", {
+        type : 'invalidType',
+        message : 'Hanya format jpg, jpeg, gif, dan webp'
+      });
     }
   };
 
@@ -150,6 +153,7 @@ const ProfileBox = () => {
               <input
                 type="file"
                 className="hidden"
+                accept="image/*"
                 {...userImageInput}
                 onChange={(e) => {
                   userImageInput.onChange(e);
@@ -157,6 +161,7 @@ const ProfileBox = () => {
                 }}
               />
             </label>
+            {errors.images && <p className="text-red-500 my-3"> {errors.images.message} </p>}
           </div>
         </div>
         <div className="p-4 w-full mt-2">
