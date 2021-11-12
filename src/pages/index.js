@@ -93,6 +93,7 @@ const Index = () => {
 
   const observerCallback = (entries) => {
     console.table([totalItems, fetchedData.length, skip])
+    
     try {
       const [entry] = entries;
       if (entry.isIntersecting) {
@@ -131,11 +132,32 @@ const Index = () => {
     };
   }, [fetchedData]);
 
+  const saveScrollHeight = () => {
+    console.log(window.scrollY);
+    setScrollHeight(window.scrollY)
+  }
+
   useEffect(() => {
+    document.addEventListener('wheel', saveScrollHeight)
+    return () => {
+        document.removeEventListener('wheel', saveScrollHeight)
+    }
+}, [saveScrollHeight])
+
+  useEffect(() => {
+    console.table(["scroll h state", scrollHeight])
+    
+    
+
     const newDataChecker = async () => {
       const data = await axios
         .get("/api/items?skip=0")
-        .then((res) => res.data.result[0]);
+        .then((res) => {
+          window.scrollTo({
+            top: scrollHeight
+          })
+          return res.data.result[0]
+        });
       if (JSON.stringify(data) !== JSON.stringify(fetchedData[0])) {
         setFetchedData((prev) => [data, ...prev]);
       }
@@ -145,6 +167,7 @@ const Index = () => {
 
     if (!fetchedData.length) {
       getInitialData();
+      
     }
   }, []);
 
