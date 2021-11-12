@@ -46,3 +46,10 @@ pre {
 .slick-arrow.slick-prev::before {
   color: black;
 }
+
+.slick-slide img {
+  height: 100%;
+  width: 100%;
+  border: 2.5px solid white;
+  box-sizing: border-box;
+}

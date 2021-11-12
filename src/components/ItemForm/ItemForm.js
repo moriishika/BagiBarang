@@ -70,9 +70,13 @@ const ItemForm = ({ userId }) => {
       // console.log(compressedImage);
       console.log(selectedImages[image].type);
       if (
-        ["image/jpg", "image/png", "image/gif", "image/jpeg", "image/webp"].includes(
-          selectedImages[image].type
-        )
+        [
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/jpeg",
+          "image/webp",
+        ].includes(selectedImages[image].type)
       ) {
         formData.append("images", selectedImages[image]);
       } else {
@@ -180,7 +184,7 @@ const ItemForm = ({ userId }) => {
     let blobImages = [];
 
     for (let i = 0; i < images.length; i++) {
-      blobImages[i] = URL.createObjectURL(await images[i]);
+      blobImages[i] = await URL.createObjectURL(await images[i]);
     }
 
     setPreviewImages((prevImage) => [...prevImage, ...blobImages]);
@@ -188,8 +192,12 @@ const ItemForm = ({ userId }) => {
   };
 
   const settings = {
-    infinite: false,
     adaptiveHeight: true,
+    infinite : true,
+    vertical: true,
+      verticalSwiping: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
     responsive: [
       {
         breakpoint: 790,
@@ -219,6 +227,36 @@ const ItemForm = ({ userId }) => {
         encType="multipart/form-data"
         autoComplete="off"
       >
+        <div className="w-full ">
+            {previewImage.map((image, index) => {
+              return (
+                <div className="relative rounded-lg my-2 bg-gray-400" key={index}>
+                  <img src={image} className="rounded-lg mx-auto"></img>
+                  <div
+                    onClick={(e) => {
+                      removeImage(index, previousImage[index]);
+                    }}
+                    className="w-24 p-1 bg-red-500 absolute text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
+                  >
+                    Hapus
+                  </div>
+                  <label className="w-24 p-1 bg-green-500 absolute text-white bottom-3 right-3 text-center font-bold rounded-md cursor-pointer">
+                    Ubah
+                    <input
+                      hidden
+                      type="file"
+                      name={`image-${index}`}
+                      accept="image/*"
+                      onChange={(e) => {
+                        e.preventDefault();
+                        changePreviewImage(e.target.files[0], index);
+                      }}
+                    ></input>
+                  </label>
+                </div>
+              );
+            })}
+        </div>
         <div className="grid grid-cols-1 my-5 mx-7">
           <div className="flex flex-col items-center justify-center w-full">
             {!previewImage.length && (
@@ -262,40 +300,10 @@ const ItemForm = ({ userId }) => {
             <p className="text-red-500 text-center mt-1">
               {errors.images && errors.images.message}
             </p>
-            <div className="w-full">
-              <Slider {...settings}>
-                {previewImage.map((image, index) => {
-                  return (
-                    <div className="relative rounded-lg w-full" key={index}>
-                      <img src={image} className="rounded-lg mx-auto"></img>
-                      <div
-                        onClick={(e) => {
-                          removeImage(index, previousImage[index]);
-                        }}
-                        className="w-24 p-1 bg-red-500 absolute text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
-                      >
-                        Hapus
-                      </div>
-                      <label className="w-24 p-1 bg-green-500 absolute text-white bottom-3 right-3 text-center font-bold rounded-md cursor-pointer">
-                        Ubah
-                        <input
-                          hidden
-                          type="file"
-                          name={`image-${index}`}
-                          accept="image/*"
-                          onChange={(e) => {
-                            e.preventDefault();
-                            changePreviewImage(e.target.files[0], index);
-                          }}
-                        ></input>
-                      </label>
-                    </div>
-                  );
-                })}
-              </Slider>
-            </div>
-
-            <div className="flex">
+          </div>
+        </div>
+        
+        <div className="flex justify-center">
               {selectedImages?.length > !5 && (
                 <>
                   <div
@@ -321,9 +329,6 @@ const ItemForm = ({ userId }) => {
                 </>
               )}
             </div>
-          </div>
-        </div>
-
         <input
           type="text"
           {...register("name", { required: true, maxLength: 150 })}

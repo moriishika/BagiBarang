@@ -153,7 +153,7 @@ const Index = () => {
       <Head>
         <title>Bagi Barang</title>
       </Head>
-      <div className="h-full w-full">
+      <div className="h-full w-full" onScroll={(e) => console.log(e.target.scrollHeight)}>
         {!fetchedData.length && !searchKeyword && !searchProvince && (
           <LoadingBox></LoadingBox>
         )}

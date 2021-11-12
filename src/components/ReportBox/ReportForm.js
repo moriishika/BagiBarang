@@ -19,7 +19,9 @@ const ReportForm = (props) => {
 
   const onSubmit = (input) => {
     setLoadingStatus(true);
+    setReportingStatus(true)
     setLoadingMessage("Mengirim Data Laporan");
+    console.table([props.reportType, props.reportCategory, input.reportDetail, session?.user?.id])
     axios
       .put(`/api/items/report/${props.itemid}`, {
         type: props.reportType,
@@ -29,7 +31,8 @@ const ReportForm = (props) => {
       })
       .then((res) => {
         setSuccessStatus(true);
-        setLoadingMessage("Berhasil Melaporkan Barang");
+        setLoadingMessage("Berhasil Melaporkan Barang");  
+        setReportingStatus(false)
         let delay = setTimeout(() => {
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");
@@ -41,9 +44,11 @@ const ReportForm = (props) => {
       .catch((err) => {
         console.log('masuk error')
         setSuccessStatus(false);
+        setReportingStatus(false)
         setLoadingMessage(err.response.data.message);
         console.log(isSuccess);
         let delay = setTimeout(() => {
+          setLoadingStatus(false)
           setSuccessStatus(false);
           setLoadingMessage("Mohon Tunggu");
           props.closeReport();
@@ -53,7 +58,7 @@ const ReportForm = (props) => {
   };
 
   if(isLoading) return (
-  <div className={`w-full h-40 my-8 rounded-lg  ${isLoading ? 'bg-blue-300' : ''} ${isSuccess ? 'bg-green-300' : 'bg-red-300'} flex justify-center items-center`}>
+  <div className={`w-full h-40 my-8 rounded-lg  ${(isLoading && isReporting) && 'bg-blue-300'} ${(!isReporting && isSuccess ) &&  'bg-green-300'} ${(!isReporting && !isSuccess ) &&'bg-red-300'} flex justify-center items-center`}>
     <p className="text-white text-base font-bold text-center">{loadingMessage}</p>
   </div>)
   

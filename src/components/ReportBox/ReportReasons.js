@@ -45,7 +45,7 @@ const ReportReasons = (props) => {
                 </div>
             }
 
-            {props.type !== 'ilegalItems' && <ReportForm reportType={props.type} reportCategory={reportCategory} closeReport={props.closeReport}></ReportForm>}
+            {props.type !== 'ilegalItems' && <ReportForm reportType={props.type} reportCategory={reportCategory} itemid={props.itemid} closeReport={props.closeReport}></ReportForm>}
             {reportCategory && <ReportForm reportType={props.type} reportCategory={reportCategory} itemid={props.itemid} closeReport={props.closeReport}></ReportForm>}
 
         </div>
