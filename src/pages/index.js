@@ -138,9 +138,9 @@ const Index = () => {
   }
 
   useEffect(() => {
-    document.addEventListener('wheel', saveScrollHeight)
+    window.addEventListener('scroll', saveScrollHeight)
     return () => {
-        document.removeEventListener('wheel', saveScrollHeight)
+        window.removeEventListener('scroll', saveScrollHeight)
     }
 }, [saveScrollHeight])
 
