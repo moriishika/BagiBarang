@@ -29,7 +29,6 @@
     "react-hook-form": "^7.11.0",
     "react-image-file-resizer": "^0.4.7",
     "react-slick": "^0.28.1",
-    "scroll-restoration-polyfill": "^0.6.1",
     "sharp": "^0.28.3",
     "slick-carousel": "^1.8.1",
     "slugify": "^1.6.0",

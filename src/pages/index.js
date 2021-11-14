@@ -51,6 +51,8 @@ const Index = () => {
 
   const loadMoreRef = useRef(null);
   let fetchToken;
+  
+let savedScroll = 0;
 
   const search = async (keywords, province) => {
     setSearchingStatus(true);
@@ -120,6 +122,10 @@ const Index = () => {
     thershold: 1.0,
   };
 
+  const saveScrollHeight = () => {
+    setScrollHeight(window.scrollY);
+  }
+
   useEffect(() => {
     const observer = new IntersectionObserver(observerCallback, options);
     if (loadMoreRef.current) {
@@ -132,10 +138,7 @@ const Index = () => {
     };
   }, [fetchedData]);
 
-  const saveScrollHeight = () => {
-    console.log(window.scrollY);
-    setScrollHeight(window.scrollY)
-  }
+  
 
   useEffect(() => {
     window.addEventListener('scroll', saveScrollHeight)
@@ -146,8 +149,6 @@ const Index = () => {
 
   useEffect(() => {
     console.table(["scroll h state", scrollHeight])
-    
-    
 
     const newDataChecker = async () => {
       const data = await axios

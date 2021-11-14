@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 import { Provider } from "next-auth/client";
 import { Loading, FetchedData, ScrollPositition } from "../state";
 import { CheckVerifiedStatus } from "../components";
-import Router from 'next/router';
-import * as ga from '../libs/ga';
-// import 'scroll-restoration-polyfill';
+import {useRouter} from 'next/router';
+import * as gtag from '../libs/ga';
+import Script from 'next/script'
 
 const App = ({ Component, pageProps }) => {
   const [isLoading, setLoadingStatus] = useState(false);
@@ -19,50 +19,38 @@ const App = ({ Component, pageProps }) => {
   const [lastSkip, setLastSkip] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [scrollHeight, setScrollHeight] = useState(0);
-
-  useEffect(() => {
-    // history.scrollRestoration = "manual"
-    // const cachedScroll = [];
-    // Router.events.on("routeChangeStart", () => {
-    //   cachedScroll.push([window.scrollX, window.scrollY]);
-    // });
-    // Router.beforePopState(() => {
-    //   const [x, y] = cachedScroll.pop();
-    //   setTimeout(() => {
-    //     window.scrollTo(x, y);
-    //   }, 100);
-    //   return true;
-    // });
-    // const cachedPageHeight = []
-    // const html = document.querySelector('html')
-    // Router.events.on('routeChangeStart', () => {
-    //   cachedPageHeight.push(window.scrollY)
-    // })
-    // Router.events.on('routeChangeComplete', () => {
-    //   html.style.height = 'initial'
-    // })
-    // Router.beforePopState(() => {
-    //   html.style.height = `${cachedPageHeight.pop()}px`
-    //   return true
-    // })
-  }, []);
+  const router = useRouter()
 
   useEffect(() => {
     const handleRouteChange = (url) => {
-      ga.pageview(url)
+      gtag.pageview(url)
     }
-    //When the component is mounted, subscribe to router changes
-    //and log those page views
-    Router.events.on('routeChangeComplete', handleRouteChange)
-
-    // If the component is unmounted, unsubscribe
-    // from the event with the `off` method
+    router.events.on('routeChangeComplete', handleRouteChange)
     return () => {
-      Router.events.off('routeChangeComplete', handleRouteChange)
+      router.events.off('routeChangeComplete', handleRouteChange)
     }
-  }, [Router.events])
+  }, [router.events])
 
   return (
+    <>
+    <Script
+            strategy="afterInteractive"
+            src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`}
+          />
+          <Script
+            id="gtag-init"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gtag.GA_TRACKING_ID}', {
+              page_path: window.location.pathname,
+            });
+          `,
+            }}
+          />
     <Provider session={pageProps.session}>
       <Loading.Provider
         value={{
@@ -97,6 +85,7 @@ const App = ({ Component, pageProps }) => {
         </CheckVerifiedStatus>
       </Loading.Provider>
     </Provider>
+    </>
   );
 };
 

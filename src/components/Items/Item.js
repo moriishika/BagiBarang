@@ -234,7 +234,6 @@ const Item = (props) => {
               ></ShareButton>
               <Link
                 href={!session ? "/login" : `/items/detail/${props.item.slug}`}
-                scroll={false}
               >
                 <a className="bg-green-500 w-4/5 p-2 rounded-md hover:bg-green-700 duration-150 text-center">
                   Detail
