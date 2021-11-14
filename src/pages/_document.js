@@ -1,5 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
-
+import * as gtag from '../libs/ga';
 class MyDocument extends Document {
   static async getInitialProps(ctx) {
     return await Document.getInitialProps(ctx);
@@ -10,21 +10,13 @@ class MyDocument extends Document {
       <Html lang="id">
         <Head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossOrigin="true"
-          />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true"/>
           <link
             href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
             rel="stylesheet"
           />
 
-          <link
-            rel="shortcut icon"
-            href="/icon-512x512.png"
-            type="image/x-icon"
-          />
+          <link rel="shortcut icon" href="/icon-512x512.png" type="image/x-icon" />
           <meta name="description" content="Bagi Barang Bagi Kebaikan" />
           <meta name="bagibarang" content="Bagi Barang" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -57,18 +49,8 @@ class MyDocument extends Document {
             href="/touch-icon-ipad-retina.png"
           />
 
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/icon-512x512.png"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/icon-512x512.png"
-          />
+          <link rel="icon" type="image/png" sizes="32x32" href="/icon-512x512.png" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/icon-512x512.png" />
           <link rel="manifest" href="/manifest.json" />
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <link rel="shortcut icon" href="/bb.ico" />
@@ -94,7 +76,22 @@ class MyDocument extends Document {
             property="og:image"
             content="https://bagibarang.com/apple-touch-icon.png"
           />
-          
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`}
+          />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gtag.GA_TRACKING_ID}', {
+              page_path: window.location.pathname,
+            });
+          `,
+            }}
+          />
         </Head>
         <body>
           <Main />
