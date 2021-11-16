@@ -8,7 +8,9 @@ import LoadingBox from "./LoadingBox";
 import MediaSlider from "./MediaSlider";
 import CheckVerifiedStatus  from "./CheckVerifiedStatus";
 import LoginError from "./LoginError";
-import ShareButton from './ShareButton'
+import ShareButton from './ShareButton';
+import Footer from './Footer'
+
 export {
   TopNavbar,
   Items,
@@ -21,5 +23,6 @@ export {
   MediaSlider,
   CheckVerifiedStatus,
   LoginError,
-  ShareButton
+  ShareButton,
+  Footer
 };

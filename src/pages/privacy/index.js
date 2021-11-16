@@ -42,10 +42,11 @@ const Privacy = () => {
           Nama<br/>  
           Nomor<br/>  
           Telepon<br/> 
+          Akun Media Sosial<br/>
           Provinsi<br/>
           Kota <br/>
           Foto Profil dari akun social media yang digunakan untuk pembuatan akun di Bagi Barang serta foto profil yang telah diupload di Bagi Barang<br/>
-          Cookie dan Data Penggunaan
+          Cookie dan Data Penggunaan.
         </p>
         <h1 className="text-3xl font-bold mt-10">Bagaimana Kami Menggunakan Data Anda</h1>
         <p className="leading-relaxed mt-2 text-justify">

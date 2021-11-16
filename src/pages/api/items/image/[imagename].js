@@ -16,15 +16,4 @@ handler
     res.setHeader("Content-Type", "image/webp");
     res.send(imageBuffer);
   })
-  // .put(async (req, res) => {
-  //   //ambil path dari api
-  //   // terus setiap call update name dulu
-  //   //abis unlink data sebelum 
-  //   const filePath = path.resolve(".", "media/items/" + req.query.imagename);
-  //   fs.unlinkSync(filePath);
-  //   const imageBuffer = fs.readFileSync(filePath);
-  //   res.setHeader("Content-Type", "image/webp");
-  //   res.send(imageBuffer);
-  // });
-
 export default handler;

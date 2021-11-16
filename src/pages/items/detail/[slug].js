@@ -5,7 +5,7 @@ import {
   Backbar,
   BottomNavbar,
   LoadingBox,
-  ShareButton,
+  Footer,
 } from "../../../components";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
@@ -18,8 +18,14 @@ export default function ItemDetail({ item }) {
 
   if (!loading && !session) router.push("/login");
 
+  if (!loading && item.reports.length >= 3) router.push("/404");
+
   if (router.isFallback) {
     return <LoadingBox></LoadingBox>;
+  }
+
+  if (item.reports.length >= 3) {
+    return <div />;
   }
 
   return (
@@ -62,14 +68,11 @@ export default function ItemDetail({ item }) {
 
       {session && (
         <>
-          <Backbar></Backbar>
-
-          <div className="flex justify-center m-auto w-11/12 xl:w-2/5">
-            <Item item={item} inItemDetail={true}></Item>
-            
+          <Backbar />
+          <div className="flex-col justify-center items-center m-auto w-11/12 xl:w-2/5">
+            <Item item={item} inItemDetail={true} />
           </div>
-
-          <BottomNavbar></BottomNavbar>
+            <Footer />
         </>
       )}
     </div>

@@ -14,7 +14,6 @@ const ImagePreview = ({
 
     return () => {
       blobImages.forEach((image) => {
-        console.log(image);
         URL.revokeObjectURL(image);
       });
     };

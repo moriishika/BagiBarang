@@ -1,19 +1,29 @@
+import { useEffect, useContext } from "react";
+import { SearchStates } from "../../state";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import {useRouter} from 'next/router';
+
 const TopNavbar = ({ search, keywords, province }) => {
-  const { register } = useForm();
+  const { register, setValue, reset } = useForm();
+  const { searchKeyword, searchProvince, setSearchKeyword, setSearchProvince } = useContext(SearchStates);
   const router = useRouter();
+
+
+  useEffect(() => {
+    setValue("keywords", searchKeyword);
+    setValue("province", searchProvince);
+  }, []);
 
   return (
     <div
-      className="w-full flex justify-center bg-white sticky top-0 z-50"
-      onClick={() => console.log(window.scrollY)}
-    >
+      className="w-full flex justify-center bg-white sticky top-0 z-50">
       <div className=" w-11/12 xl:w-2/5 flex-col py-4">
         <form>
           <div className="flex justify-between items-center">
             <div className="cursor-pointer">
-              <a className="font-bold text-2xl" onClick={() => router.reload()}>Bagi Barang</a>
+              <a className="font-bold text-2xl" onClick={() => router.reload()}>
+                Bagi Barang <sup className="text-red-600 text-sm">BETA</sup>
+              </a>
             </div>
             <div className="relative inline-block text-gray-700">
               <select
@@ -64,13 +74,27 @@ const TopNavbar = ({ search, keywords, province }) => {
               </select>
             </div>
           </div>
-          <input
-            type="text"
-            {...register("keywords")}
-            onChange={(e) => search(e.target.value, province)}
-            className="border-1 mt-3.5 py-3 pl-4 border-black focus:ring-0 focus:border-blue-500 block w-full shadow-sm sm:text-sm rounded-md"
-            placeholder="Mau nyari barang apa hari ini?"
-          />
+          <div className="flex justify-center items-center mt-5">
+            <input
+              type="text"
+              {...register("keywords")}
+              onChange={(e) => search(e.target.value, province)}
+              className="border-1 py-3 pl-4 w-full  border-black focus:ring-0 focus:border-blue-500 block  shadow-sm sm:text-sm rounded-md"
+              placeholder="Mau nyari barang apa hari ini?"
+            />
+            {(searchKeyword || searchProvince) && (
+              <button
+                className="drop-shadow-red-md filter ml-4 bg-green-500 xl:text-lg w-36 h-10 text-sm font-semibold rounded-md hover:bg-green-700 duration-150 text-center text-white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  reset()
+                  search('', '')
+                }}
+              >
+                Bersihkan
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </div>

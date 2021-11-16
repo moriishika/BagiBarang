@@ -117,7 +117,6 @@ const UpdateItemForm = ({ item }) => {
       } else {
         formData.append("images", selectedImages[image]);
       }
-      console.log(selectedImages[image]);
       imageIndex.push(typeof selectedImages[image] === "object");
     }
 
@@ -137,7 +136,6 @@ const UpdateItemForm = ({ item }) => {
         },
       })
       .then((res) => {
-        console.log("Masuk selesai");
         setLoadingMessage("Telah diperbarui");
         setSuccessStatus(true);
         let delay = setTimeout(() => {
@@ -148,9 +146,6 @@ const UpdateItemForm = ({ item }) => {
           router.push(`/${session.user.slug}`);
         }, 1000);
       })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const imagesInput = register("images");
@@ -514,7 +509,6 @@ export async function getServerSideProps({ query }) {
       },
     };
   } catch (error) {
-    console.log(error);
     return;
   }
 }

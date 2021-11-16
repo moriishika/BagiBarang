@@ -1,13 +1,13 @@
+import { useState, useEffect, useRef } from "react";
 import { signOut } from "next-auth/client";
-import { Items, BottomNavbar, LoadingBox } from "../../components";
 import { useSession } from "next-auth/client";
 import Head from "next/head";
+import router from "next/router";
+import Link from "next/link";
 import axios from "axios";
 import useSWR from "swr";
-import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { Items, BottomNavbar, LoadingBox } from "../../components";
 import { connectToDatabase } from "../../libs/database";
-import router from "next/router";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
@@ -77,16 +77,14 @@ const Profile = ({ user }) => {
   }, [data, user, loading]);
 
   useEffect(() => {
-    if(!session) router.push('/login')
-  }, [session])
+    if (!session) router.push("/login");
+  }, [session]);
 
   if (error) router.push("/404");
-  
-  if (loading || !data || !user) return <LoadingBox></LoadingBox>;
-  
-  
-  if (!loading && !session) return <div></div>;
 
+  if (loading || !data || !user) return <LoadingBox />;
+
+  if (!loading && !session) return <div />;
 
   return (
     <div className="h-full">
@@ -109,7 +107,9 @@ const Profile = ({ user }) => {
                 Tidak
               </button>
               <button
-                onClick={() => signOut({ callbackUrl: 'https://bagibarang.com/' })}
+                onClick={() =>
+                  signOut({ callbackUrl: "https://bagibarang.com/" })
+                }
                 className="drop-shadow-red-md filter font-semibold bg-red-500 w-24 p-2 rounded-md hover:bg-red-700 duration-150 text-center"
               >
                 Iya

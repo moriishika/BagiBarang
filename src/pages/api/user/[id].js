@@ -59,11 +59,10 @@ handler.put(async (req, res) => {
       );
       return res.status(200).json({ message: "Berhasil update", status : 'success' });
     } else {
-      res.status(401).json({ message: "please log in", status : 'fail' });
+      return res.status(401).json({ message: "please log in", status : 'fail' });
     }
   } catch (err) {
-    console.log(err);
-    res.status(400).json({ message: err });
+    return res.status(400).json({ message: err });
   }
 });
 

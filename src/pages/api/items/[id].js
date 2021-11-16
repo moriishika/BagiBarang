@@ -24,18 +24,15 @@ handler.use(parseMultipartForm);
 handler
   .put(async (req, res) => {
     try {
-      console.log(req.body);
       let fullpath = req.body.fullpath.split(",");
       let imagesName = req.body.imageName.split(",");
       // let images = req.body.images.split(',');
       let deletedImages = req.body.deletedImage.split(",");
 
-      console.log(deletedImages);
 
       const deleted = [...deletedImages];
 
       await deletedImages.forEach((isDeleted) => {
-        console.log(imagesName);
         if (isDeleted === "deleted") {
           fs.unlinkSync(
             process.cwd() +
@@ -45,14 +42,12 @@ handler
               imagesName[deleted.indexOf(isDeleted)] +
               ".webp"
           );
-          console.log(deleted.indexOf(isDeleted));
           fullpath.splice(deleted.indexOf(isDeleted), 1);
           imagesName.splice(deleted.indexOf(isDeleted), 1);
           deleted.splice(deleted.indexOf(isDeleted), 1);
         }
       });
 
-      console.log(fullpath);
 
       if (req.files) {
         let path = req.files.images.map(
@@ -64,7 +59,6 @@ handler
         const imageIndex = req.body.imageIndex.split(",");
 
         await imageIndex.forEach((isUpdated, index) => {
-          console.log(imageIndex);
           if (isUpdated === "true") {
             if (imagesName[index]) {
               fs.unlinkSync(
@@ -119,13 +113,11 @@ handler
       );
       res.status(200).json({ message: "Update Success" });
     } catch (error) {
-      console.log(error);
       res.status(400).json({ message: "Failed to Update Data" });
     }
   })
   .delete(async (req, res) => {
     try {
-      console.log("masuk delete");
       const { db } = await connectToDatabase();
       const { id } = req.query;
 

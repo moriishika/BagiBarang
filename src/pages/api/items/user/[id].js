@@ -42,7 +42,6 @@ handler.get(async (req, res) => {
     
     res.status(200).json({result, itemsTotal});
   } catch (err) {
-    console.log(err)
     res.status(400).json({ message: "failed to get items" });
   }
 });

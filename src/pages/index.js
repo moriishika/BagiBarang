@@ -2,20 +2,27 @@ import React, { useEffect, useRef, useState, useContext } from "react";
 import Head from "next/head";
 import { TopNavbar, Items, BottomNavbar, LoadingBox } from "../components";
 import axios from "axios";
-import { FetchedData, ScrollPositition } from "../state";
+import { FetchedData, ScrollPositition, SearchStates } from "../state";
 
 const Index = () => {
   const {
     fetchedData,
-    setFetchedData,
     lastSkip,
-    setLastSkip,
     totalItems,
+    setFetchedData,
+    setLastSkip,
     setTotalItems,
   } = useContext(FetchedData);
+  const {
+    searchKeyword,
+    searchProvince,
+    setSearchKeyword,
+    setSearchProvince
+  } = useContext(SearchStates);
+  
+  const [isSearching, setSearchingStatus] = useState(false);
 
   const {scrollHeight, setScrollHeight} = useContext(ScrollPositition)
-
   const [skip, setSkip] = useState(lastSkip);
 
   const getInitialData = async () => {
@@ -45,14 +52,11 @@ const Index = () => {
     }
   };
 
-  const [isSearching, setSearchingStatus] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [searchProvince, setSearchProvince] = useState("");
+
 
   const loadMoreRef = useRef(null);
-  let fetchToken;
   
-let savedScroll = 0;
+  let fetchToken;
 
   const search = async (keywords, province) => {
     setSearchingStatus(true);
@@ -94,8 +98,6 @@ let savedScroll = 0;
   };
 
   const observerCallback = (entries) => {
-    console.table([totalItems, fetchedData.length, skip])
-    
     try {
       const [entry] = entries;
       if (entry.isIntersecting) {
@@ -148,7 +150,6 @@ let savedScroll = 0;
 }, [saveScrollHeight])
 
   useEffect(() => {
-    console.table(["scroll h state", scrollHeight])
 
     const newDataChecker = async () => {
       const data = await axios
@@ -177,7 +178,7 @@ let savedScroll = 0;
       <Head>
         <title>Bagi Barang</title>
       </Head>
-      <div className="h-full w-full" onScroll={(e) => console.log(e.target.scrollHeight)}>
+      <div className="h-full w-full" >
         {!fetchedData.length && !searchKeyword && !searchProvince && (
           <LoadingBox></LoadingBox>
         )}

@@ -1,9 +1,9 @@
 import router from "next/router";
 
-const Backbar = (props) => {
+const Backbar = ({link}) => {
   return (
     <div className="bg-white h-20 flex justify-items-center sticky top-0 z-50">
-      <a onClick={() => props.link ? router.push(props.link) : router.back()}>
+      <a onClick={() => link ? router.push(link) : router.back()}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="ml-4 w-14 cursor-pointer"

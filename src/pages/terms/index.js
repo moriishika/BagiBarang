@@ -9,15 +9,16 @@ const Terms = () => {
           SYARAT & KETENTUAN
         </h1>
         <p className="leading-relaxed text-justify">
-          Terima kasih telah menggunakan platform BagiBarang. BagiBarang adalah
+          Terima kasih telah menggunakan platform Bagi Barang. Bagi Barang adalah
           platform yang mempertemukan orang yang ingin membagikan barangnya,
           dengan orang membutuhkan barang tersebut. Sistem dari platform ini
           serupa dengan marketplace, hanya saja yang perlu digarisbawahi adalah
-          di dalam BagiBarang tidak terjadi transaksi jual beli, semua barang
-          yang terlisting murni ingin dibagikan secara gratis oleh setiap orang
+          di dalam Bagi Barang tidak terjadi transaksi jual beli, semua barang
+          yang ditampilkan murni ingin dibagikan secara gratis oleh setiap orang
           yang mempostingnya. <br />
           <br />
-          Dengan menggunakan platform BagiBarang baik melalui web maupun
+          Kami tidak bertanggung jawab atas segala hal atau peristiwa yang terjadi di luar platform kami. 
+          Dengan menggunakan platform Bagi Barang baik melalui web maupun
           aplikasi, Anda mengakui bahwa Anda telah membaca, memahami dan
           menyetujui untuk terikat dengan setiap syarat dan ketentuan yang
           terkandung dalam perjanjian ini.
@@ -31,7 +32,7 @@ const Terms = () => {
           jawab untuk menjaga kerahasiaan akun dan kata sandi dan membatasi
           akses ke perangkat yang digunakan untuk mengakses Layanan. Anda
           bertanggung jawab atas semua yang terjadi perihal penggunaan akun
-          pribadi dan kata sandi Anda. BagiBarang berkomitmen menjaga
+          pribadi dan kata sandi Anda. Bagi Barang berkomitmen menjaga
           kerahasiaan data anda dari pihak ketiga dengan menerapkan sistem
           keamanan dan enkripsi terbaik. <br />
           <br />

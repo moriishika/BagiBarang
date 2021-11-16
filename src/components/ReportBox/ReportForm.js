@@ -42,11 +42,9 @@ const ReportForm = (props) => {
         }, 1000);
       })
       .catch((err) => {
-        console.log('masuk error')
         setSuccessStatus(false);
         setReportingStatus(false)
         setLoadingMessage(err.response.data.message);
-        console.log(isSuccess);
         let delay = setTimeout(() => {
           setLoadingStatus(false)
           setSuccessStatus(false);

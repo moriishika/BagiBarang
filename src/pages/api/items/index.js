@@ -55,7 +55,6 @@ handler
     const { db } = await connectToDatabase();
     const skip = parseInt(req.query.skip);
     const itemsTotal = await db.collection('items').estimatedDocumentCount({});
-    console.log(itemsTotal);
 
     db.collection("items")
       .aggregate([

@@ -63,13 +63,11 @@ handler.get(async (req, res) => {
       ])
       .toArray();
 
-    console.log(searchedItems);
 
     res
       .status(200)
       .json({ result: searchedItems, itemsTotal: totalSearchedItems });
   } catch (error) {
-    console.log(error);
     res.status(400).json({ message: "unable to get searched data" });
   }
 });

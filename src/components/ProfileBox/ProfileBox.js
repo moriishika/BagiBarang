@@ -50,7 +50,6 @@ const ProfileBox = () => {
         e.target.files[0].type
       )
     ) {
-      console.log(e.target.files[0]);
       setUserImage(URL.createObjectURL(e.target.files[0]));
     } else {
       setError("images", {
@@ -65,7 +64,6 @@ const ProfileBox = () => {
     setLoadingStatus(true);
     let formData = new FormData();
 
-    console.log(data.images[0]);
 
     if (!session.user.isVerified) {
       formData.append("phoneNumber", session.user.phoneNumber);
@@ -81,10 +79,6 @@ const ProfileBox = () => {
 
     for (const input in data) {
       formData.append(`${input}`, data[input]);
-    }
-
-    for (const value of formData.values()) {
-      console.log(value);
     }
 
     axios

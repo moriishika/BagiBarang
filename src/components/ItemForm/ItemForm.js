@@ -1,15 +1,16 @@
 import axios from "axios";
 import { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Loading } from "../../state";
+import { Loading, SearchStates } from "../../state";
 import { useSession } from "next-auth/client";
 import router from "next/router";
-import Slider from "react-slick";
 import resizeImage from "../../libs/compressBeforeUpload";
 
 const ItemForm = ({ userId }) => {
   const { setLoadingStatus, setLoadingMessage, setSuccessStatus } =
     useContext(Loading);
+
+  const {setSearchKeyword, setSearchProvince} = useContext(SearchStates);
 
   const [session, loading] = useSession();
   const [previousImage, setPreviousImages] = useState([]);
@@ -27,19 +28,15 @@ const ItemForm = ({ userId }) => {
   } = useForm();
 
   const uploadItem = async (data) => {
-    console.log(errors.images?.type);
-    console.log(data);
     if (!selectedImages[0] || selectedImages.length > 5) {
       setLoadingStatus(false);
       setLoadingMessage("Mohon Tunggu");
       setSuccessStatus(false);
       setSelectedImages([]);
-      console.log("masuk ek erorr");
       setError("images", {
         type: "manual",
         message: "Tolong pilih gambar min 1 dan maks 5 gambar",
       });
-      console.log("masuk disini");
       return;
     }
 
@@ -47,7 +44,8 @@ const ItemForm = ({ userId }) => {
       !data.instagram &&
       !data.phoneNumber &&
       !data.facebook &&
-      !data.twitter
+      !data.twitter &&
+      !data.email
     ) {
       setError("instagram", {
         type: "emptyValue",
@@ -57,8 +55,6 @@ const ItemForm = ({ userId }) => {
       return;
     }
 
-    console.log(data);
-
     let formData = new FormData();
 
     for (const input in data) {
@@ -66,9 +62,6 @@ const ItemForm = ({ userId }) => {
     }
 
     for (const image in selectedImages) {
-      // let compressedImage = await resizeImage(selectedImages[image])
-      // console.log(compressedImage);
-      console.log(selectedImages[image].type);
       if (
         [
           "image/jpg",
@@ -173,7 +166,6 @@ const ItemForm = ({ userId }) => {
   };
 
   const addPreviewImage = async (images) => {
-    console.log(images);
     let selectedImages = [];
 
     for (let i = 0; i < images.length; i++) {
@@ -291,7 +283,6 @@ const ItemForm = ({ userId }) => {
                   {...imagesInput}
                   onChange={(e) => {
                     imagesInput.onChange(e);
-                    console.log(e.target.files);
                     addPreviewImage(e.target.files);
                   }}
                 />
@@ -407,7 +398,9 @@ const ItemForm = ({ userId }) => {
           {errors.address?.type === "required" &&
             "Tolong isi alamat pengambilan barang"}
         </p>
-
+      <fieldset className="border-2 border-dashed border-blue-500 p-3 mb-5">
+      <legend className="font-bold" >Kontak</legend>
+      <p className="font-medium">Isi salah satu atau semua kontak yang dapat dihubungi</p>
         <input
           type="tel"
           {...register("phoneNumber", {
@@ -444,9 +437,6 @@ const ItemForm = ({ userId }) => {
           className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
           placeholder="Twitter"
         />
-        <p className="text-red-500">
-          {errors.instagram?.type === "emptyValue" && errors.instagram.message}
-        </p>
 
         <input
           type="email"
@@ -462,6 +452,7 @@ const ItemForm = ({ userId }) => {
           {errors.email?.type === "pattern" &&
             "Format email salah contoh : namaemail@gmail.com"}
         </p>
+        </fieldset>
         <button className="w-full bg-blue-400 xl:h-12 h-11 rounded-lg text-white font-bold hover:bg-blue-600">
           Simpan
         </button>
