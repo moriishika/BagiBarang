@@ -18,15 +18,13 @@ export default function ItemDetail({ item }) {
 
   if (!loading && !session) router.push("/login");
 
-  if (!loading && item.reports.length >= 3) router.push("/404");
-
   if (router.isFallback) {
     return <LoadingBox></LoadingBox>;
   }
 
-  if (item.reports.length >= 3) {
-    return <div />;
-  }
+  // if (item?.reports.length >= 3) {
+  //   return <div />;
+  // }
 
   return (
     <div>
@@ -47,7 +45,7 @@ export default function ItemDetail({ item }) {
         ></meta>
         <meta
           property="og:image"
-          content="https://bagibarang.com/apple-touch-icon.png"
+          content={`https://bagibarang.com/api/items/image/${item.images[0]}.webp`}
         ></meta>
 
         <meta property="twitter:card" content="summary_large_image"></meta>
@@ -62,7 +60,7 @@ export default function ItemDetail({ item }) {
         ></meta>
         <meta
           property="twitter:image"
-          content="https://bagibarang.com/apple-touch-icon.png"
+          content="https://bagibarang.com/api/items/image/${item.images[0]}.webp"
         ></meta>
       </Head>
 
@@ -100,11 +98,18 @@ export async function getStaticProps({ params }) {
     ])
     .toArray();
 
+  if(resultItem.length === 0 || resultItem[0].reports.length >= 3){
+    return {
+      notFound : true
+    }
+  }
+
   return {
     props: {
       item: JSON.parse(JSON.stringify(resultItem[0])),
     },
     revalidate: 1,
+    
   };
 }
 

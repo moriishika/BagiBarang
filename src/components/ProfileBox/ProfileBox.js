@@ -20,42 +20,31 @@ const ProfileBox = () => {
     formState: { errors },
     setValue,
   } = useForm();
+
   const [session, loading] = useSession();
   const [userImage, setUserImage] = useState(null);
   const userImageInput = register("images");
-
   const router = useRouter();
+  const [isVerified, setVerifiedStatus] = useState(false);
 
-  useEffect(() => {
-    if (session) {
-      setLoadingStatus(false);
-
-      setValue("name", session.user.name);
-      setValue("province", session.user.province);
-      setValue("phoneNumber", session.user.phoneNumber);
-      setValue("email", session.user.email);
-      setValue("address", session.user.address);
-    } else {
-      setLoadingStatus(true);
-    }
-
-    return () => {
-      URL.revokeObjectURL(userImage);
-    };
-  }, [session]);
-
-  const handleImage = (e) => {
-    if (
-      ["image/jpg", "image/jpeg", "image/png", "image/webp",'image/gif'].includes(
-        e.target.files[0].type
-      )
-    ) {
-      setUserImage(URL.createObjectURL(e.target.files[0]));
-    } else {
-      setError("images", {
-        type : 'invalidType',
-        message : 'Hanya format jpg, jpeg, gif, dan webp'
-      });
+  const handleImage = async (e) => {
+    if (e.target.files[0]) {
+      if (
+        [
+          "image/jpg",
+          "image/jpeg",
+          "image/png",
+          "image/webp",
+          "image/gif",
+        ].includes(e.target.files[0].type)
+      ) {
+        setUserImage(URL.createObjectURL(await resizeImage(e.target.files[0])));
+      } else {
+        setError("images", {
+          type: "invalidType",
+          message: "Hanya format jpg, jpeg, gif, dan webp",
+        });
+      }
     }
   };
 
@@ -63,7 +52,6 @@ const ProfileBox = () => {
     setLoadingMessage("Memperbarui profil");
     setLoadingStatus(true);
     let formData = new FormData();
-
 
     if (!session.user.isVerified) {
       formData.append("phoneNumber", session.user.phoneNumber);
@@ -74,7 +62,7 @@ const ProfileBox = () => {
     if (!data.images.length) {
       data.images = session.user.image;
     } else {
-        formData.append("images", await resizeImage(data.images[0]))
+      formData.append("images", await resizeImage(data.images[0]));
     }
 
     for (const input in data) {
@@ -109,7 +97,30 @@ const ProfileBox = () => {
       });
   };
 
-  if (!session) return <LoadingBox></LoadingBox>;
+  useEffect(() => {
+    if (session) {
+      setLoadingStatus(false);
+
+      setValue("name", session.user.name);
+      setValue("province", session.user.province);
+      setValue("phoneNumber", session.user.phoneNumber);
+      setValue("email", session.user.email);
+      setValue("address", session.user.address);
+      setVerifiedStatus(session.user.isVerified);
+    } else {
+      setLoadingStatus(true);
+    }
+
+    return () => {
+      URL.revokeObjectURL(userImage);
+    };
+  }, [session]);
+
+  useEffect(() => {
+    setVerifiedStatus(session?.user?.isVerified);
+  }, []);
+
+  if (!session && isLoading && loading) return <LoadingBox></LoadingBox>;
 
   return (
     <div className="flex h-screen justify-center items-center">
@@ -155,11 +166,13 @@ const ProfileBox = () => {
                 }}
               />
             </label>
-            {errors.images && <p className="text-red-500 my-3"> {errors.images.message} </p>}
+            {errors.images && (
+              <p className="text-red-500 my-3"> {errors.images.message} </p>
+            )}
           </div>
         </div>
         <div className="p-4 w-full mt-2">
-          {!session?.user.isVerified && (
+          {session?.user?.isVerified && (
             <p className="text-center font-bold ">
               Nama dan wilayah harus diisi agar bisa mengakses setiap halaman
             </p>
@@ -228,19 +241,19 @@ const ProfileBox = () => {
           </select>
           {errors.province?.type === "required" && "Tolong pilih wilayah anda"}
 
-          {session.user.isVerified && (
+          {isVerified && (
             <>
               <input
                 type="text"
                 {...register("phoneNumber", {
-                  pattern: /^(\+62|62|0)8[1-9][0-9]{6,9}$/,
+                  pattern: /^(62)(\d{3,4}-?){2}\d{3,4}$/,
                 })}
                 placeholder="Nomer Telepon / Whatsapp"
                 className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
               />
               <p>
                 {errors.phoneNumber?.type === "pattern" &&
-                  "Format nomor salah, Contoh : 085-123-456-789"}
+                  "Format No. Telepon salah contoh: 6287123456789"}
               </p>
 
               <input
@@ -273,7 +286,7 @@ const ProfileBox = () => {
             Simpan
           </button>
 
-          {session.user.isVerified && (
+          {isVerified && (
             <Link href={"/" + slugify(session.user.name)}>
               <a className="hover:bg-transparent block border border-green-500 w-full py-2 rounded-md mt-4 text-white hover:text-green-500 font-semibold hover bg-green-500 text-center">
                 Kembali

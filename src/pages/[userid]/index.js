@@ -145,11 +145,18 @@ const Profile = ({ user }) => {
             <h1 className="font-semibold">{user.name}</h1>
             {user._id === session.user.id && (
               <div className="flex">
-                <Link href="/accounts/edit/">
+                {/* <Link href="/accounts/edit/">
                   <a className="mt-1 xl:text-md bg-transparent block border text-sm px-2 py-1  text-center border-green-500 xl:w-3/4 rounded-md hover:text-white text-green-500 font-medium hover:bg-green-500 ">
                     Perbarui Profil
                   </a>
-                </Link>
+                </Link> */}
+
+                <a
+                  onClick={() => router.push("/accounts/edit")}
+                  className="mt-1 xl:text-md bg-transparent block border text-sm px-2 py-1  text-center border-green-500 xl:w-3/4 rounded-md hover:text-white text-green-500 font-medium hover:bg-green-500 "
+                >
+                  Perbarui Profil
+                </a>
                 <button
                   className="mt-1 ml-2 xl:text-md bg-transparent block border border-red-500 xl:w-1/5 text-sm  p-1 rounded-md hover:text-white text-red-500 font-medium hover:bg-red-500"
                   onClick={() => setLogoutStatus(true)}
@@ -169,9 +176,12 @@ const Profile = ({ user }) => {
               ref={loadMoreRef}
             >
               {isSearching && (
-                <h1 className="text-2xl font-semibold">
-                  Sedang Meng-loding data 🤹‍♀️
-                </h1>
+                <div className="flex">
+                  <h1 className="text-2xl font-semibold ">
+                    Sedang Meng-loding data
+                  </h1>
+                  <span className="text-2xl">🤹‍♀️</span>
+                </div>
               )}
             </div>
           </>

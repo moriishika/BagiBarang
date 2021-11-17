@@ -64,7 +64,7 @@ handler.put(async (req, res) => {
   } catch (err) {
     return res.status(400).json({ message: err });
   }
-});
+})
 
 export const config = {
   api: {

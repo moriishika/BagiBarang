@@ -28,6 +28,12 @@ const Item = ({inProfile, item, inItemDetail}) => {
     await setOpenedStatus(false);
   };
 
+  const createWhatsappLink = (phoneNumber) => {
+    const itemName = item.name.trim().replace(/\s+(?=\S)/g, "%20");
+    const link = `https://wa.me/${phoneNumber}?text=Saya%20berminat%20dengan%20barang%20yang%20anda%20posting%20di%20*Bagi%20Barang*%20dengan%20nama%20barang%20*${itemName}*%20%20%0A%0Ahttps%3A%2F%2Fbagibarang.com%2Fitems%2Fdetail%2F${item.slug}`
+    return link
+  }
+
   const deleteItem = async (id) => {
     mutate(`/api/items/user/${session?.user?.id}?skip=0`, async (items) => {
       await axios.delete(`/api/items/${id}`);
@@ -129,7 +135,7 @@ const Item = ({inProfile, item, inItemDetail}) => {
                       d="M224 122.8c-72.7 0-131.8 59.1-131.9 131.8 0 24.9 7 49.2 20.2 70.1l3.1 5-13.3 48.6 49.9-13.1 4.8 2.9c20.2 12 43.4 18.4 67.1 18.4h.1c72.6 0 133.3-59.1 133.3-131.8 0-35.2-15.2-68.3-40.1-93.2-25-25-58-38.7-93.2-38.7zm77.5 188.4c-3.3 9.3-19.1 17.7-26.7 18.8-12.6 1.9-22.4.9-47.5-9.9-39.7-17.2-65.7-57.2-67.7-59.8-2-2.6-16.2-21.5-16.2-41s10.2-29.1 13.9-33.1c3.6-4 7.9-5 10.6-5 2.6 0 5.3 0 7.6.1 2.4.1 5.7-.9 8.9 6.8 3.3 7.9 11.2 27.4 12.2 29.4s1.7 4.3.3 6.9c-7.6 15.2-15.7 14.6-11.6 21.6 15.3 26.3 30.6 35.4 53.9 47.1 4 2 6.3 1.7 8.6-1 2.3-2.6 9.9-11.6 12.5-15.5 2.6-4 5.3-3.3 8.9-2 3.6 1.3 23.1 10.9 27.1 12.9s6.6 3 7.6 4.6c.9 1.9.9 9.9-2.4 19.1zM400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zM223.9 413.2c-26.6 0-52.7-6.7-75.8-19.3L64 416l22.5-82.2c-13.9-24-21.2-51.3-21.2-79.3C65.4 167.1 136.5 96 223.9 96c42.4 0 82.2 16.5 112.2 46.5 29.9 30 47.9 69.8 47.9 112.2 0 87.4-72.7 158.5-160.1 158.5z"
                     ></path>
                   </svg>
-                  <p className="ml-3 ">{item.phoneNumber}</p>
+                  <a className="ml-3 " target="_blank" rel="noopener noreferrer" href={createWhatsappLink(item.phoneNumber)}>{item.phoneNumber}</a>
                 </div>
               )}
               {item?.facebook && (
@@ -144,7 +150,7 @@ const Item = ({inProfile, item, inItemDetail}) => {
                       d="M9 4C6.25 4 4 6.25 4 9v32c0 2.75 2.25 5 5 5h16.832c.11.02.219.02.328 0h5.672c.11.02.219.02.328 0H41c2.75 0 5-2.25 5-5V9c0-2.75-2.25-5-5-5zm0 2h32c1.668 0 3 1.332 3 3v32c0 1.668-1.332 3-3 3h-8V30h3.82l1.403-7H33v-2c0-.559.055-.602.238-.723.188-.12.766-.277 1.762-.277h3v-5.629l-.57-.273S35.133 13 32 13c-2.25 0-4.098.895-5.281 2.375C25.535 16.855 25 18.832 25 21v2h-3v7h3v14H9c-1.668 0-3-1.332-3-3V9c0-1.668 1.332-3 3-3zm23 9c2.078 0 3.387.457 4 .7V18h-1c-1.152 0-2.074.094-2.848.598C31.375 19.105 31 20.063 31 21v4h4.777l-.597 3H31v16h-4V28h-3v-3h3v-4c0-1.832.465-3.355 1.281-4.375C29.098 15.605 30.25 15 32 15zm0 0"
                     ></path>
                   </svg>
-                  <p className="ml-3 ">{item.facebook}</p>
+                  <a  target="_blank" rel="noopener noreferrer" href={`https://web.facebook.com/${item.facebook}`} className="ml-3 ">{item.facebook}</a>
                 </div>
               )}
               {item?.instagram && (
@@ -159,7 +165,7 @@ const Item = ({inProfile, item, inItemDetail}) => {
                       d="M32 12c-11.027 0-20 8.973-20 20v32c0 11.027 8.973 20 20 20h32c11.027 0 20-8.973 20-20V32c0-11.027-8.973-20-20-20zm0 8h32c6.617 0 12 5.383 12 12v32c0 6.617-5.383 12-12 12H32c-6.617 0-12-5.383-12-12V32c0-6.617 5.383-12 12-12zm36 4c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-20 4c-11.027 0-20 8.973-20 20s8.973 20 20 20 20-8.973 20-20-8.973-20-20-20zm0 8c6.617 0 12 5.383 12 12s-5.383 12-12 12-12-5.383-12-12 5.383-12 12-12zm0 0"
                     ></path>
                   </svg>
-                  <p className="ml-3 ">{item.instagram}</p>
+                  <a target="_blank" rel="noopener noreferrer" href={`https://www.instagram.com/${item.instagram}`} className="ml-3">{item.instagram}</a>
                 </div>
               )}
               {item?.twitter && (
@@ -174,7 +180,7 @@ const Item = ({inProfile, item, inItemDetail}) => {
                       d="M20 12c-4.41 0-8 3.59-8 8v56c0 4.41 3.59 8 8 8h56c4.41 0 8-3.59 8-8V20c0-4.41-3.59-8-8-8zm0 8h56l.008 56H20zm38.266 8.453c-5.489 0-9.946 4.461-9.946 9.945 0 1.028.344 1.715.344 2.399-8.227-.34-15.426-4.453-20.227-10.281-1.027 1.37-1.375 3.082-1.375 4.797 0 3.43 1.72 6.18 4.461 8.578-1.71-.344-3.09-.692-4.46-1.375 0 4.8 3.425 8.574 7.882 9.601-1.027.344-1.715.344-2.742.344-.344 0-1.035-.344-1.719-.344 1.371 3.774 4.801 6.852 9.258 6.852-3.43 2.398-7.887 4.117-12.344 4.117H25c4.457 2.738 9.602 4.46 15.086 4.46 18.172 0 28.117-15.089 28.117-28.116v-1.375c1.715-1.371 3.426-3.086 4.805-5.149-2.055 1.032-3.774 1.375-5.828 1.719 2.054-1.367 3.77-3.086 4.453-5.484-1.715 1.027-3.774 2.054-6.172 2.398-1.715-2.055-4.453-3.086-7.195-3.086zm0 0"
                     ></path>
                   </svg>
-                  <p className="ml-3 ">{item.twitter}</p>
+                  <a  target="_blank" rel="noopener noreferrer" href={`https://twitter.com/${item.twitter}`} className="ml-3">{item.twitter}</a>
                 </div>
               )}
               {item?.email && (
@@ -195,7 +201,7 @@ const Item = ({inProfile, item, inItemDetail}) => {
                     d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"
                   ></path>
                 </svg>
-                <p className="ml-3">{item.email}</p>
+                <a className="ml-3" target="_blank" rel="noopener noreferrer" href={`mailto:${item.email}?subject=Bagi Barang - Saya Peminat Barang Anda &body=Saya berminat dengan barang yang anda posting di Bagi Barang dengan nama ${item.name}`}>{item.email}</a>
               </div>
               )}
               <div className="flex items-center mt-3">

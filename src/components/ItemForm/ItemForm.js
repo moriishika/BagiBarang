@@ -10,8 +10,6 @@ const ItemForm = ({ userId }) => {
   const { setLoadingStatus, setLoadingMessage, setSuccessStatus } =
     useContext(Loading);
 
-  const {setSearchKeyword, setSearchProvince} = useContext(SearchStates);
-
   const [session, loading] = useSession();
   const [previousImage, setPreviousImages] = useState([]);
   const [previewImage, setPreviewImages] = useState([]);
@@ -71,7 +69,7 @@ const ItemForm = ({ userId }) => {
           "image/webp",
         ].includes(selectedImages[image].type)
       ) {
-        formData.append("images", selectedImages[image]);
+        formData.append("images", await resizeImage(selectedImages[image]));
       } else {
         setError("images", {
           type: "wrongFormat",
@@ -117,16 +115,35 @@ const ItemForm = ({ userId }) => {
 
   const imagesInput = register("images");
 
-  const changePreviewImage = (image, i) => {
+  const changePreviewImage = async (image, i) => {
     let selectedImage = [...selectedImages];
     const images = [...previewImage];
 
     URL.revokeObjectURL(images[i]);
+    if (image) {
+      if (
+        [
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/jpeg",
+          "image/webp",
+        ].includes(image.type)
+      ) {
+        selectedImage[i] = await resizeImage(image);
+        setSelectedImages([...selectedImage]);
+      } else {
+        setError("images", {
+          type: "wrongFormat",
+          message: "Hanya format jpg, jpeg, gif, dan webp",
+        });
+        return;
+      }
+    }else{
+      return;
+    }
 
-    selectedImage[i] = image;
-    setSelectedImages([...selectedImage]);
-
-    images[i] = URL.createObjectURL(image);
+    images[i] = URL.createObjectURL(await resizeImage(image));
     setPreviewImages(images);
   };
 
@@ -169,14 +186,30 @@ const ItemForm = ({ userId }) => {
     let selectedImages = [];
 
     for (let i = 0; i < images.length; i++) {
-      selectedImages.push(await images[i]);
+      if (
+        [
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/jpeg",
+          "image/webp",
+        ].includes(images[i].type)
+      ) {
+        selectedImages.push(await resizeImage(images[i]));
+      } else {
+        setError("images", {
+          type: "wrongFormat",
+          message: "Hanya format jpg, jpeg, gif, dan webp",
+        });
+        return;
+      }
     }
 
     setSelectedImages((prevImage) => [...prevImage, ...selectedImages]);
     let blobImages = [];
 
     for (let i = 0; i < images.length; i++) {
-      blobImages[i] = await URL.createObjectURL(await images[i]);
+      blobImages[i] = await URL.createObjectURL(await resizeImage(images[i]));
     }
 
     setPreviewImages((prevImage) => [...prevImage, ...blobImages]);
@@ -185,11 +218,11 @@ const ItemForm = ({ userId }) => {
 
   const settings = {
     adaptiveHeight: true,
-    infinite : true,
+    infinite: true,
     vertical: true,
-      verticalSwiping: true,
-      slidesToShow: 1,
-      slidesToScroll: 1,
+    verticalSwiping: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
     responsive: [
       {
         breakpoint: 790,
@@ -220,34 +253,34 @@ const ItemForm = ({ userId }) => {
         autoComplete="off"
       >
         <div className="w-full ">
-            {previewImage.map((image, index) => {
-              return (
-                <div className="relative rounded-lg my-2 bg-gray-400" key={index}>
-                  <img src={image} className="rounded-lg mx-auto"></img>
-                  <div
-                    onClick={(e) => {
-                      removeImage(index, previousImage[index]);
-                    }}
-                    className="w-24 p-1 bg-red-500 absolute text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
-                  >
-                    Hapus
-                  </div>
-                  <label className="w-24 p-1 bg-green-500 absolute text-white bottom-3 right-3 text-center font-bold rounded-md cursor-pointer">
-                    Ubah
-                    <input
-                      hidden
-                      type="file"
-                      name={`image-${index}`}
-                      accept="image/*"
-                      onChange={(e) => {
-                        e.preventDefault();
-                        changePreviewImage(e.target.files[0], index);
-                      }}
-                    ></input>
-                  </label>
+          {previewImage.map((image, index) => {
+            return (
+              <div className="relative rounded-lg my-2 bg-gray-400" key={index}>
+                <img src={image} className="rounded-lg mx-auto"></img>
+                <div
+                  onClick={(e) => {
+                    removeImage(index, previousImage[index]);
+                  }}
+                  className="w-24 p-1 bg-red-500 absolute text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
+                >
+                  Hapus
                 </div>
-              );
-            })}
+                <label className="w-24 p-1 bg-green-500 absolute text-white bottom-3 right-3 text-center font-bold rounded-md cursor-pointer">
+                  Ubah
+                  <input
+                    hidden
+                    type="file"
+                    name={`image-${index}`}
+                    accept="image/*"
+                    onChange={(e) => {
+                      e.preventDefault();
+                      changePreviewImage(e.target.files[0], index);
+                    }}
+                  ></input>
+                </label>
+              </div>
+            );
+          })}
         </div>
         <div className="grid grid-cols-1 my-5 mx-7">
           <div className="flex flex-col items-center justify-center w-full">
@@ -293,33 +326,33 @@ const ItemForm = ({ userId }) => {
             </p>
           </div>
         </div>
-        
+
         <div className="flex justify-center">
-              {selectedImages?.length > !5 && (
-                <>
-                  <div
-                    onClick={resetImages}
-                    className="p-2 my-2 mr-4 border border-yellow-500 text-yellow-500 hover:border-0 hover:bg-yellow-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
-                  >
-                    Kosongkan Semua Gambar
-                  </div>
-                  <label className="p-2 my-2 border border-blue-500 text-blue-500 hover:border-0 hover:bg-blue-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer">
-                    Tambah Gambar
-                    <input
-                      type="file"
-                      multiple
-                      hidden
-                      accept="image/*"
-                      {...imagesInput}
-                      onChange={(e) => {
-                        imagesInput.onChange(e);
-                        addPreviewImage(e.target.files);
-                      }}
-                    ></input>
-                  </label>
-                </>
-              )}
-            </div>
+          {selectedImages?.length > !5 && (
+            <>
+              <div
+                onClick={resetImages}
+                className="p-2 my-2 mr-4 border border-yellow-500 text-yellow-500 hover:border-0 hover:bg-yellow-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer"
+              >
+                Kosongkan Semua Gambar
+              </div>
+              <label className="p-2 my-2 border border-blue-500 text-blue-500 hover:border-0 hover:bg-blue-400 hover:text-white bottom-3 left-3 text-center font-bold rounded-md cursor-pointer">
+                Tambah Gambar
+                <input
+                  type="file"
+                  multiple
+                  hidden
+                  accept="image/*"
+                  {...imagesInput}
+                  onChange={(e) => {
+                    imagesInput.onChange(e);
+                    addPreviewImage(e.target.files);
+                  }}
+                ></input>
+              </label>
+            </>
+          )}
+        </div>
         <input
           type="text"
           {...register("name", { required: true, maxLength: 150 })}
@@ -398,60 +431,62 @@ const ItemForm = ({ userId }) => {
           {errors.address?.type === "required" &&
             "Tolong isi alamat pengambilan barang"}
         </p>
-      <fieldset className="border-2 border-dashed border-blue-500 p-3 mb-5">
-      <legend className="font-bold" >Kontak</legend>
-      <p className="font-medium">Isi salah satu atau semua kontak yang dapat dihubungi</p>
-        <input
-          type="tel"
-          {...register("phoneNumber", {
-            pattern: /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/,
-          })}
-          name="phoneNumber"
-          className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-          placeholder="Nomor Telepon / Whatsapp"
-        />
+        <fieldset className="border-2 border-dashed border-blue-500 p-3 mb-5">
+          <legend className="font-bold">Kontak</legend>
+          <p className="font-medium">
+            Isi salah satu atau semua kontak yang dapat dihubungi
+          </p>
+          <input
+            type="tel"
+            {...register("phoneNumber", {
+              pattern: /^(62)(\d{3,4}-?){2}\d{3,4}$/,
+            })}
+            name="phoneNumber"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Nomor Telepon / Whatsapp"
+          />
 
-        <p className="text-red-500">
-          {errors.phoneNumber?.type === "pattern" &&
-            "Format No. Telepon salah contoh: 087 123 345 678"}
-        </p>
+          <p className="text-red-500">
+            {errors.phoneNumber?.type === "pattern" &&
+              "Format No. Telepon salah contoh: 6287123456789"}
+          </p>
 
-        <input
-          type="text"
-          {...register("instagram")}
-          name="instagram"
-          className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-          placeholder="Instagram"
-        />
-        <input
-          type="text"
-          {...register("facebook")}
-          name="facebook"
-          className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-          placeholder="Facebook"
-        />
-        <input
-          type="text"
-          {...register("twitter")}
-          name="twitter"
-          className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-          placeholder="Twitter"
-        />
+          <input
+            type="text"
+            {...register("instagram")}
+            name="instagram"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Instagram"
+          />
+          <input
+            type="text"
+            {...register("facebook")}
+            name="facebook"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Facebook"
+          />
+          <input
+            type="text"
+            {...register("twitter")}
+            name="twitter"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Twitter"
+          />
 
-        <input
-          type="email"
-          {...register("email", {
-            pattern:
-              /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
-          })}
-          name="email"
-          className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
-          placeholder="Email"
-        />
-        <p className="text-red-500">
-          {errors.email?.type === "pattern" &&
-            "Format email salah contoh : namaemail@gmail.com"}
-        </p>
+          <input
+            type="email"
+            {...register("email", {
+              pattern:
+                /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
+            })}
+            name="email"
+            className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
+            placeholder="Email"
+          />
+          <p className="text-red-500">
+            {errors.email?.type === "pattern" &&
+              "Format email salah contoh : namaemail@gmail.com"}
+          </p>
         </fieldset>
         <button className="w-full bg-blue-400 xl:h-12 h-11 rounded-lg text-white font-bold hover:bg-blue-600">
           Simpan

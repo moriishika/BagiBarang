@@ -8,6 +8,7 @@ import { Provider } from "next-auth/client";
 import { Loading, FetchedData, ScrollPositition, SearchStates } from "../state";
 import { CheckVerifiedStatus } from "../components";
 import { useRouter } from "next/router";
+import {useSession} from 'next-auth/client'
 import * as gtag from "../libs/ga";
 import Script from "next/script";
 
@@ -21,6 +22,7 @@ const App = ({ Component, pageProps }) => {
   const [scrollHeight, setScrollHeight] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searchProvince, setSearchProvince] = useState("");
+  const [session, loading] = useSession()
 
   const router = useRouter();
 
@@ -55,7 +57,9 @@ const App = ({ Component, pageProps }) => {
         }}
       />
 
-      <Provider session={pageProps.session}>
+      <Provider session={pageProps.session} options={{
+        clientMaxAge : session?.user?.isVerified ? 100 : 10
+      }}>
         <Loading.Provider
           value={{
             isLoading,

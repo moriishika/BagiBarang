@@ -52,7 +52,7 @@ const options = {
         slug,
       };
 
-      return session;
+      return Promise.resolve(session);
     },
   },
   pages: {

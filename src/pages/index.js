@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useContext } from "react";
 import Head from "next/head";
 import { TopNavbar, Items, BottomNavbar, LoadingBox } from "../components";
 import axios from "axios";
-import { FetchedData, ScrollPositition, SearchStates } from "../state";
+import { FetchedData, ScrollPositition, SearchStates, Loading } from "../state";
 
 const Index = () => {
   const {
@@ -13,20 +13,18 @@ const Index = () => {
     setLastSkip,
     setTotalItems,
   } = useContext(FetchedData);
-  const {
-    searchKeyword,
-    searchProvince,
-    setSearchKeyword,
-    setSearchProvince
-  } = useContext(SearchStates);
-  
+  const { searchKeyword, searchProvince, setSearchKeyword, setSearchProvince } =
+    useContext(SearchStates);
+
   const [isSearching, setSearchingStatus] = useState(false);
 
-  const {scrollHeight, setScrollHeight} = useContext(ScrollPositition)
+  const { scrollHeight, setScrollHeight } = useContext(ScrollPositition);
   const [skip, setSkip] = useState(lastSkip);
 
   const getInitialData = async () => {
+    setSearchingStatus(true);
     await axios.get("/api/items?skip=0").then((res) => {
+      setSearchingStatus(false);
       setTotalItems(res.data.itemsTotal);
       setSkip(2);
       setFetchedData([...res.data.result]);
@@ -52,10 +50,8 @@ const Index = () => {
     }
   };
 
-
-
   const loadMoreRef = useRef(null);
-  
+
   let fetchToken;
 
   const search = async (keywords, province) => {
@@ -126,40 +122,35 @@ const Index = () => {
 
   const saveScrollHeight = () => {
     setScrollHeight(window.scrollY);
-  }
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(observerCallback, options);
     if (loadMoreRef.current) {
       observer.observe(loadMoreRef.current);
     }
-    
+
     return () => {
       if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
       setLastSkip(skip);
     };
   }, [fetchedData]);
 
-  
-
   useEffect(() => {
-    window.addEventListener('scroll', saveScrollHeight)
+    window.addEventListener("scroll", saveScrollHeight);
     return () => {
-        window.removeEventListener('scroll', saveScrollHeight)
-    }
-}, [saveScrollHeight])
+      window.removeEventListener("scroll", saveScrollHeight);
+    };
+  }, [saveScrollHeight]);
 
   useEffect(() => {
-
     const newDataChecker = async () => {
-      const data = await axios
-        .get("/api/items?skip=0")
-        .then((res) => {
-          window.scrollTo({
-            top: scrollHeight
-          })
-          return res.data.result[0]
+      const data = await axios.get("/api/items?skip=0").then((res) => {
+        window.scrollTo({
+          top: scrollHeight,
         });
+        return res.data.result[0];
+      });
       if (JSON.stringify(data) !== JSON.stringify(fetchedData[0])) {
         setFetchedData((prev) => [data, ...prev]);
       }
@@ -169,7 +160,6 @@ const Index = () => {
 
     if (!fetchedData.length) {
       getInitialData();
-      
     }
   }, []);
 
@@ -178,8 +168,8 @@ const Index = () => {
       <Head>
         <title>Bagi Barang</title>
       </Head>
-      <div className="h-full w-full" >
-        {!fetchedData.length && !searchKeyword && !searchProvince && (
+      <div className="h-full w-full">
+        {isSearching && !searchKeyword && !searchProvince && (
           <LoadingBox></LoadingBox>
         )}
         <TopNavbar
@@ -199,9 +189,12 @@ const Index = () => {
           ref={loadMoreRef}
         >
           {isSearching && (
-            <h1 className="text-2xl font-semibold">
-              Sedang Meng-loding data 🤹‍♀️
-            </h1>
+            <div className="flex">
+              <h1 className="text-2xl font-semibold ">
+                Sedang Meng-loding data
+              </h1>
+              <span className="text-2xl">🤹‍♀️</span>
+            </div>
           )}
         </div>
         <BottomNavbar></BottomNavbar>

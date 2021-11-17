@@ -3,7 +3,7 @@ import { connectToDatabase } from "../../../libs/database";
 import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/client";
-import { Loading } from "../../../state";
+import { Loading, FetchedData } from "../../../state";
 import axios from "axios";
 import Slider from "react-slick";
 import router from "next/router";
@@ -13,6 +13,7 @@ const UpdateItemForm = ({ item }) => {
   const [session, loading] = useSession();
   const { setLoadingStatus, setLoadingMessage, setSuccessStatus, isLoading } =
     useContext(Loading);
+  const { fetchedData, setFetchedData } = useContext(FetchedData);
 
   const [previousImage, setPreviousImages] = useState(item.images);
   const [previewImage, setPreviewImages] = useState(item.images);
@@ -78,8 +79,6 @@ const UpdateItemForm = ({ item }) => {
       return;
     }
 
-    
-
     delete updateData["images"];
 
     const formData = new FormData();
@@ -138,6 +137,11 @@ const UpdateItemForm = ({ item }) => {
       .then((res) => {
         setLoadingMessage("Telah diperbarui");
         setSuccessStatus(true);
+        const fetchedDataResult = fetchedData.filter(
+          (items) => items._id !== item._id
+        );
+        setFetchedData([...fetchedDataResult]);
+
         let delay = setTimeout(() => {
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");
@@ -145,21 +149,40 @@ const UpdateItemForm = ({ item }) => {
           clearTimeout(delay);
           router.push(`/${session.user.slug}`);
         }, 1000);
-      })
+      });
   };
 
   const imagesInput = register("images");
 
-  const changePreviewImage = (image, i) => {
+  const changePreviewImage = async (image, i) => {
     let selectedImage = [...selectedImages];
     const images = [...previewImage];
 
     URL.revokeObjectURL(images[i]);
+    if (image) {
+      if (
+        [
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/jpeg",
+          "image/webp",
+        ].includes(image.type)
+      ) {
+        selectedImage[i] = await resizeImage(image);
+        setSelectedImages([...selectedImage]);
+      } else {
+        setError("images", {
+          type: "wrongFormat",
+          message: "Hanya format jpg, jpeg, gif, dan webp",
+        });
+        return;
+      }
+    }else{
+      return;
+    }
 
-    selectedImage[i] = image;
-    setSelectedImages([...selectedImage]);
-
-    images[i] = URL.createObjectURL(image);
+    images[i] = URL.createObjectURL(await resizeImage(image));
     setPreviewImages(images);
   };
 
@@ -198,11 +221,27 @@ const UpdateItemForm = ({ item }) => {
     setDeletedImages([...item.images]);
   };
 
-  const addPreviewImage = (images) => {
+  const addPreviewImage = async (images) => {
     let selectedImages = [];
 
     for (let i = 0; i < images.length; i++) {
-      selectedImages.push(images[i]);
+      if (
+        [
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/jpeg",
+          "image/webp",
+        ].includes(images[i].type)
+      ) {
+        selectedImages.push(await resizeImage(images[i]));
+      } else {
+        setError("images", {
+          type: "wrongFormat",
+          message: "Hanya format jpg, jpeg, gif, dan webp",
+        });
+        return;
+      }
     }
 
     setSelectedImages((prevImage) => [...prevImage, ...selectedImages]);
@@ -295,7 +334,9 @@ const UpdateItemForm = ({ item }) => {
             <p className="text-red-500">Gambar minimal 1 maksimal 5</p>
           )}
 
-          {errors.images && <p className="text-red-500 my-3"> {errors.images.message} </p>}
+          {errors.images && (
+            <p className="text-red-500 my-3"> {errors.images.message} </p>
+          )}
 
           <div className="flex">
             <div
@@ -413,7 +454,7 @@ const UpdateItemForm = ({ item }) => {
           <input
             type="tel"
             {...register("phoneNumber", {
-              pattern: /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/,
+              pattern: /^(62)(\d{3,4}-?){2}\d{3,4}$/,
               value: item.phoneNumber,
             })}
             name="phoneNumber"
@@ -422,7 +463,7 @@ const UpdateItemForm = ({ item }) => {
           />
           <p className="text-red-500">
             {errors.phoneNumber?.type === "pattern" &&
-              "Format No. Telepon salah contoh: 087 123 345 678"}
+              "Format No. Telepon salah contoh: 6287123456789"}
           </p>
 
           <input
@@ -443,7 +484,7 @@ const UpdateItemForm = ({ item }) => {
           />
           <input
             type="text"
-            {...register("twitter", { value: item.instagram })}
+            {...register("twitter", { value: item.twitter })}
             name="twitter"
             className="mt-4 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-black rounded-md my-3"
             placeholder="Twitter"
