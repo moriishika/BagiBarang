@@ -158,7 +158,7 @@ const Index = () => {
           top: scrollHeight,
         });
         return res.data.result[0];
-      }); 
+      });
       if (data._id !== fetchedData[0]?._id) {
         setFetchedData((prev) => [data, ...prev]);
       }
@@ -167,8 +167,7 @@ const Index = () => {
     if (!searchKeyword && !searchProvince) {
       newDataChecker();
     }
-
-    if (!fetchedData.length) {
+    if (!fetchedData.length && !searchKeyword && !searchProvince) {
       getInitialData();
     }
   }, []);

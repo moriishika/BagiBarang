@@ -109,7 +109,8 @@ const Item = ({inProfile, item, inItemDetail}) => {
         ></MediaSlider>
       </div>
       <div>
-        <h1 className="text-2xl mt-8 font-semibold">{item.name}</h1>
+        <h1 className="text-2xl mt-8 font-bold">{item.name}</h1>
+        <h2 className="text-lg mt-3 font-semibold">{item.province}</h2>
         {inItemDetail && (
           <div>
             <hr className="border-gray-300 mt-2" />
