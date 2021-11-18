@@ -8,19 +8,21 @@ import {
   Footer,
 } from "../../../components";
 import { useSession } from "next-auth/client";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 
 export default function ItemDetail({ item }) {
   const [session, loading] = useSession();
   const router = useRouter();
 
-  if (!item && !loading && !session) return <LoadingBox></LoadingBox>;
+  if (router.isFallback) {
+    return <LoadingBox />;
+  } 
+
+  if (!item && !loading && !session) return <LoadingBox />;
 
   if (!loading && !session) router.push("/login");
 
-  if (router.isFallback) {
-    return <LoadingBox></LoadingBox>;
-  }
+  
 
   // if (item?.reports.length >= 3) {
   //   return <div />;

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 
 const TopNavbar = ({ search, keywords, province }) => {
   const { register, setValue, reset } = useForm();
-  const { searchKeyword, searchProvince, setSearchKeyword, setSearchProvince } = useContext(SearchStates);
+  const { searchKeyword, searchProvince} = useContext(SearchStates);
   const router = useRouter();
 
 

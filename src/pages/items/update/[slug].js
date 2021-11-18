@@ -137,11 +137,7 @@ const UpdateItemForm = ({ item }) => {
       .then((res) => {
         setLoadingMessage("Telah diperbarui");
         setSuccessStatus(true);
-        const fetchedDataResult = fetchedData.filter(
-          (items) => items._id !== item._id
-        );
-        setFetchedData([...fetchedDataResult]);
-
+        
         let delay = setTimeout(() => {
           setLoadingStatus(false);
           setLoadingMessage("Mohon Tunggu");

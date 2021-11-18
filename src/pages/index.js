@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useContext } from "react";
 import Head from "next/head";
 import { TopNavbar, Items, BottomNavbar, LoadingBox } from "../components";
 import axios from "axios";
-import { FetchedData, ScrollPositition, SearchStates, Loading } from "../state";
+import { FetchedData, ScrollPositition, SearchStates } from "../state";
 
 const Index = () => {
   const {
@@ -23,12 +23,17 @@ const Index = () => {
 
   const getInitialData = async () => {
     setSearchingStatus(true);
-    await axios.get("/api/items?skip=0").then((res) => {
-      setSearchingStatus(false);
-      setTotalItems(res.data.itemsTotal);
-      setSkip(2);
-      setFetchedData([...res.data.result]);
-    });
+    await axios
+      .get("/api/items?skip=0")
+      .then((res) => {
+        setSearchingStatus(false);
+        setTotalItems(res.data.itemsTotal);
+        setSkip(2);
+        setFetchedData([...res.data.result]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const fetchMoreData = async (url) => {
@@ -75,6 +80,9 @@ const Index = () => {
           setSearchingStatus(false);
           setSkip(0);
           setFetchedData([...res.data.result]);
+        })
+        .catch((err) => {
+          console.log(err);
         });
     } else {
       if (fetchToken) {
@@ -150,13 +158,15 @@ const Index = () => {
           top: scrollHeight,
         });
         return res.data.result[0];
-      });
-      if (JSON.stringify(data) !== JSON.stringify(fetchedData[0])) {
+      }); 
+      if (data._id !== fetchedData[0]?._id) {
         setFetchedData((prev) => [data, ...prev]);
       }
     };
 
-    newDataChecker();
+    if (!searchKeyword && !searchProvince) {
+      newDataChecker();
+    }
 
     if (!fetchedData.length) {
       getInitialData();
