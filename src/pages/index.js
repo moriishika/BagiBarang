@@ -152,20 +152,10 @@ const Index = () => {
   }, [saveScrollHeight]);
 
   useEffect(() => {
-    const newDataChecker = async () => {
-      const data = await axios.get("/api/items?skip=0").then((res) => {
-        window.scrollTo({
-          top: scrollHeight,
-        });
-        return res.data.result[0];
-      });
-      if (data._id !== fetchedData[0]?._id) {
-        setFetchedData((prev) => [data, ...prev]);
-      }
-    };
+     
 
     if (!searchKeyword && !searchProvince) {
-      newDataChecker();
+      // newDataChecker();
     }
     if (!fetchedData.length && !searchKeyword && !searchProvince) {
       getInitialData();

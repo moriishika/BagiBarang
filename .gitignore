@@ -29,3 +29,5 @@ yarn-error.log*
 
 media/items/*
 media/user/*
+
+.vscode

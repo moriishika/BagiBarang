@@ -139,7 +139,7 @@ const ItemForm = ({ userId }) => {
         });
         return;
       }
-    }else{
+    } else {
       return;
     }
 
